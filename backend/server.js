@@ -1,9 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import userRoutes from './routes/userRoutes.js';
 dotenv.config();
+import cors from 'cors';
+
+import userRoutes from './routes/userRoutes.js';
+
 const app = express();
+
+const allowedOrigins = [process.env.CLIENT_URL];
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true
+}));
 
 app.use(express.json());
 
