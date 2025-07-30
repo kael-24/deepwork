@@ -48,8 +48,8 @@ backend/.env.*.local
 
 # ---------------------
 # Optional: lockfiles (if you prefer to ignore them)\
-frontend/src/hooks/
-backend
+backend/controllers/googleAuth.js
+
 
 # ---------------------
 # yarn.lock

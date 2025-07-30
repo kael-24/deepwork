@@ -3,21 +3,46 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config();
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
-const allowedOrigins = [process.env.CLIENT_URL];
+/**
+ * ---------------------------------------------------------
+ * CORS MIDDLEWARE - restricting the frontend link that can connect 
+ * ---------------------------------------------------------
+ */
+const allowedOrigins = [process.env.CLIENT_URL || 'http://localhost:5173']; // only the client url can connect to the backend
 app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
+    origin: function (origin, callback) {
+        if (process.env.IS_DEV === 'true' || allowedOrigins.includes(origin))
+            callback(null, true);
+        else 
+            callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true  // Important for cookies to work with CORS
 }));
 
+// converts the https into a json type
 app.use(express.json());
 
-app.use('/api/users', userRoutes);
+// reads and parse any incoming cookies attached to HTTP request, so that they're available in req.cookies
+app.use(cookieParser());
 
+/**
+ * ---------------------------------------------------------
+ * MAIN ROUTES
+ * ---------------------------------------------------------
+ */
+app.use('/api/user', userRoutes);
+
+/**
+ * ---------------------------------------------------------
+ * DATABASE AND PORT CONNECTIONS
+ * ---------------------------------------------------------
+ */
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         app.listen(process.env.PORT, () => {

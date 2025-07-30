@@ -1,8 +1,16 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { useAuthContext } from '../hooks/useContext/useAuthContext'
+import { useAuthHandler } from '../hooks/useAuthHandler'
 
 const Navbar = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const { user } = useAuthContext();
+    const { userLogout } = useAuthHandler();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    
+    const handleLogout = () => {
+        userLogout();
+    }
 
     return (
         <nav className="bg-gradient-to-r from-green-400 to-emerald-500 shadow-lg">
@@ -24,12 +32,21 @@ const Navbar = () => {
                             <Link to="/usage" className="text-white hover:bg-green-500 hover:bg-opacity-75 px-3 py-2 rounded-md font-medium">
                                 Usage
                             </Link>
-                            <Link to="/signup" className="bg-white text-green-600 hover:bg-green-50 px-4 py-2 rounded-md font-medium">
-                                Sign Up
-                            </Link>
-                            <Link to="/login" className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium">
-                                Login
-                            </Link>
+                            {!user && (
+                                <div className="flex items-center space-x-4">
+                                    <Link to="/signup" className="bg-white text-green-600 hover:bg-green-50 px-4 py-2 rounded-md font-medium">
+                                        Sign Up
+                                    </Link>
+                                    <Link to="/login" className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium">
+                                        Login
+                                    </Link>
+                                </div>
+                            )}
+                            {user && (
+                                <div onClick={handleLogout} className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium">
+                                    Logout
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="md:hidden">
@@ -64,12 +81,21 @@ const Navbar = () => {
                         <Link to="/usage" className="text-white block px-3 py-2 rounded-md font-medium hover:bg-green-500">
                             Usage
                         </Link>
-                        <Link to="/signup" className="bg-white text-green-600 block px-3 py-2 rounded-md font-medium hover:bg-green-50">
-                            Sign Up
-                        </Link>
-                        <Link to="/login" className="bg-green-600 text-white block px-3 py-2 rounded-md font-medium hover:bg-green-700">
-                            Login
-                        </Link>
+                        {!user && (
+                            <div className="space-y-1">
+                                <Link to="/signup" className="block bg-white text-green-600 hover:bg-green-50 px-4 py-2 rounded-md font-medium">
+                                    Sign Up
+                                </Link>
+                                <Link to="/login" className="block bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium">
+                                    Login
+                                </Link>
+                            </div>
+                        )}
+                        {user && (
+                            <div onClick={handleLogout} className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium">
+                                Logout
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

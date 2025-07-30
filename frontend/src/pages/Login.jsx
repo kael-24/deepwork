@@ -1,12 +1,15 @@
 import { useState } from "react";
 import validate from 'validator';
 import { Link } from 'react-router-dom';
+import { useAuthHandler } from "../hooks/useAuthHandler";
 
 const Login = () => {
     const [inputEmail, setInputEmail] = useState('');
     const [inputIsValid, setInputIsValid] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
+    const { userLogin } = useAuthHandler();
 
     const validateEmail = (value) => {
         setInputEmail(value);
@@ -15,6 +18,10 @@ const Login = () => {
             setInputIsValid(false);
         else 
             setInputIsValid(true);
+    }
+
+    const handleLogin = () => {
+        userLogin(inputEmail, inputPassword);
     }
     
     return(
@@ -28,7 +35,7 @@ const Login = () => {
                         Sign in to continue your fitness journey
                     </p>
                 </div>
-                <form className="mt-8 space-y-6" action="#" method="POST">
+                <form className="mt-8 space-y-6" action={handleLogin} method="POST">
                     <div className="rounded-md -space-y-px">
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>

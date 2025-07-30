@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import validate from 'validator'
 import { Link } from 'react-router-dom'
+import { useAuthHandler } from "../hooks/useAuthHandler"
 
 const Signup = () => {
+    const { userSignup, error, isLoading } = useAuthHandler();
     const [inputName, setInputName] = useState('');
     const [inputEmail, setInputEmail] = useState('');
     const [inputPassword, setInputPassword] = useState('');
@@ -68,7 +70,29 @@ const Signup = () => {
             if (inputPassword !== inputConfirmPassword && !validate.isEmpty(inputConfirmPassword))
                 setConfirmPasswordError('Passwords do not match');
         }
-    }, [inputPassword, inputConfirmPassword])
+    }, [inputPassword, inputConfirmPassword]);
+
+    /**
+     * ---------------------------------------------------------
+     * HANDLES SIGNUP BUTTON
+     * ---------------------------------------------------------
+     */
+    const handleSignup = async (e) => {
+        e.preventDefault();
+        
+        // Check for validation errors first
+        if (nameError || emailError || passwordError || confirmPasswordError) {
+            return;
+        }
+        
+        // Check if fields are empty
+        if (!inputName || !inputEmail || !inputPassword || !inputConfirmPassword) {
+            return;
+        }
+        
+        // All validation passed, call the signup function
+        await userSignup(inputName, inputEmail, inputPassword);
+    }
 
     return(
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -82,7 +106,7 @@ const Signup = () => {
                     </p>
                 </div>
                 
-                <form className="mt-8 space-y-5" action="#" method="POST">
+                <form className="mt-8 space-y-5" onSubmit={handleSignup} method="POST">
                     {/* Name field */}
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -215,17 +239,20 @@ const Signup = () => {
                         </label>
                     </div>
 
+                    {error && <p className="text-center text-red-500 text-sm">{error}</p>}
+
                     <div>
                         <button
                             type="submit"
-                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg"
+                            disabled={isLoading}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg className="h-5 w-5 text-green-100 group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
                                 </svg>
                             </span>
-                            Create Account
+                            {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>
                     </div>
                 </form>
@@ -233,7 +260,10 @@ const Signup = () => {
                 <div className="text-center">
                     <p className="text-sm text-gray-600">
                         Already have an account?{' '}
-                        <Link to="/login" className="font-medium text-green-600 hover:text-green-500">
+                        <Link 
+                            to="/login" 
+                            className="font-medium text-green-600 hover:text-green-500"
+                        >
                             Sign in
                         </Link>
                     </p>
