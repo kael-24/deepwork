@@ -2,19 +2,21 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
 const requireAuth = async (req, res, next) => {
-    const { authorization } = req.headers;
+    // Get the token from the cookie instead of the Authorization header
+    const token = req.cookies.jwt;
 
-    if (!authorization)
-        return res.status(400).json({ error: 'Authorization token is required'})
-
-    const token = authorization.split(' ')[1]
+    if (!token) {
+        return res.status(401).json({ error: 'Authentication required' });
+    }
 
     try {
-        const {_id} = jwt.verify(token, process.env.SECRET);
+        const { _id } = jwt.verify(token, process.env.SECRET);
         req.user = await User.findById(_id).select('_id');
+        if (!req.user)
+            throw new Error('User does not exists');
         next();
     } catch (err) {
-        res.status(400).json({ error: `Request is not authorized. ${err.message}` });
+        res.status(401).json({ error: `Request is not authorized. ${err.message}` });
     }
 }
 

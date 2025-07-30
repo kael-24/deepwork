@@ -4,8 +4,10 @@ import Home from "./pages/Home"
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
+import { useAuthContext } from './hooks/useContext/useAuthContext';
 
 function App() {
+  const { user } = useAuthContext();
 
   return(
     <BrowserRouter>
@@ -17,11 +19,11 @@ function App() {
         />
         <Route
           path='/signup'
-          element={<Signup />}
+          element={!user ? <Signup /> : <Home />}
         />
         <Route
           path='/login'
-          element={<Login />}
+          element={!user ? <Login /> : <Home />}
         />
       </Routes>
     </BrowserRouter>
