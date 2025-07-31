@@ -48,8 +48,6 @@ backend/.env.*.local
 
 # ---------------------
 # Optional: lockfiles (if you prefer to ignore them)\
-backend/controllers/googleAuth.js
-
 
 # ---------------------
 # yarn.lock
@@ -57,3 +55,5 @@ package-lock.json
 # pnpm-lock.yaml
 
 
+# Firebase admin private key
+frontend/firebase/serviceAccountKey.json

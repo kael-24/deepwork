@@ -2,6 +2,7 @@ import { useState } from "react";
 import validate from 'validator';
 import { Link } from 'react-router-dom';
 import { useAuthHandler } from "../hooks/useAuthHandler";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
 
 const Login = () => {
     const [inputEmail, setInputEmail] = useState('');
@@ -9,7 +10,8 @@ const Login = () => {
     const [inputPassword, setInputPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    const { userLogin } = useAuthHandler();
+    const { userLogin, error, isLoading } = useAuthHandler();
+    const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
 
     const validateEmail = (value) => {
         setInputEmail(value);
@@ -20,7 +22,8 @@ const Login = () => {
             setInputIsValid(true);
     }
 
-    const handleLogin = () => {
+    const handleLogin = (e) => {
+        e.preventDefault();
         userLogin(inputEmail, inputPassword);
     }
     
@@ -35,7 +38,7 @@ const Login = () => {
                         Sign in to continue your fitness journey
                     </p>
                 </div>
-                <form className="mt-8 space-y-6" action={handleLogin} method="POST">
+                <form className="mt-8 space-y-6" onSubmit={handleLogin}>
                     <div className="rounded-md -space-y-px">
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
@@ -116,17 +119,23 @@ const Login = () => {
                     <div>
                         <button
                             type="submit"
-                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg"
+                            disabled={isLoading}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${
+                                isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                            }`}
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg className="h-5 w-5 text-green-100 group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                                 </svg>
                             </span>
-                            Sign in
+                            {isLoading ? 'Signing in...' : 'Sign in'}
                         </button>
                     </div>
                 </form>
+
+                {error && <p className="text-center text-red-500 text-sm">{error}</p>}
+
                 <div className="text-center mt-4">
                     <p className="text-sm text-gray-600">
                         Don't have an account?{' '}
@@ -135,6 +144,17 @@ const Login = () => {
                         </Link>
                     </p>
                 </div>
+                <button
+                    type="button"
+                    onClick={loginWithGoogle}
+                    disabled={gLoading}
+                    className="w-full flex justify-center mt-4 bg-white text-gray-700 border
+                                border-gray-300 rounded-lg py-3 hover:bg-gray-50"
+                    >
+                    <img src="https://developers.google.com/identity/images/g-logo.png"
+                        alt="G" className="h-5 w-5 mr-3" />
+                    {gLoading ? 'Signing in…' : 'Continue with Google'}
+                </button>
             </div>
         </div>
     );

@@ -1,13 +1,26 @@
 import User from '../models/userModel.js';
 import { nameValidator, emailValidator, passwordValidator } from '../utils/InputValidator.js';
 import jwt from 'jsonwebtoken'
+import admin from '../firebase/firebaseAdmin.js'
 
+/**
+ * ---------------------------------------------------------
+ * CREATES TOKEN
+ * ---------------------------------------------------------
+ * @param {String} _id 
+ * @returns JWT Token
+ */
 const createToken = (_id) => {
     return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d'});
 }
 
-// Set cookie helper function
-// this is included in the response
+/**
+ * ---------------------------------------------------------
+ * SET COOKIE - included in res
+ * ---------------------------------------------------------
+ * @param {*} res 
+ * @param {String object} token 
+ */
 const setCookieToken = (res, token) => {
     res.cookie('jwt', token, {
         httpOnly: true, // Not accessible via JavaScript
@@ -19,7 +32,7 @@ const setCookieToken = (res, token) => {
 
 /**
  * ---------------------------------------------------------
- * LOGIN USER
+ * LOCAL LOGIN USER
  * ---------------------------------------------------------
  * @param {*} req 
  * @param {*} res 
@@ -51,7 +64,7 @@ export const userLogin = async (req, res) => {
         res.status(200).json({
             name: validatedUser.name,
             email: validatedUser.email,
-            isAuthenticated: true
+            isAuthenticated: true // TODO provider not added
         });
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -60,7 +73,7 @@ export const userLogin = async (req, res) => {
 
 /**
  * ---------------------------------------------------------
- * SIGNUP USER
+ * LOCAL SIGNUP USER
  * ---------------------------------------------------------
  * @param {*} req 
  * @param {*} res 
@@ -96,7 +109,7 @@ export const userSignup = async (req, res) => {
         res.status(200).json({ 
             name: newUser.name,
             email: newUser.email,
-            isAuthenticated: true
+            isAuthenticated: true // TODO provider not added
         });
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -106,7 +119,7 @@ export const userSignup = async (req, res) => {
 
 /**
  * ---------------------------------------------------------
- * LOGOUT USER
+ * LOCAL AND GOOGLE -- LOGOUT USER
  * ---------------------------------------------------------
  * @param {*} req 
  * @param {*} res 
@@ -125,7 +138,7 @@ export const userLogout = async (req, res) => {
 
 /**
  * ---------------------------------------------------------
- * CHECK EXISTING USER AUTH
+ * LOCAL AND GOOGLE -- CHECK EXISTING USER AUTH
  * ---------------------------------------------------------
  * @param {*} req 
  * @param {*} res 
@@ -135,7 +148,7 @@ export const checkAuth = async (req, res) => {
     try {
         // The requireAuth middleware will already verify the token
         // If we reach this point, the user is authenticated
-        const user = await User.findById(req.user._id).select('name email');
+        const user = await User.findById(req.user._id).select('name email provider');
         
         console.log("checkAuth", user);
         
@@ -146,9 +159,41 @@ export const checkAuth = async (req, res) => {
         return res.status(200).json({
             isAuthenticated: true,
             name: user.name,
-            email: user.email
+            email: user.email,
+            provider: user.provider
         });
     } catch (err) {
         return res.status(401).json({ isAuthenticated: false });
     }
+}
+
+/**
+ * ---------------------------------------------------------
+ * GOOGLE AUTH CONTR - verifies firebase ID and creates JWT
+ * ---------------------------------------------------------
+ * @param {*} req 
+ * @param {*} res 
+ */
+export const googleAuth = async (req, res) => {
+    try {
+        const { idToken } = req.body;
+        const decoded = await admin.auth().verifyIdToken(idToken);
+        const { uid, name, email } = decoded;
+    
+        const newUser = await User.userGoogleAuth(name, email, uid);
+        
+        const token = createToken(newUser._id);
+        setCookieToken(res, token);
+
+        res.status(200).json({
+            name: newUser.name, 
+            email: newUser.email,
+            uid: newUser.uid,
+            provider: newUser.provider
+        });
+    } catch (err) {
+        console.log(err.message);
+        res.status(400).json({error: err.message})
+    }
+    
 }

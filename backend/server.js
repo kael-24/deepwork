@@ -5,7 +5,7 @@ dotenv.config();
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import userRoutes from './routes/userRoutes.js';
+import userAuthRoutes from './routes/userAuthRoutes.js';
 
 const app = express();
 
@@ -25,10 +25,18 @@ app.use(cors({
     credentials: true  // Important for cookies to work with CORS
 }));
 
-// converts the https into a json type
+/**
+ * ---------------------------------------------------------
+ * CONVERTS HTTPS TO JSON
+ * ---------------------------------------------------------
+ */
 app.use(express.json());
 
-// reads and parse any incoming cookies attached to HTTP request, so that they're available in req.cookies
+/**
+ * ---------------------------------------------------------
+ * reads and parse any incoming cookies attached to HTTP request, so that they're available in req.cookies
+ * ---------------------------------------------------------
+ */
 app.use(cookieParser());
 
 /**
@@ -36,7 +44,7 @@ app.use(cookieParser());
  * MAIN ROUTES
  * ---------------------------------------------------------
  */
-app.use('/api/user', userRoutes);
+app.use('/api/auth', userAuthRoutes);
 
 /**
  * ---------------------------------------------------------
