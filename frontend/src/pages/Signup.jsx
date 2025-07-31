@@ -2,9 +2,13 @@ import { useEffect, useState } from "react"
 import validate from 'validator'
 import { Link } from 'react-router-dom'
 import { useAuthHandler } from "../hooks/useAuthHandler"
+import { useGoogleAuth } from "../hooks/useGoogleAuth"
 
 const Signup = () => {
     const { userSignup, error, isLoading } = useAuthHandler();
+    const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
+
+
     const [inputName, setInputName] = useState('');
     const [inputEmail, setInputEmail] = useState('');
     const [inputPassword, setInputPassword] = useState('');
@@ -268,6 +272,17 @@ const Signup = () => {
                         </Link>
                     </p>
                 </div>
+                <button
+                    type="button"
+                    onClick={loginWithGoogle}
+                    disabled={gLoading}
+                    className="w-full flex justify-center mt-4 bg-white text-gray-700 border
+                                border-gray-300 rounded-lg py-3 hover:bg-gray-50"
+                    >
+                    <img src="https://developers.google.com/identity/images/g-logo.png"
+                        alt="G" className="h-5 w-5 mr-3" />
+                    {gLoading ? 'Signing in…' : 'Continue with Google'}
+                </button>
             </div>
         </div>
     )

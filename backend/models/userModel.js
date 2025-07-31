@@ -17,14 +17,32 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: function () {
+            return !this.provider;
+        }
+    },
+    uid: {
+        type: String,
+        index: true
+    },
+    provider: {
+        type: String,
+        enum: ['local', 'google'],
+        default: 'local'
     }
 }, { timestamps: true });
 
-
+/**
+ * ---------------------------------------------------------
+ * LOCAL -- USER LOGIN MODEL
+ * ---------------------------------------------------------
+ * @param {String} email 
+ * @param {String} password 
+ * @returns 
+ */
 userSchema.statics.userLoginModel = async function (email, password) {
     try {
-        const user = await this.findOne({ email });
+        const user = await this.findOne({ email, provider: 'local' });
         if (!user) 
             throw new Error('User does not exists');
     
@@ -38,6 +56,15 @@ userSchema.statics.userLoginModel = async function (email, password) {
     }
 }
 
+/**
+ * ---------------------------------------------------------
+ * LOCAL -- USER SIGNUP MODEL
+ * ---------------------------------------------------------
+ * @param {String} name 
+ * @param {String} email 
+ * @param {String} password 
+ * @returns 
+ */
 userSchema.statics.userSignupModel = async function (name, email, password) {
     try {
         const user = await this.findOne({ email });
@@ -53,6 +80,30 @@ userSchema.statics.userSignupModel = async function (name, email, password) {
     } catch (err) {
         throw err;
     }
+}
+
+/**
+ * ---------------------------------------------------------
+ * GOOGLE AUTH MODEL -- signup and login combined
+ * ---------------------------------------------------------
+ * @param {String} name 
+ * @param {String} email 
+ * @param {String} uid 
+ * @returns 
+ */
+userSchema.statics.userGoogleAuth = async function (name, email, uid) {
+    let user = await this.findOne({ email });
+
+    if (!user) {
+        user = await this.create({
+            email,
+            name, 
+            uid,
+            provider: 'google'
+        });
+    }
+
+    return user;
 }
 
 

@@ -12,7 +12,7 @@ export const useAuthHandler = () => {
         setError(null);
         
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/signup`, { //TODO
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/signup`, { //TODO
                 name,
                 email, 
                 password
@@ -22,10 +22,10 @@ export const useAuthHandler = () => {
 
             // Update context with user data
             dispatch({ type: 'SIGNUP', payload: response.data });
-            setIsLoading(false);
         } catch (err) {
-            setIsLoading(false);
             setError(err.response?.data?.error || 'Error signing up');
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -34,7 +34,7 @@ export const useAuthHandler = () => {
         setError(null);
         
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/login`, {
                 email, 
                 password
             }, {
@@ -43,10 +43,10 @@ export const useAuthHandler = () => {
 
             // Update context with user data
             dispatch({ type: 'LOGIN', payload: response.data });
-            setIsLoading(false);
         } catch (err) {
-            setIsLoading(false);
             setError(err.response?.data?.error || 'Error logging in');
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -54,16 +54,16 @@ export const useAuthHandler = () => {
         setIsLoading(true);
         
         try {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/logout`, {}, {
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/logout`, {}, {
                 withCredentials: true
             });
             
             // Clear user from context
             dispatch({ type: 'LOGOUT' });
-            setIsLoading(false);
         } catch (err) {
-            setIsLoading(false);
             console.error("Error logging out", err);
+        } finally {
+            setIsLoading(false);
         }
     }
 

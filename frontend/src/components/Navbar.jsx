@@ -2,14 +2,21 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuthContext } from '../hooks/useContext/useAuthContext'
 import { useAuthHandler } from '../hooks/useAuthHandler'
+import { useGoogleAuth } from '../hooks/useGoogleAuth'
 
 const Navbar = () => {
     const { user } = useAuthContext();
     const { userLogout } = useAuthHandler();
+    const { logoutGoogle } = useGoogleAuth();
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
-    const handleLogout = () => {
-        userLogout();
+    const handleLogout = async () => {
+        if (user?.provider === 'google')
+            await logoutGoogle();
+        else
+            await userLogout();
+
     }
 
     return (

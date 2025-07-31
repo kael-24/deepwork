@@ -28,7 +28,7 @@ export const AuthContextProvider = ({ children }) => {
         const checkAuthStatus = async () => {
             try {
                 // Make a request to an endpoint that checks if the cookie is valid
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/check-auth`, {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/check-auth`, {
                     withCredentials: true // Important to send cookies
                 });
                 
@@ -37,11 +37,12 @@ export const AuthContextProvider = ({ children }) => {
                 if (response.data.isAuthenticated) {
                     dispatch({ 
                         type: 'CHECK_AUTH', 
-                        payload: {
-                            name: response.data.name,
-                            email: response.data.email,
-                            isAuthenticated: true
-                        }
+                            payload: {
+                                name: response.data.name,
+                                email: response.data.email,
+                                provider: response.data.provider,
+                                isAuthenticated: true
+                            }
                     });
                 }
             } catch (error) {
