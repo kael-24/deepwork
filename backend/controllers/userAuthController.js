@@ -2,6 +2,9 @@ import User from '../models/userModel.js';
 import { nameValidator, emailValidator, passwordValidator } from '../utils/InputValidator.js';
 import jwt from 'jsonwebtoken'
 import admin from '../firebase/firebaseAdmin.js'
+import { sendResetEmail } from '../utils/sendResetEmail.js';
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
 /**
  * ---------------------------------------------------------
@@ -112,8 +115,8 @@ export const userSignup = async (req, res) => {
             isAuthenticated: true // TODO provider not added
         });
     } catch (err) {
-        res.status(400).json({ error: err.message });
         console.log("ERROR", err.message);
+        res.status(400).json({ error: err.message });
     }
 }
 
@@ -196,4 +199,51 @@ export const googleAuth = async (req, res) => {
         res.status(400).json({error: err.message})
     }
     
+}
+
+export const forgetPassword = async (req, res) => { // TODO SECURITY UPGRADE
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email, provider: 'local' });
+        if (!user)
+            throw new Error('User not found');
+        const token = crypto.randomBytes(32).toString('hex');
+        user.resetToken = token;
+        user.resetTokenExpiry = Date.now() + 15 * 60 * 1000 // expires 15 minutes from now
+        await user.save();
+
+        await sendResetEmail({ to: user.email, token });
+
+        res.status(200).json({ message: 'Reset email sent' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `${err.message}` || 'Server error' });
+    }
+}
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { token, newPassword } = req.body; // TODO SECURITY UPGRADE
+
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpiry: { $gt: Date.now() }
+        });
+
+        if (!user) 
+            throw new Error('Token expired or invalid' );
+
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        user.resetToken = undefined;
+        user.resetTokenExpiry = undefined;
+        await user.save();
+
+        res.json({ message: 'Password has been set' });
+    } catch (err) {
+        res.status(500).json({ error: `${err.message}` || 'Server error' }); 
+    }
 }

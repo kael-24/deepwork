@@ -1,5 +1,5 @@
 import express from 'express';
-import { userLogin, userSignup, userLogout, checkAuth, googleAuth } from '../controllers/userAuthController.js';
+import { userLogin, userSignup, userLogout, checkAuth, googleAuth, forgetPassword, resetPassword } from '../controllers/userAuthController.js';
 import requireAuth from '../middleware/requireAuth.js';
 const router = express.Router();
 
@@ -9,6 +9,12 @@ router.post('/user/login', userLogin);
 
 // Signup route
 router.post('/user/signup', userSignup);
+
+// forget-password route
+router.post('/forget-password', forgetPassword);
+
+// reset-password route
+router.post('/reset-password', resetPassword);
 
 
 //*---------------GOOGLE AUTH---------------*//
