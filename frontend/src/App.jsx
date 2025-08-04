@@ -4,6 +4,9 @@ import Home from "./pages/Home"
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
+import ForgetPassword from './pages/FogetPassword';
+import ResetPassword from './pages/ResetPassword';
+
 import { useAuthContext } from './hooks/useContext/useAuthContext';
 
 function App() {
@@ -19,11 +22,19 @@ function App() {
         />
         <Route
           path='/signup'
-          element={!user ? <Signup /> : <Home />}
+          element={!user ? <Signup /> : <Navigate to='/' />}
         />
         <Route
           path='/login'
-          element={!user ? <Login /> : <Home />}
+          element={!user ? <Login /> : <Navigate to='/' />}
+        />
+        <Route 
+          path='/forget-password'
+          element={!user ? <ForgetPassword /> : <Navigate to='/' />}
+        />
+        <Route 
+          path='/reset-password'
+          element={!user ? <ResetPassword /> : <Navigate to='/' />}
         />
       </Routes>
     </BrowserRouter>

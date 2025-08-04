@@ -1,17 +1,20 @@
 import { useState } from "react";
 import validate from 'validator';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuthHandler } from "../hooks/useAuthHandler";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 
 const Login = () => {
+    const { userLogin, error, isLoading } = useAuthHandler();
+    const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
+    
     const [inputEmail, setInputEmail] = useState('');
     const [inputIsValid, setInputIsValid] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-
-    const { userLogin, error, isLoading } = useAuthHandler();
-    const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
+    
+    const location = useLocation();
+    let pwdResetMessage = location.state?.pwdReset;
 
     const validateEmail = (value) => {
         setInputEmail(value);
@@ -23,7 +26,9 @@ const Login = () => {
     }
 
     const handleLogin = (e) => {
+        pwdResetMessage = ""
         e.preventDefault();
+        window.history.replaceState({}, document.title);
         userLogin(inputEmail, inputPassword);
     }
     
@@ -110,9 +115,9 @@ const Login = () => {
                         </div>
 
                         <div className="text-sm">
-                            <a href="#" className="font-medium text-green-600 hover:text-green-500">
+                            <Link to="/forget-password" className="font-medium text-green-600 hover:text-green-500">
                                 Forgot your password?
-                            </a>
+                            </Link>
                         </div>
                     </div>
 
@@ -134,6 +139,7 @@ const Login = () => {
                     </div>
                 </form>
 
+                {pwdResetMessage && <p className="text-center text-green-500 text-sm">{pwdResetMessage}</p>}
                 {error && <p className="text-center text-red-500 text-sm">{error}</p>}
 
                 <div className="text-center mt-4">

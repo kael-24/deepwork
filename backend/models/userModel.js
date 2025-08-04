@@ -29,6 +29,12 @@ const userSchema = new Schema({
         type: String,
         enum: ['local', 'google'],
         default: 'local'
+    },
+    resetToken: {
+        type: String
+    }, 
+    resetTokenExpiry: { 
+        type: Date
     }
 }, { timestamps: true });
 
