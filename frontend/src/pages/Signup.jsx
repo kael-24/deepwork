@@ -3,6 +3,7 @@ import validate from 'validator'
 import { Link } from 'react-router-dom'
 import { useAuthHandler } from "../hooks/useAuthHandler"
 import { useGoogleAuth } from "../hooks/useGoogleAuth"
+import { inputValidator } from "../auth/inputValidator"
 
 const Signup = () => {
     const { userSignup, error, isLoading } = useAuthHandler();
@@ -51,30 +52,27 @@ const Signup = () => {
         else if (!validate.isEmail(email))
             setEmailError('Invalid Email');
     }
-
+    
     /**
      * ---------------------------------------------------------
      * Verify passwords (password and confirm)
      * ---------------------------------------------------------
      */
     useEffect(() => {
+        setPasswordError(null);
         if (inputPassword) {
-            setPasswordError(null);
+            const result = inputValidator({ password: inputPassword, confirmPassword: inputConfirmPassword });
+            if (result) 
+                setPasswordError(result);
 
-            if (validate.isEmpty(inputPassword))
-                setPasswordError(null);
-            else if (inputPassword?.length < 8)
-                setPasswordError('Password too short');
-            else if (!/^(?=.*[A-Za-z])(?=.*\d).+$/.test(inputPassword))
-                setPasswordError('Password should have atleast a letter and a number');
+            if (inputConfirmPassword) {
+                setConfirmPasswordError(null);
+                const confirmPasswordResult = inputValidator({ password: inputPassword, confirmPassword: inputConfirmPassword });
+                if (confirmPasswordResult) 
+                    setConfirmPasswordError(confirmPasswordResult);
+            }
         }
-
-        if (inputConfirmPassword) {
-            setConfirmPasswordError(null);
-            if (inputPassword !== inputConfirmPassword && !validate.isEmpty(inputConfirmPassword))
-                setConfirmPasswordError('Passwords do not match');
-        }
-    }, [inputPassword, inputConfirmPassword]);
+    }, [inputPassword, inputConfirmPassword])
 
     /**
      * ---------------------------------------------------------

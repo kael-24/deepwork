@@ -1,20 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import validate from 'validator';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuthHandler } from "../hooks/useAuthHandler";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
+import useAuthStore from "../../store/useAuthStore";
 
 const Login = () => {
     const { userLogin, error, isLoading } = useAuthHandler();
     const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
+    const { pwdResetMessage, pwdClearMessage } = useAuthStore();
     
     const [inputEmail, setInputEmail] = useState('');
     const [inputIsValid, setInputIsValid] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    
-    const location = useLocation();
-    let pwdResetMessage = location.state?.pwdReset;
 
     const validateEmail = (value) => {
         setInputEmail(value);
@@ -26,11 +25,17 @@ const Login = () => {
     }
 
     const handleLogin = (e) => {
-        pwdResetMessage = ""
         e.preventDefault();
-        window.history.replaceState({}, document.title);
         userLogin(inputEmail, inputPassword);
     }
+
+    useEffect(() => {
+        if (pwdResetMessage) {
+            const messageInterval = setTimeout(() => pwdClearMessage(), 3000);
+            return () => clearTimeout(messageInterval);
+        }
+        
+    }, [pwdResetMessage]);
     
     return(
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">

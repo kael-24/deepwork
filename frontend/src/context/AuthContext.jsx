@@ -1,4 +1,4 @@
-import { createContext, useReducer, useEffect } from "react";
+import { createContext, useReducer, useEffect, useState } from "react";
 import axios from "axios";
 
 export const AuthContext = createContext();
@@ -22,6 +22,8 @@ export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(AuthReducer, {
         user: null,
     });
+
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
 
     // Check if user is authenticated when the app loads
     useEffect(() => {
@@ -49,6 +51,8 @@ export const AuthContextProvider = ({ children }) => {
                 console.log('Error checking auth status: ', error)
                 // If there's an error or the user is not authenticated, set user to null
                 dispatch({ type: 'LOGOUT' });
+            } finally {
+                setIsAuthLoading(false);
             }
         };
 
@@ -58,7 +62,7 @@ export const AuthContextProvider = ({ children }) => {
     console.log('AuthContext State: ', state)
 
     return(
-        <AuthContext.Provider value={{...state, dispatch}}>
+        <AuthContext.Provider value={{ ...state, dispatch, isAuthLoading }}>
             { children }
         </AuthContext.Provider>
     )

@@ -19,7 +19,6 @@ const useForgetPassword = () => {
         }
     })
 
-
     return {
         forgetPasswordMutation,
         resetPasswordMutation
