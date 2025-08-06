@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import validate from 'validator';
 import { Link } from 'react-router-dom';
-import { useAuthHandler } from "../hooks/useAuthHandler";
-import { useGoogleAuth } from "../hooks/useGoogleAuth";
-import useAuthStore from "../store/useAuthStore";
+import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler";
+import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth";
+import usePwdResetStore from "@/store/usePwdResetStore";
 
 const Login = () => {
     const { userLogin, error, isLoading } = useAuthHandler();
     const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
-    const { pwdResetMessage, pwdClearMessage } = useAuthStore();
+    const { pwdResetMessage, pwdClearMessage } = usePwdResetStore();
     
     const [inputEmail, setInputEmail] = useState('');
     const [inputIsValid, setInputIsValid] = useState('');

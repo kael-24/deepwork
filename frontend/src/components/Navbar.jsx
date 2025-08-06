@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { useAuthContext } from '../hooks/useContext/useAuthContext'
-import { useAuthHandler } from '../hooks/useAuthHandler'
-import { useGoogleAuth } from '../hooks/useGoogleAuth'
+import { useAuthStore } from '@/store/useAuthStore'
+import { useAuthHandler } from '@/features/auth/hooks/useAuthHandler'
+import { useGoogleAuth } from '@/features/auth/hooks/useGoogleAuth'
 
 const Navbar = () => {
-    const { user } = useAuthContext();
+    const { user } = useAuthStore();
     const { userLogout } = useAuthHandler();
     const { logoutGoogle } = useGoogleAuth();
 
@@ -54,6 +54,7 @@ const Navbar = () => {
     const closeMenu = () => {
         setIsMenuOpen(false);
     }
+    
     console.log("Hellow", isMenuOpen);
 
     return (
@@ -88,7 +89,7 @@ const Navbar = () => {
                         {/* Right group: account section */}
                         <div className="flex items-center space-x-4 mr-2">
                             {!user ? (
-                                <div className="hidden md:flex items-center space-x-4">
+                                <div className="flex items-center space-x-4">
                                     <Link to="/signup" className="bg-white text-green-600 hover:bg-green-50 px-4 py-2 rounded-md font-medium transition-colors duration-200">
                                         Sign Up
                                     </Link>
@@ -145,22 +146,25 @@ const Navbar = () => {
 
                                 {!user ? (
                                     <div className="space-y-2">
+                                        <div className="border-t border-gray-200 pt-4 mt-4">
+                                            <p className="text-sm text-gray-500 mb-3 px-3">Account</p>
+                                        </div>
                                         <Link 
                                             to="/signup" 
                                             onClick={closeMenu}
-                                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-green-50 transition-colors duration-200 border border-green-200"
                                         >
                                             <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                                             </svg>
-                                            <span className="font-medium">Sign Up</span>
+                                            <span className="font-medium text-green-700">Sign Up</span>
                                         </Link>
                                         <Link 
                                             to="/login" 
                                             onClick={closeMenu}
-                                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                                            className="flex items-center space-x-3 p-3 rounded-lg bg-green-600 hover:bg-green-700 transition-colors duration-200 text-white"
                                         >
-                                            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                                             </svg>
                                             <span className="font-medium">Login</span>

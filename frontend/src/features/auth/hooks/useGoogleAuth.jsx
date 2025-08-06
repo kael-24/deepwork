@@ -1,10 +1,10 @@
-import { googlePopupLogin, firebaseLogout } from "../auth/firebase";
+import { googlePopupLogin, firebaseLogout } from "@/features/auth/firebase";
 import { useState } from "react"
-import { useAuthContext } from "./useContext/useAuthContext";
+import { useAuthStore } from "@/store/useAuthStore";
 import axios from "axios";
 
 export const useGoogleAuth = () => {
-    const {dispatch} = useAuthContext();
+    const { setUser, logoutUser} = useAuthStore();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -22,16 +22,13 @@ export const useGoogleAuth = () => {
                 withCredentials: true
             });
 
-            dispatch({
-                type: 'LOGIN',
-                payload: {
-                    name: response.data.displayName,
-                    email: response.data.email,
-                    uid: response.data.uid,
-                    provider: response.data.provider,
-                    isAuthenticated: true
-                }
-            });
+            setUser({
+                name: response.data.displayName,
+                email: response.data.email,
+                uid: response.data.uid,
+                provider: response.data.provider,
+                isAuthenticated: true
+            })
         } catch (err) { 
             console.error(err);
             setError(`${err?.response?.data?.error} -- ${err.message}`);
@@ -45,7 +42,7 @@ export const useGoogleAuth = () => {
         await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/logout`, null, {
             withCredentials: true
         })
-        dispatch({ type: 'LOGOUT'});
+        logoutUser();
     }
 
     return {loginWithGoogle, logoutGoogle, error, loading}

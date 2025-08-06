@@ -1,9 +1,16 @@
 import { create } from 'zustand'
 
-const useAuthStore = create((set) => ({
-    pwdResetMessage: '',
-    pwdResetSuccess: () => set({ pwdResetMessage: "New password have been set" }),
-    pwdClearMessage: () => set({ pwdResetMessage: '' })
-}))
+export const useAuthStore = create((set) => ({
+    // states
+    user: null,
+    isAuthLoading: true,
 
-export default useAuthStore;
+    // set user
+    setUser: (userData) => set({ user: userData }),
+
+    // logout user
+    logoutUser: () => set({ user: null }),
+    
+    // set isAuthLoading (seems like not needed) // TODO
+    setIsAuthLoading: (value) => set({ isAuthLoading: value }),
+}));

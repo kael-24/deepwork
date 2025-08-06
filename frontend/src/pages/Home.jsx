@@ -1,9 +1,8 @@
-import Navbar from "../components/Navbar"
 
 const Home = () => {
     return(
         <>
-            <h1>Hellow</h1>
+            <h1>Home</h1>
         </>
     )
 }

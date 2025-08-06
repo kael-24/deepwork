@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { useAuthContext } from './useContext/useAuthContext';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export const useAuthHandler = () => {
-    const { dispatch } = useAuthContext(); 
+    const { setUser, logoutUser } = useAuthStore(); 
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +21,7 @@ export const useAuthHandler = () => {
             });
 
             // Update context with user data
-            dispatch({ type: 'SIGNUP', payload: response.data });
+            setUser(response.data);
         } catch (err) {
             setError(err.response?.data?.error || 'Error signing up');
         } finally {
@@ -43,7 +43,7 @@ export const useAuthHandler = () => {
             });
 
             // Update context with user data
-            dispatch({ type: 'LOGIN', payload: response.data });
+            setUser(response.data);
         } catch (err) {
             setError(err.response?.data?.error || 'Error logging in');
         } finally {
@@ -60,7 +60,7 @@ export const useAuthHandler = () => {
             });
             
             // Clear user from context
-            dispatch({ type: 'LOGOUT' });
+            logoutUser();
         } catch (err) {
             console.error("Error logging out", err);
         } finally {

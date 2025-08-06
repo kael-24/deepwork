@@ -1,19 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useAuthContext } from './hooks/useContext/useAuthContext';
+import { useAuthStore } from '@/store/useAuthStore';
 
-import Home from "./pages/Home"
-import Signup from './pages/Signup';
-import Login from './pages/Login';
-import Navbar from './components/Navbar';
-import ForgetPassword from './pages/FogetPassword';
-import ResetPassword from './pages/ResetPassword';
+import Home from "@/pages/Home"
+import Signup from '@/features/auth/pages/Signup';
+import Login from '@/features/auth/pages/Login';
+import Navbar from '@/components/Navbar';
+import ForgetPassword from '@/features/auth/pages/FogetPassword';
+import ResetPassword from '@/features/auth/pages/ResetPassword';
 
 
 function AppRoutes() {
-  const { user, isAuthLoading } = useAuthContext();
+  const { user, isAuthLoading } = useAuthStore();
   const location = useLocation();
 
-  const showNavbarPaths = ['/', '/login', 'signup'];
+  const showNavbarPaths = ['/', '/login', '/signup'];
   const showNavbar = showNavbarPaths.includes(location.pathname);
 
   if (isAuthLoading) 

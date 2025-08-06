@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import useForgetPassword from "../hooks/useForgetPassword"; 
 import { useSearchParams } from "react-router-dom";
-import useAuthStore from "../store/useAuthStore";
-import { inputValidator } from "../auth/inputValidator";
+
+import useForgetPassword from "@/features/auth/hooks/useForgetPassword"; 
+import usePwdResetStore from "@/store/usePwdResetStore";
+import { inputValidator } from "@/features/auth/inputValidator";
 
 const ResetPassword = () => {
     const {
@@ -15,7 +16,7 @@ const ResetPassword = () => {
         }
     } = useForgetPassword();
 
-    const { pwdResetSuccess } = useAuthStore();
+    const { pwdResetSuccess } = usePwdResetStore();
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
