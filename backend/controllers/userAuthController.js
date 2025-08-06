@@ -13,8 +13,8 @@ import bcrypt from 'bcrypt';
  * @param {String} _id 
  * @returns JWT Token
  */
-const createToken = (_id) => {
-    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d'});
+const createToken = (_id, rememberMe) => {
+    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: rememberMe === false ? '30m' : '3d' });
 }
 
 /**
@@ -24,12 +24,12 @@ const createToken = (_id) => {
  * @param {*} res 
  * @param {String object} token 
  */
-const setCookieToken = (res, token) => {
+const setCookieToken = (res, token, rememberMe) => {
     res.cookie('jwt', token, {
         httpOnly: true, // Not accessible via JavaScript
         secure: process.env.IS_DEV !== 'true', // Only use HTTPS in production
         sameSite: 'strict', // Protection against CSRF
-        maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
+        maxAge: rememberMe === false ? 30 * 60 * 1000 : 3 * 24 * 60 * 60 * 1000 // 30 mins or 3 days in milliseconds
     });
 }
 
@@ -42,7 +42,7 @@ const setCookieToken = (res, token) => {
  */
 export const userLogin = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, rememberMe } = req.body;
 
         if (email) {
             emailValidator(email.trim());
@@ -55,18 +55,22 @@ export const userLogin = async (req, res) => {
         else 
             throw new Error('Password is required');
 
+        if (typeof rememberMe !== 'boolean')
+            throw new Error('Unrecognized value for RememberMe');
+
         const normalizedEmail = email.toLowerCase();
-        const validatedUser = await User.userLoginModel(normalizedEmail, password);
-        const token = createToken(validatedUser._id);
+        const validatedUser = await User.userLoginModel(normalizedEmail, password, rememberMe);
+        const token = createToken(validatedUser._id, rememberMe);
         console.log("userLogin Token", token);
         
         // Set HTTP-only cookie
-        setCookieToken(res, token);
+        setCookieToken(res, token, rememberMe);
         
         // Send user info without token
         res.status(200).json({
             name: validatedUser.name,
             email: validatedUser.email,
+            rememberMe: validatedUser.rememberMe,
             isAuthenticated: true // TODO provider not added
         });
     } catch (err) {

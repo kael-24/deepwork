@@ -3,7 +3,7 @@ import validate from 'validator';
 import { Link } from 'react-router-dom';
 import { useAuthHandler } from "../hooks/useAuthHandler";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore from "../store/useAuthStore";
 
 const Login = () => {
     const { userLogin, error, isLoading } = useAuthHandler();
@@ -14,6 +14,7 @@ const Login = () => {
     const [inputIsValid, setInputIsValid] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
 
     const validateEmail = (value) => {
         setInputEmail(value);
@@ -26,7 +27,7 @@ const Login = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        userLogin(inputEmail, inputPassword);
+        userLogin(inputEmail, inputPassword, rememberMe);
     }
 
     useEffect(() => {
@@ -113,6 +114,8 @@ const Login = () => {
                                 name="remember-me"
                                 type="checkbox"
                                 className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
                             />
                             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                                 Remember me

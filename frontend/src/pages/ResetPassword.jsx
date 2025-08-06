@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import useForgetPassword from "../hooks/useForgetPassword"; 
 import { useSearchParams } from "react-router-dom";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore from "../store/useAuthStore";
 import { inputValidator } from "../auth/inputValidator";
 
 const ResetPassword = () => {
