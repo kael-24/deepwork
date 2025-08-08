@@ -1,7 +1,6 @@
 import axios from "axios"
 import { useMutation } from '@tanstack/react-query';
 
-
 const useForgetPassword = () => {
 
     const forgetPasswordMutation = useMutation({
@@ -14,7 +13,7 @@ const useForgetPassword = () => {
 
     const resetPasswordMutation = useMutation({
         mutationFn: async ({ token, newPassword }) => {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/reset-password`, { token, newPassword });
+            await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/reset-password`, { token, newPassword });
             return true;
         }
     })

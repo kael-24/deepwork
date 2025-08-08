@@ -21,7 +21,13 @@ export const useAuthHandler = () => {
             });
 
             // Update context with user data
-            setUser(response.data);
+            setUser({
+                name: response.data.name, 
+                email: response.data.email,
+                uid: response.data.uid ?? undefined,
+                provider: response.data.provider,
+                isAuthenticated: true,
+            });
         } catch (err) {
             setError(err.response?.data?.error || 'Error signing up');
         } finally {
@@ -43,7 +49,13 @@ export const useAuthHandler = () => {
             });
 
             // Update context with user data
-            setUser(response.data);
+            setUser({
+                name: response.data.name, 
+                email: response.data.email,
+                uid: response.data.uid ?? undefined,
+                provider: response.data.provider,
+                isAuthenticated: true,
+            });
         } catch (err) {
             setError(err.response?.data?.error || 'Error logging in');
         } finally {

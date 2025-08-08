@@ -55,8 +55,6 @@ const Navbar = () => {
         setIsMenuOpen(false);
     }
     
-    console.log("Hellow", isMenuOpen);
-
     return (
         <>
             <nav className="bg-gradient-to-r from-green-400 to-emerald-500 shadow-lg fixed top-0 left-0 right-0 z-50">
@@ -99,7 +97,7 @@ const Navbar = () => {
                                 </div>
                             ) : (
                                 <div className="flex items-center space-x-3">
-                                    <Link to="/profile-setting" className="flex items-center space-x-2 text-white hover:text-green-100 transition-colors duration-200">
+                                    <Link to="/profile-settings" className="flex items-center space-x-2 text-white hover:text-green-100 transition-colors duration-200">
                                         {/* Profile Icon */}
                                         <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
                                             <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -108,12 +106,6 @@ const Navbar = () => {
                                         </div>
                                         <span className="font-medium">{user.name}</span>
                                     </Link>
-                                    <button 
-                                        onClick={handleLogout} 
-                                        className="bg-green-600 text-white hover:bg-green-700 px-3 py-2 rounded-md font-medium transition-colors duration-200"
-                                    >
-                                        Logout
-                                    </button>
                                 </div>
                             )}
                         </div>
@@ -172,8 +164,8 @@ const Navbar = () => {
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
-                                        <Link 
-                                            to="/profile-setting" 
+                                    <Link 
+                                        to="/profile-settings" 
                                             onClick={closeMenu}
                                             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
                                         >

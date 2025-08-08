@@ -20,9 +20,11 @@ const AuthProvider = ({ children }) => {
                     setUser({ 
                         name: response.data.name,
                         email: response.data.email,
+                        uid: response.data.uid ?? undefined,
                         provider: response.data.provider,
                         isAuthenticated: true
                     })
+                    
                 }
             } catch (error) {
                 console.log('Error checking auth status: ', error)

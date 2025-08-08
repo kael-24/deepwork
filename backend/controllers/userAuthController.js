@@ -5,6 +5,7 @@ import admin from '../firebase/firebaseAdmin.js'
 import { sendResetEmail } from '../utils/sendResetEmail.js';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 /**
  * ---------------------------------------------------------
@@ -70,7 +71,7 @@ export const userLogin = async (req, res) => {
         res.status(200).json({
             name: validatedUser.name,
             email: validatedUser.email,
-            rememberMe: validatedUser.rememberMe,
+            provider: validatedUser.provider,
             isAuthenticated: true // TODO provider not added
         });
     } catch (err) {
@@ -116,6 +117,7 @@ export const userSignup = async (req, res) => {
         res.status(200).json({ 
             name: newUser.name,
             email: newUser.email,
+            provider: newUser.provider,
             isAuthenticated: true // TODO provider not added
         });
     } catch (err) {
@@ -155,7 +157,12 @@ export const checkAuth = async (req, res) => {
     try {
         // The requireAuth middleware will already verify the token
         // If we reach this point, the user is authenticated
-        const user = await User.findById(req.user._id).select('name email provider');
+        const id = req.user._id;
+
+        if (!mongoose.Types.ObjectId.isValid(id))
+            return res.status(400).json({ error: 'Object ID is invalid' });
+
+        const user = await User.findById(id).select('name email provider');
         
         console.log("checkAuth", user);
         
@@ -164,13 +171,13 @@ export const checkAuth = async (req, res) => {
         }
         
         return res.status(200).json({
-            isAuthenticated: true,
             name: user.name,
             email: user.email,
-            provider: user.provider
+            provider: user.provider,
+            isAuthenticated: true
         });
     } catch (err) {
-        return res.status(401).json({ isAuthenticated: false });
+        return res.status(500).json({ isAuthenticated: false });
     }
 }
 
@@ -187,7 +194,7 @@ export const googleAuth = async (req, res) => {
         const decoded = await admin.auth().verifyIdToken(idToken);
         const { uid, name, email } = decoded;
     
-        const newUser = await User.userGoogleAuth(name, email, uid);
+        const newUser = await User.userGoogleAuthModel(name, email, uid);
         
         const token = createToken(newUser._id);
         setCookieToken(res, token);
@@ -196,7 +203,8 @@ export const googleAuth = async (req, res) => {
             name: newUser.name, 
             email: newUser.email,
             uid: newUser.uid,
-            provider: newUser.provider
+            provider: newUser.provider,
+            isAuthenticated: true,
         });
     } catch (err) {
         console.log(err.message);

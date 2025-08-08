@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 
 import useForgetPassword from "@/features/auth/hooks/useForgetPassword"; 
 import usePwdResetStore from "@/store/usePwdResetStore";
-import { inputValidator } from "@/features/auth/inputValidator";
+import { passwordValidator } from "@/features/auth/inputValidator";
 
 const ResetPassword = () => {
     const {
@@ -52,10 +52,13 @@ const ResetPassword = () => {
     useEffect(() => {
         setClientError(null)
         if (newPassword) {
-            const result = inputValidator({ password: newPassword, confirmPassword });
+            const result = passwordValidator({ password: newPassword, isEnough: true, isStrong: true });
             if (result) {
                 setClientError(result);
-            }
+                return;
+            } 
+            if (confirmPassword && confirmPassword !== newPassword)
+                setClientError("Passwords does not match");
         }
     }, [newPassword, confirmPassword])
 

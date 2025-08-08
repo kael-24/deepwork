@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import bcrypt from 'bcrypt';
 
 const Schema = mongoose.Schema;
@@ -96,21 +96,61 @@ userSchema.statics.userSignupModel = async function (name, email, password) {
  * @param {String} email 
  * @param {String} uid 
  * @returns 
- */
-userSchema.statics.userGoogleAuth = async function (name, email, uid) {
-    let user = await this.findOne({ email });
+*/
+userSchema.statics.userGoogleAuthModel = async function (name, email, uid) {
+    try {
+        let user = await this.findOne({ email });
 
-    if (!user) {
-        user = await this.create({
-            email,
-            name, 
-            uid,
-            provider: 'google'
-        });
+        if (!user) {
+            user = await this.create({
+                email,
+                name, 
+                uid,
+                provider: 'google'
+            });
+        }
+    
+        return user;
+    } catch (err) {
+        throw err;
     }
 
-    return user;
 }
 
+
+userSchema.statics.userEditModel = async function (id, name, password, newPassword) {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(id))
+            throw new Error('Object ID is invalid');
+
+        const query = {_id: id};
+        if (password && newPassword) {
+            query.provider = 'local';
+        }
+
+        const user = await this.findOne(query);
+        if (!user)
+            throw new Error("User not found");
+        
+        if (password && newPassword) {
+            const match = await bcrypt.compare(password, user.password);
+            if (!match)
+                throw new Error("Incorrect credentials");
+            
+            const salt = await bcrypt.genSalt(12);
+            const hash = await bcrypt.hash(newPassword, salt);
+            user.password = hash;
+        }
+
+        if (name)
+            user.name = name;
+
+        await user.save();
+
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
 
 export default mongoose.model('User', userSchema);

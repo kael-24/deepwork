@@ -18,12 +18,12 @@ export const useGoogleAuth = () => {
             const idToken = await result.user.getIdToken();
 
             // send token to the backend
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/google`, { idToken }, {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/google`, { idToken }, {
                 withCredentials: true
             });
 
             setUser({
-                name: response.data.displayName,
+                name: response.data.name,
                 email: response.data.email,
                 uid: response.data.uid,
                 provider: response.data.provider,

@@ -6,7 +6,11 @@ export const useAuthStore = create((set) => ({
     isAuthLoading: true,
 
     // set user
-    setUser: (userData) => set({ user: userData }),
+    setUser: (userData) => set((state) => ({ 
+        user: {
+            ...state.user, ...userData
+        }
+    })),
 
     // logout user
     logoutUser: () => set({ user: null }),

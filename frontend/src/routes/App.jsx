@@ -7,13 +7,14 @@ import Login from '@/features/auth/pages/Login';
 import Navbar from '@/components/Navbar';
 import ForgetPassword from '@/features/auth/pages/FogetPassword';
 import ResetPassword from '@/features/auth/pages/ResetPassword';
+import ProfileSettings from '@/features/auth/pages/ProfileSettings';
 
 
 function AppRoutes() {
   const { user, isAuthLoading } = useAuthStore();
   const location = useLocation();
 
-  const showNavbarPaths = ['/', '/login', '/signup'];
+  const showNavbarPaths = ['/', '/login', '/signup', '/profile-settings'];
   const showNavbar = showNavbarPaths.includes(location.pathname);
 
   if (isAuthLoading) 
@@ -42,6 +43,10 @@ function AppRoutes() {
           <Route 
             path='/reset-password'
             element={!user ? <ResetPassword /> : <Navigate to='/' />}
+          />
+          <Route 
+            path='/profile-settings'
+            element={user ? <ProfileSettings /> : <Navigate to='/login' />}
           />
         </Routes>
     </>

@@ -3,7 +3,7 @@ import validate from 'validator'
 import { Link } from 'react-router-dom'
 import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler"
 import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth"
-import { inputValidator } from "@/features/auth/inputValidator"
+import { passwordValidator } from "@/features/auth/inputValidator"
 
 const Signup = () => {
     const { userSignup, error, isLoading } = useAuthHandler();
@@ -60,16 +60,15 @@ const Signup = () => {
      */
     useEffect(() => {
         setPasswordError(null);
+        setConfirmPasswordError(null);
+        
         if (inputPassword) {
-            const result = inputValidator({ password: inputPassword, confirmPassword: inputConfirmPassword });
+            const result = passwordValidator({ password: inputPassword, isEnough: true, isStrong: true });
             if (result) 
                 setPasswordError(result);
 
-            if (inputConfirmPassword) {
-                setConfirmPasswordError(null);
-                const confirmPasswordResult = inputValidator({ password: inputPassword, confirmPassword: inputConfirmPassword });
-                if (confirmPasswordResult) 
-                    setConfirmPasswordError(confirmPasswordResult);
+            if (inputConfirmPassword && inputConfirmPassword !== inputPassword) {
+                setConfirmPasswordError("Passwords does not match");
             }
         }
     }, [inputPassword, inputConfirmPassword])

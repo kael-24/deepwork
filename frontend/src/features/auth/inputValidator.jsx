@@ -1,22 +1,22 @@
-import validate from 'validator';
+import validator from 'validator'
 
-export const inputValidator = ({ password = undefined, confirmPassword = undefined }) => {
-    /**
-     * ---------------------------------------------------------
-     * Verify passwords (password and confirm)
-     * ---------------------------------------------------------
-     */
-    if (password) {
-        if (password?.length < 8)
-            return 'Password cannot be less than 8 characters'
-        else if (!/^(?=.*[A-Za-z])(?=.*\d).+$/.test(password))
-            return 'Password should have atleast a letter and a number';
-        
-        if (confirmPassword) {
-            if (password !== confirmPassword && !validate.isEmpty(confirmPassword))
-                return 'Passwords do not match';
-        }
+export const nameValidator = (name) => {
+    if (typeof name !== 'string')
+        return 'Invalid input';
+    
+    if (name?.trim().length < 2)
+        return 'Name should not be less than 2 characters';
+}
+
+export const passwordValidator = ({ password, isEnough = false, isStrong = false }) => {
+    if (typeof password !== 'string')
+        return 'Invalid input';
+
+    if (isEnough && !validator.isLength(password, { min: 8 })) {
+        return 'Password too short';
     }
 
-    return;
+    if (isStrong && !(/^(?=.*[A-Za-z])(?=.*\d)/.test(password))) {
+        return 'It should atleast have a number and a letter';
+    }
 }
