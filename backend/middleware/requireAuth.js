@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
-const requireAuth = async (req, res, next) => {
+export const requireAuth = async (req, res, next) => {
     // Get the token from the cookie instead of the Authorization header
     const token = req.cookies.jwt;
 
@@ -19,5 +19,3 @@ const requireAuth = async (req, res, next) => {
         res.status(401).json({ error: `Request is not authorized. ${err.message}` });
     }
 }
-
-export default requireAuth;

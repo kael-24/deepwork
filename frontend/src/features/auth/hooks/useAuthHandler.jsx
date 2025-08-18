@@ -39,6 +39,8 @@ export const useAuthHandler = () => {
         setIsLoading(true);
         setError(null);
         
+        console.log("Remember Me", rememberMe);
+
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/login`, {
                 email, 

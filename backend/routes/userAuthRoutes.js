@@ -1,7 +1,7 @@
 import express from 'express';
 import { userLogin, userSignup, userLogout, checkAuth, googleAuth, forgetPassword, resetPassword } from '../controllers/userAuthController.js';
 import { userEdit } from '../controllers/userEditController.js';
-import requireAuth from '../middleware/requireAuth.js';
+import { requireAuth } from '../middleware/requireAuth.js';
 const router = express.Router();
 
 //*---------------LOCAL AUTH---------------*//

@@ -15,7 +15,11 @@ import mongoose from 'mongoose';
  * @returns JWT Token
  */
 const createToken = (_id, rememberMe) => {
-    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: rememberMe === false ? '30m' : '3d' });
+    const expiresIn = rememberMe === false ? '30m' : '3d';
+    const token = jwt.sign({ _id }, process.env.SECRET, { expiresIn: expiresIn });
+    
+    console.log("TOKEN: ", token);
+    return token;
 }
 
 /**
@@ -72,7 +76,7 @@ export const userLogin = async (req, res) => {
             name: validatedUser.name,
             email: validatedUser.email,
             provider: validatedUser.provider,
-            isAuthenticated: true // TODO provider not added
+            isAuthenticated: true 
         });
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -118,7 +122,7 @@ export const userSignup = async (req, res) => {
             name: newUser.name,
             email: newUser.email,
             provider: newUser.provider,
-            isAuthenticated: true // TODO provider not added
+            isAuthenticated: true 
         });
     } catch (err) {
         console.log("ERROR", err.message);
@@ -213,10 +217,12 @@ export const googleAuth = async (req, res) => {
     
 }
 
-export const forgetPassword = async (req, res) => { // TODO SECURITY UPGRADE
+export const forgetPassword = async (req, res) => { 
     const { email } = req.body;
 
     try {
+        emailValidator(email);
+
         const user = await User.findOne({ email, provider: 'local' });
         if (!user)
             throw new Error('User not found');
@@ -236,7 +242,9 @@ export const forgetPassword = async (req, res) => { // TODO SECURITY UPGRADE
 
 export const resetPassword = async (req, res) => {
     try {
-        const { token, newPassword } = req.body; // TODO SECURITY UPGRADE
+        const { token, newPassword } = req.body; 
+
+        passwordValidator({ password: newPassword, isEnough: true, isStrong: true });
 
         const user = await User.findOne({
             resetToken: token,

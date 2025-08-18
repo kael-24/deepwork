@@ -3,7 +3,7 @@ import validate from 'validator';
 import { Link } from 'react-router-dom';
 import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler";
 import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth";
-import usePwdResetStore from "@/store/usePwdResetStore";
+import { usePwdResetStore } from "@/store/usePwdResetStore";
 
 const Login = () => {
     const { userLogin, error, isLoading } = useAuthHandler();
@@ -14,7 +14,7 @@ const Login = () => {
     const [inputIsValid, setInputIsValid] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
+    const [rememberMe, setRememberMe] = useState(true);
 
     const validateEmail = (value) => {
         setInputEmail(value);

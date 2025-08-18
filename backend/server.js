@@ -6,6 +6,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
 import userAuthRoutes from './routes/userAuthRoutes.js';
+import workoutRoutes from './routes/workoutRoutes.js'
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use(cookieParser());
  * ---------------------------------------------------------
  */
 app.use('/api/auth', userAuthRoutes);
+app.use('/api/workouts', workoutRoutes)
 
 /**
  * ---------------------------------------------------------

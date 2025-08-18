@@ -9,56 +9,77 @@ import ForgetPassword from '@/features/auth/pages/FogetPassword';
 import ResetPassword from '@/features/auth/pages/ResetPassword';
 import ProfileSettings from '@/features/auth/pages/ProfileSettings';
 
+import CreateWorkout from '@/features/workout/pages/CreateWorkout';
+
+function AuthRoutes({ user, excludeNavbar }) {
+  return(
+    <>
+      {!excludeNavbar && <Navbar />}
+      <Routes>
+        <Route 
+          path='/'
+          element={<Home />}
+        />
+        <Route
+          path='/signup'
+          element={!user ? <Signup /> : <Navigate to='/' />}
+        />
+        <Route
+          path='/login'
+          element={!user ? <Login /> : <Navigate to='/' />}
+        />
+        <Route 
+          path='/forget-password'
+          element={!user ? <ForgetPassword /> : <Navigate to='/' />}
+        />
+        <Route 
+          path='/reset-password'
+          element={!user ? <ResetPassword /> : <Navigate to='/' />}
+        />
+        <Route 
+          path='/profile-settings'
+          element={user ? <ProfileSettings /> : <Navigate to='/login' />}
+        />
+      </Routes>
+    </>
+  )
+}
+
+function WorkoutRoutes({ user, showNavbar }) {
+  return(
+    <Routes>
+      <Route
+        path='/create-workout'
+        element={user ? <CreateWorkout /> : <Navigate to ='/login' />}
+      />
+    </Routes>
+  );
+}
 
 function AppRoutes() {
   const { user, isAuthLoading } = useAuthStore();
   const location = useLocation();
 
-  const showNavbarPaths = ['/', '/login', '/signup', '/profile-settings'];
-  const showNavbar = showNavbarPaths.includes(location.pathname);
+  const excludeNavbarPaths = ['/forget-password', '/reset-password'];
+  const excludeNavbar = excludeNavbarPaths.includes(location.pathname);
 
   if (isAuthLoading) 
     return null;
   
   return(
     <>
-      {showNavbar && <Navbar />}
-        <Routes>
-          <Route 
-            path='/'
-            element={<Home />}
-          />
-          <Route
-            path='/signup'
-            element={!user ? <Signup /> : <Navigate to='/' />}
-          />
-          <Route
-            path='/login'
-            element={!user ? <Login /> : <Navigate to='/' />}
-          />
-          <Route 
-            path='/forget-password'
-            element={!user ? <ForgetPassword /> : <Navigate to='/' />}
-          />
-          <Route 
-            path='/reset-password'
-            element={!user ? <ResetPassword /> : <Navigate to='/' />}
-          />
-          <Route 
-            path='/profile-settings'
-            element={user ? <ProfileSettings /> : <Navigate to='/login' />}
-          />
-        </Routes>
+      <AuthRoutes user={user} excludeNavbar={excludeNavbar}/>
+      <WorkoutRoutes user={user} excludeNavbar={excludeNavbar}/>
     </>
   )
 }
 
-function App() {
+function App(){
   return(
     <BrowserRouter>
       <AppRoutes />
     </BrowserRouter>
-  );
-};
+  )
+}
 
 export default App;
