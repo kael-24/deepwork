@@ -1,5 +1,7 @@
+import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
-import ExerciseCard from "../components/exerciseCard";
+import ExerciseCard from "@/features/workout/components/ExerciseCard";
+import DnDWrapper from "@/utils/DnDWrapper";
 
 const CreateWorkout = () => {    
 
@@ -9,11 +11,10 @@ const CreateWorkout = () => {
 
     const exerciseTypeOptions = ["Prepare", "Work", "Rest", "RestBetweenSets", "Cooldown"];
 
-    const updateExercise = (sequence, update) => {
-        console.log("sequence", sequence);
+    const updateExercise = (id, update) => {
         setExercises(prev =>
             prev.map((exercise) => 
-                exercise.sequence === sequence
+                exercise.id === id
                     ? { ...exercise, ...update }
                     : exercise
             )
@@ -34,7 +35,7 @@ const CreateWorkout = () => {
         else if (option === "Cooldown")
             arr = {type: "Cooldown", name: "", timeType: "Timer", timer: '0000', reps: 0};
 
-        arr = {sequence: exercises.length + 1, ...arr}
+        arr = {id: uuidv4(), ...arr}
 
         setExercises(prev => [...prev, arr]);
         setAddWorkoutMenuOpen(false);
@@ -45,7 +46,7 @@ const CreateWorkout = () => {
     }, [exercises])
 
     return(
-        <>
+        <div>
             <h1 className="mb-6 mt-6">Create Workout</h1><hr/>
             <div className="mb-6 mt-6">
                 <label>Workout Name:</label>
@@ -56,21 +57,24 @@ const CreateWorkout = () => {
                     className="border border-black"
                 />
             </div><hr />
-
-            {exercises.length > 0 ? 
-                (
-                    exercises.map((exercise, index) => 
-                        <ExerciseCard 
-                            key={index} 
-                            exercise={exercise} 
-                            sequence={index + 1}
-                            update={(sequence, update) => updateExercise(sequence, update)}
-                        />
+            
+            <DnDWrapper items={exercises} setItems={setExercises}>
+                {exercises.length > 0 ? 
+                    (
+                        exercises.map((exercise, index) => 
+                            <ExerciseCard 
+                                key={exercise.id}
+                                id={exercise.id} 
+                                exercise={exercise} 
+                                sequence={index + 1}
+                                update={(update) => updateExercise(exercise.id, update)}
+                            />
+                        )
+                    ) : (
+                        <h1>No Exercises added</h1>
                     )
-                ) : (
-                    <h1>No Exercises added</h1>
-                )
-            }
+                }
+            </DnDWrapper>
 
             <button
                 className="border border-black"
@@ -78,6 +82,7 @@ const CreateWorkout = () => {
             >
                 {addWorkoutMenuOpen ? 'x' : '+'}
             </button>
+
             {addWorkoutMenuOpen && 
                 <div>
                     <ul>
@@ -87,7 +92,7 @@ const CreateWorkout = () => {
                     </ul>
                 </div>
             }
-        </>
+        </div>
     );
 }
 

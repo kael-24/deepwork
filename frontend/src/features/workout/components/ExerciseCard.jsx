@@ -1,9 +1,23 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
 
-const ExerciseCard = ({ exercise, sequence, update }) => {
+const ExerciseCard = ({ id, exercise, index, update }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        padding: "12px",
+        margin: "8px 0",
+        background: "#f4f4f4",
+        borderRadius: "8px",
+        cursor: "grab",
+    };
+
     const [ExerciseTypeMenuOpen, setExerciseTypeMenuOpen] = useState(false);
 
-    const exerciseTypeOptions = ["Prepare", "Work", "Rest", "Rest between sets", "Cooldown"];
+    const exerciseTypeOptions = ["Prepare", "Work", "Rest", "RestBetweenSets", "Cooldown"];
 
     const handleTimer = (type, value) => {
         let digits = Number(value.replace(/[^0-9]/g, ""));
@@ -13,15 +27,15 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
         } else {
             digits = exercise.timer.slice(0, 2) + String(digits).padStart(2, "0");
         }
-        update(sequence, {timer: digits});  
+        update({timer: digits});  
     }
 
     console.log("exerciseTImer", exercise.timer);
 
     return(
-        <div>
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             {/** SEQUENCE NUMBER */}
-            <div>{sequence + 1}</div>
+            <div>{index}</div>
 
             {/* EXERCISE TYPE */}
             <div className="mb-6 mt-6">
@@ -39,7 +53,7 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
                                     <li key={index}>
                                         <button 
                                             onClick={() => {
-                                                update(sequence, {type: option});    
+                                                update({type: option});    
                                                 setExerciseTypeMenuOpen(false);
                                             }}
                                         >
@@ -55,10 +69,10 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
 
             {/* EXERCISE NAME */}
             <div className="mb-6 mt-6">
-                <label>Exercise Name:</label>
+                <label>Description:</label>
                 <input
                     onChange={(e) => {
-                        update(sequence, {name: e.target.value});
+                        update({name: e.target.value});
                     }}
                     value={exercise.name}
                     className="border border-black"
@@ -72,7 +86,7 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
                     onClick={() => {
                         let timeType = exercise.timeType;
                         timeType === "Timer" ? timeType = "Stopwatch" : timeType === "Stopwatch" ? timeType = "None" : timeType = "Timer";
-                        update(sequence, {timeType});
+                        update({timeType});
                     }}
                 >
                     {exercise.timeType === "Timer" ? "⌚" : exercise.timeType === "Stopwatch" ? "⌛" : "⛔"}
@@ -87,7 +101,7 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
                             <button
                                 onClick={() => Number(exercise.timer.slice(0, 2)) <= 0 
                                         ? 0 
-                                        : update(sequence, {timer: String(Number(exercise.timer.slice(0,2)) - 1).padStart(2, "0") + exercise.timer.slice(2,4)})
+                                        : update({timer: String(Number(exercise.timer.slice(0,2)) - 1).padStart(2, "0") + exercise.timer.slice(2,4)})
                                     }
                                 >
                                 -
@@ -101,7 +115,7 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
                             <button
                                 onClick={() => Number(exercise.timer.slice(0, 2)) >= 59 
                                         ? 0 
-                                        : update(sequence, {timer: String(Number(exercise.timer.slice(0,2)) + 1).padStart(2, "0") + exercise.timer.slice(2,4)})
+                                        : update({timer: String(Number(exercise.timer.slice(0,2)) + 1).padStart(2, "0") + exercise.timer.slice(2,4)})
                                     }
                                 >
                                 +
@@ -109,7 +123,7 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
                             <button
                                 onClick={() => Number(exercise.timer.slice(2,4)) <= 0 
                                         ? 0 
-                                        : update(sequence, {timer: exercise.timer.slice(0,2) + String(Number(exercise.timer.slice(2,4)) - 1).padStart(2, "0")})
+                                        : update({timer: exercise.timer.slice(0,2) + String(Number(exercise.timer.slice(2,4)) - 1).padStart(2, "0")})
                                     }
                                 >
                                 -
@@ -123,7 +137,7 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
                             <button
                                 onClick={() => Number(exercise.timer.slice(2, 4)) >= 59 
                                         ? 0 
-                                        : update(sequence, {timer: exercise.timer.slice(0,2) + String(Number(exercise.timer.slice(2,4)) + 1).padStart(2, "0")})
+                                        : update({timer: exercise.timer.slice(0,2) + String(Number(exercise.timer.slice(2,4)) + 1).padStart(2, "0")})
                                     }
                                 >
                                 +
@@ -138,7 +152,7 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
                 {exercise.type === "Work" && 
                     <div>
                         <button
-                            onClick={() => update(sequence, {reps: exercise.reps <= 0 ? 0 : exercise.reps - 1})}
+                            onClick={() => update({reps: exercise.reps <= 0 ? 0 : exercise.reps - 1})}
                         >
                             -
                         </button>
@@ -147,12 +161,12 @@ const ExerciseCard = ({ exercise, sequence, update }) => {
                             value={exercise.reps}
                             onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
-                                update(sequence, {reps: value === '' || value === '0' ? '' : value});
+                                update({reps: value === '' || value === '0' ? '' : value});
                             }}
                             placeholder="0"
                         />
                         <button
-                            onClick={() => update(sequence, {reps: exercise.reps >= 59 ? 59 : exercise.reps + 1})}
+                            onClick={() => update({reps: exercise.reps >= 59 ? 59 : exercise.reps + 1})}
                         >
                             +
                         </button>
