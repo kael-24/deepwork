@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import validate from 'validator';
 import { Link } from 'react-router-dom';
-import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler";
-import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth";
+import { useAuthHandler } from "@/hooks/auth/useAuthHandler";
+import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
 import { usePwdResetStore } from "@/store/usePwdResetStore";
 
 const Login = () => {

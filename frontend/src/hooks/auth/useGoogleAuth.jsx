@@ -1,4 +1,4 @@
-import { googlePopupLogin, firebaseLogout } from "@/features/auth/firebase";
+import { googlePopupLogin, firebaseLogout } from "@/utils/auth/firebase";
 import { useState } from "react"
 import { useAuthStore } from "@/store/useAuthStore";
 import axios from "axios";

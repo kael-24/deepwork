@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
-import useForgetPassword from "@/features/auth/hooks/useForgetPassword"; 
+import useForgetPassword from "@/hooks/auth/useForgetPassword"; 
 import { usePwdResetStore } from "@/store/usePwdResetStore";
-import { passwordValidator } from "@/features/auth/inputValidator";
+import { passwordValidator } from "@/utils/auth/inputValidator";
 
 const ResetPassword = () => {
     const {

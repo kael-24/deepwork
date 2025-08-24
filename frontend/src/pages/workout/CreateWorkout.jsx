@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
-import ExerciseCard from "@/features/workout/components/ExerciseCard";
+import ExerciseCard from "@/components/workout/ExerciseCard";
 import DnDWrapper from "@/utils/DnDWrapper";
-import { useSaveWorkout } from "@/features/workout/hooks/useSaveWorkout";
+import { useSaveWorkout } from "@/hooks/workout/useSaveWorkout";
 import DialogBox from "@/utils/DialogBox";
 import { useNavigate } from 'react-router-dom';
 

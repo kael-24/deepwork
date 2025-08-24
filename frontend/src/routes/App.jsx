@@ -2,14 +2,15 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useAuthStore } from '@/store/useAuthStore';
 
 import Home from "@/pages/Home"
-import Signup from '@/features/auth/pages/Signup';
-import Login from '@/features/auth/pages/Login';
 import Navbar from '@/components/Navbar';
-import ForgetPassword from '@/features/auth/pages/FogetPassword';
-import ResetPassword from '@/features/auth/pages/ResetPassword';
-import ProfileSettings from '@/features/auth/pages/ProfileSettings';
 
-import CreateWorkout from '@/features/workout/pages/CreateWorkout';
+import Signup from '@/pages/auth/Signup';
+import Login from '@/pages/auth/Login';
+import ForgetPassword from '@/pages/auth/ForgetPassword';
+import ResetPassword from '@/pages/auth/ResetPassword';
+import ProfileSettings from '@/pages/auth/ProfileSettings';
+
+import CreateWorkout from '@/pages/workout/CreateWorkout';
 
 function AuthRoutes({ user, excludeNavbar }) {
   return(
@@ -45,7 +46,7 @@ function AuthRoutes({ user, excludeNavbar }) {
   )
 }
 
-function WorkoutRoutes({ user, showNavbar }) {
+function WorkoutRoutes({ user }) {
   return(
     <Routes>
       <Route

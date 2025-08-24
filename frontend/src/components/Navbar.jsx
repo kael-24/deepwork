@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
-import { useAuthHandler } from '@/features/auth/hooks/useAuthHandler'
-import { useGoogleAuth } from '@/features/auth/hooks/useGoogleAuth'
+import { useAuthHandler } from '@/hooks/auth/useAuthHandler'
+import { useGoogleAuth } from '@/hooks/auth/useGoogleAuth'
 
 const Navbar = () => {
     const { user } = useAuthStore();
