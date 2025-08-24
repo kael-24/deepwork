@@ -2,13 +2,28 @@ import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import ExerciseCard from "@/features/workout/components/ExerciseCard";
 import DnDWrapper from "@/utils/DnDWrapper";
+import { useSaveWorkout } from "@/features/workout/hooks/useSaveWorkout";
+import DialogBox from "@/utils/DialogBox";
+import { useNavigate } from 'react-router-dom';
 
 const CreateWorkout = () => {    
+    const { 
+        saveWorkoutMutation: {
+            mutate: saveWorkout,
+            isError,
+            error,
+    }} = useSaveWorkout();
+
+    const navigate = useNavigate();
 
     const [workoutName, setWorkoutName] = useState('Untitled');
-    const [addWorkoutMenuOpen, setAddWorkoutMenuOpen] = useState(false);
     const [exercises, setExercises] = useState([]);
-
+    const [dialogBoxOpen, setIsDialogBoxOpen] = useState(false);
+    const [clientError, setClientError] = useState(null);
+    
+    const [addExerciseMenuOpen, setAddExerciseMenuOpen] = useState(false);
+    const [addExerciseBetween, setAddExerciseBetween] = useState(null);
+    
     const exerciseTypeOptions = ["Prepare", "Work", "Rest", "RestBetweenSets", "Cooldown"];
 
     const updateExercise = (id, update) => {
@@ -21,24 +36,68 @@ const CreateWorkout = () => {
         )
     };
 
-    console.log("exercises", exercises);
     const handleCreateExercise = (option) => {
         let arr = {};
         if (option === "Prepare")
-            arr = {type: "Prepare", name: "", timeType: "None", timer: '0000', reps: null};
+            arr = {type: "Prepare", name: "", timeType: "None", timer: '0', reps: null};
         else if (option === "Work")
-            arr = {type: "Work", name: "", timeType: "Timer", timer: '0000', reps: 0};
+            arr = {type: "Work", name: "", timeType: "Timer", timer: '0', reps: 0};
         else if (option === "Rest")
-            arr = {type: "Rest", name: "", timeType: "Timer", timer: '0000', reps: null};
+            arr = {type: "Rest", name: "", timeType: "Timer", timer: '0', reps: null};
         else if (option === "RestBetweenSets")
-            arr = {type: "RestBetweenSets", name: "", timeType: "Timer", timer: '0000', reps: null};
+            arr = {type: "RestBetweenSets", name: "", timeType: "Timer", timer: '0', reps: null};
         else if (option === "Cooldown")
-            arr = {type: "Cooldown", name: "", timeType: "Timer", timer: '0000', reps: 0};
+            arr = {type: "Cooldown", name: "", timeType: "Timer", timer: '0', reps: 0};
 
         arr = {id: uuidv4(), ...arr}
 
-        setExercises(prev => [...prev, arr]);
-        setAddWorkoutMenuOpen(false);
+        if (addExerciseBetween !== null) 
+            setExercises(prev => {
+                            const newArr = [...prev];
+                            newArr.splice(addExerciseBetween[0] === "before" 
+                                ? addExerciseBetween[1] 
+                                : addExerciseBetween[1] + 1, 0, arr);
+                            return newArr;
+                            })
+        else 
+            setExercises(prev => [...prev, arr]);
+        setAddExerciseMenuOpen(false);
+    }
+
+    /**
+     * ---------------------------------------------------------
+     * SAVE WORKOUT
+     * ---------------------------------------------------------
+     * @returns 
+     */
+    const handleSaveWorkout = async () => {
+        setClientError(null);
+        if (!Array.isArray(exercises) || exercises.length === 0) {
+            setClientError("Workout Should not be empty");
+            setIsDialogBoxOpen(true);
+            return;
+        }
+
+        const finalExercises = exercises.map(exercise => {
+            const rest = { ...exercise }
+            delete rest.id;
+            return {
+                ...rest,
+                timer: Number(rest.timer),
+                reps: rest.reps !== null ? Number(rest.reps) : rest.reps
+            }
+        })
+
+        console.log("Description", finalExercises);
+
+        await saveWorkout({ workoutName, exercises: finalExercises }, {
+            onSuccess: () => {
+                navigate("/");
+            },
+            onError: () => {
+                setIsDialogBoxOpen(true);
+            }
+        });
     }
 
     useEffect(() => {
@@ -67,7 +126,12 @@ const CreateWorkout = () => {
                                 id={exercise.id} 
                                 exercise={exercise} 
                                 sequence={index + 1}
-                                update={(update) => updateExercise(exercise.id, update)}
+                                addExercise={(direction) => {
+                                    setAddExerciseMenuOpen(true); 
+                                    setAddExerciseBetween([direction, index]);
+                                }}
+                                updateExercise={(update) => updateExercise(exercise.id, update)}
+                                deleteExercise={() => setExercises(prev => prev.filter((option) => exercise.id !== option.id))}
                             />
                         )
                     ) : (
@@ -78,12 +142,18 @@ const CreateWorkout = () => {
 
             <button
                 className="border border-black"
-                onClick={() => setAddWorkoutMenuOpen(!addWorkoutMenuOpen)}
+                onClick={() => setAddExerciseMenuOpen(!addExerciseMenuOpen)}
             >
-                {addWorkoutMenuOpen ? 'x' : '+'}
+                {addExerciseMenuOpen ? 'x' : '+'}
+            </button>
+            <button 
+                className="border border-black"
+                onClick={handleSaveWorkout}
+            >
+                save
             </button>
 
-            {addWorkoutMenuOpen && 
+            {addExerciseMenuOpen && 
                 <div>
                     <ul>
                         {exerciseTypeOptions.map((option, index) => 
@@ -91,6 +161,13 @@ const CreateWorkout = () => {
                         )}
                     </ul>
                 </div>
+            }
+            {dialogBoxOpen && (clientError || (isError && error)) && 
+                <DialogBox 
+                    title="Error"
+                    message={clientError || error.response?.data?.error || error.message || "Something went wrong"}
+                    onCancel={() => setIsDialogBoxOpen(false)}
+                />
             }
         </div>
     );

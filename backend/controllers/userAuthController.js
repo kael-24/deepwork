@@ -30,11 +30,12 @@ const createToken = (_id, rememberMe) => {
  * @param {String object} token 
  */
 const setCookieToken = (res, token, rememberMe) => {
+    const isDev = process.env.IS_DEV === 'true';
     res.cookie('jwt', token, {
-        httpOnly: true, // Not accessible via JavaScript
-        secure: process.env.IS_DEV !== 'true', // Only use HTTPS in production
-        sameSite: 'strict', // Protection against CSRF
-        maxAge: rememberMe === false ? 30 * 60 * 1000 : 3 * 24 * 60 * 60 * 1000 // 30 mins or 3 days in milliseconds
+        httpOnly: true,
+        secure: !isDev, // Only use HTTPS in production
+        sameSite: isDev ? 'strict' : 'none', // Cross-site requests in prod need 'none'
+        maxAge: rememberMe === false ? 30 * 60 * 1000 : 3 * 24 * 60 * 60 * 1000
     });
 }
 
@@ -139,10 +140,11 @@ export const userSignup = async (req, res) => {
  */
 export const userLogout = async (req, res) => {
     // Clear the cookie by setting it with an expired date
+    const isDev = process.env.IS_DEV === 'true';
     res.cookie('jwt', '', { 
         httpOnly: true,
-        secure: process.env.IS_DEV !== 'true',
-        sameSite: 'strict',  
+        secure: !isDev,
+        sameSite: isDev ? 'strict' : 'none',  
         expires: new Date(0)
     });
     

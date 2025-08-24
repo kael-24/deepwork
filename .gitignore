@@ -59,7 +59,5 @@ backend/firebase/serviceAccountKey.json
 
 # ---------------------
 # Optional: lockfiles (if you prefer to ignore them)\
-todo.txt
-todo.jsx
-*.scratch.jsx
-*.scratch.js
+*.txt
+*.py

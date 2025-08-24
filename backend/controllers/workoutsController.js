@@ -17,16 +17,26 @@ export const createWorkout = async (req, res) => {
         const { _id } = req.user;
         const { workoutName, exercises } = req.body;
 
-        if (typeof workoutName !== 'string' || workoutName?.trim().length < 2)
+        
+        if (typeof workoutName !== 'string' || workoutName?.trim().length < 2) 
             throw new Error("Invalid workout name");
+        
+        if ((!Array.isArray(exercises) || 
+        exercises.length === 0) || 
+        exercises.every((obj) => Object.keys(obj).length === 0))
+        throw new Error("Invalid or empty exercises data");
+        
+        const finalExercises = exercises.map(({type, timeType, ...rest}) => ({
+            ...rest,
+            exerciseType: type.toLowerCase(),
+            timeType: timeType.toLowerCase()
+        }));
 
-        if (!Array.isArray(exercises) || (exercises.length === 0))
-            throw new Error("Invalid or empty exercises data");
-
-        const newWorkout = await Workout.createWorkoutModel(_id, workoutName, exercises);
-
+        const newWorkout = await Workout.createWorkoutModel(_id, workoutName, finalExercises);
+        
         res.status(200).json(newWorkout);
     } catch (err) {
+        console.log(err.message);
         res.status(400).json({ error: err.message || "Error creating workouts" });
     }
 }

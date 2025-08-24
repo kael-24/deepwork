@@ -4,10 +4,6 @@ import User from './userModel.js'
 const Schema = mongoose.Schema;
 
 const exerciseSchema = new Schema({
-    sequenceNumber: {
-        type: Number,
-        required: true
-    },
     exerciseType: {
         type: String,
         enum: ['prepare', 'work', 'rest', 'restBetweenSets', 'cooldown'],
@@ -46,8 +42,8 @@ const workoutSchema = new Schema({
         type: String,
         required: true,
     },
-    exercises: [exerciseSchema]
-});
+    exercises: [exerciseSchema],
+}, { timestamps: true });
 
 const validateUser = async (id) => {
     if (!mongoose.Types.ObjectId.isValid(id))
@@ -76,9 +72,9 @@ workoutSchema.statics.getWorkoutsModel = async function (userId) {
 }
 
 workoutSchema.statics.createWorkoutModel = async function (userId, workoutName, exercises) {
+    console.log("qwewqe", workoutName, exercises);
     try {
         await validateUser(userId);
-
         const createdWorkout = await this.create({ userId, workoutName, exercises });
 
         return {

@@ -16,7 +16,7 @@ const useForgetPassword = () => {
             await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/reset-password`, { token, newPassword });
             return true;
         }
-    })
+    });
 
     return {
         forgetPasswordMutation,
@@ -25,3 +25,9 @@ const useForgetPassword = () => {
 }
 
 export default useForgetPassword
+
+
+
+
+
+

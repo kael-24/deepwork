@@ -7,9 +7,7 @@ export const useAuthStore = create((set) => ({
 
     // set user
     setUser: (userData) => set((state) => ({ 
-        user: {
-            ...state.user, ...userData
-        }
+        user: state.user ? { ...state.user, ...userData } : { ...userData }
     })),
 
     // logout user
