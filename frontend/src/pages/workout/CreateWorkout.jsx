@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import ExerciseCard from "@/components/workout/ExerciseCard";
 import DnDWrapper from "@/utils/DnDWrapper";
-import { useSaveWorkout } from "@/hooks/workout/useSaveWorkout";
 import DialogBox from "@/utils/DialogBox";
+import { useSaveWorkout } from "@/hooks/workout/useSaveWorkout";
 import { useNavigate } from 'react-router-dom';
 
 const CreateWorkout = () => {    
@@ -16,7 +16,7 @@ const CreateWorkout = () => {
 
     const navigate = useNavigate();
 
-    const [workoutName, setWorkoutName] = useState('Untitled');
+    const [workoutName, setWorkoutName] = useState("");
     const [exercises, setExercises] = useState([]);
     const [dialogBoxOpen, setIsDialogBoxOpen] = useState(false);
     const [clientError, setClientError] = useState(null);
@@ -25,6 +25,11 @@ const CreateWorkout = () => {
     const [addExerciseBetween, setAddExerciseBetween] = useState(null);
     
     const exerciseTypeOptions = ["Prepare", "Work", "Rest", "RestBetweenSets", "Cooldown"];
+    const defaultExercises = [
+        {id: uuidv4(), exerciseType: "Prepare", exerciseName: "Prepare yourself", timeType: "Timer", timer: '60', reps: 0},
+        {id: uuidv4(), exerciseType: "Work", exerciseName: "Here lies the workout", timeType: "Timer", timer: '120', reps: 12},
+        {id: uuidv4(), exerciseType: "Cooldown", exerciseName: "Stretch yourself", timeType: "Timer", timer: '180', reps: 0}
+    ]
 
     const updateExercise = (id, update) => {
         setExercises(prev =>
@@ -39,15 +44,15 @@ const CreateWorkout = () => {
     const handleCreateExercise = (option) => {
         let arr = {};
         if (option === "Prepare")
-            arr = {type: "Prepare", name: "", timeType: "None", timer: '0', reps: null};
+            arr = {exerciseType: "Prepare", exerciseName: "", timeType: "None", timer: '', reps: 0};
         else if (option === "Work")
-            arr = {type: "Work", name: "", timeType: "Timer", timer: '0', reps: 0};
+            arr = {exerciseType: "Work", exerciseName: "", timeType: "Timer", timer: '', reps: 0};
         else if (option === "Rest")
-            arr = {type: "Rest", name: "", timeType: "Timer", timer: '0', reps: null};
+            arr = {exerciseType: "Rest", exerciseName: "", timeType: "Timer", timer: '', reps: 0};
         else if (option === "RestBetweenSets")
-            arr = {type: "RestBetweenSets", name: "", timeType: "Timer", timer: '0', reps: null};
+            arr = {exerciseType: "RestBetweenSets", exerciseName: "", timeType: "Timer", timer: '', reps: 0};
         else if (option === "Cooldown")
-            arr = {type: "Cooldown", name: "", timeType: "Timer", timer: '0', reps: 0};
+            arr = {exerciseType: "Cooldown", exerciseName: "", timeType: "Timer", timer: '', reps: 0};
 
         arr = {id: uuidv4(), ...arr}
 
@@ -71,11 +76,17 @@ const CreateWorkout = () => {
      * @returns 
      */
     const handleSaveWorkout = async () => {
+        console.log("WORKOUTS", exercises);
         setClientError(null);
         if (!Array.isArray(exercises) || exercises.length === 0) {
             setClientError("Workout Should not be empty");
             setIsDialogBoxOpen(true);
             return;
+        }
+
+        const hasEmptyTimer = exercises.some(ex => ex.timeType === 'Timer' && (ex.timer === '' || ex.timer === "0" || ex.timer === null))
+        if (hasEmptyTimer) {
+            setClientError("Timer cannot be 0. You can set it to none if you do not want a timer")
         }
 
         const finalExercises = exercises.map(exercise => {
@@ -88,8 +99,6 @@ const CreateWorkout = () => {
             }
         })
 
-        console.log("Description", finalExercises);
-
         await saveWorkout({ workoutName, exercises: finalExercises }, {
             onSuccess: () => {
                 navigate("/");
@@ -99,10 +108,24 @@ const CreateWorkout = () => {
             }
         });
     }
-
+    
+    // recovers snapshot from local storage
     useEffect(() => {
-        localStorage.setItem("draftWorkout", JSON.stringify({workoutName, exercises}));
-    }, [exercises])
+        const draftWorkout = JSON.parse(localStorage.getItem("draftWorkout"));
+
+        if (!draftWorkout || Object.keys(draftWorkout).length === 0) {
+            localStorage.setItem("draftWorkout", JSON.stringify({workoutName, defaultExercises}));
+        } 
+        setWorkoutName(draftWorkout.workoutName);
+        setExercises(draftWorkout.exercises);
+    }, []);
+
+    // reflects changes to the local storage
+    useEffect(() => {
+        if (exercises.length !== 0)
+            localStorage.setItem("draftWorkout", JSON.stringify({workoutName, exercises}));
+    }, [workoutName, exercises, defaultExercises]);
+
 
     return(
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8 px-4 sm:px-6 lg:px-8 relative">
@@ -143,7 +166,7 @@ const CreateWorkout = () => {
                     </div>
 
                     {/* Exercise List */}
-                    <DnDWrapper items={exercises} setItems={setExercises}>
+                    <DnDWrapper items={exercises} setItems={setExercises} type="vertical">
                         {exercises.length > 0 ? (
                             <div className="space-y-3">
                                 {exercises.map((exercise, index) => (

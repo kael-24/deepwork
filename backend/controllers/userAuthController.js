@@ -67,7 +67,6 @@ export const userLogin = async (req, res) => {
         const normalizedEmail = email.toLowerCase();
         const validatedUser = await User.userLoginModel(normalizedEmail, password, rememberMe);
         const token = createToken(validatedUser._id, rememberMe);
-        console.log("userLogin Token", token);
         
         // Set HTTP-only cookie
         setCookieToken(res, token, rememberMe);
@@ -113,7 +112,6 @@ export const userSignup = async (req, res) => {
         const normalizedEmail = email.toLowerCase();
         const newUser = await User.userSignupModel(name, normalizedEmail, password);
         const token = createToken(newUser._id);
-        console.log("userSingup Token", token);
 
         // Set HTTP-only cookie
         setCookieToken(res, token);

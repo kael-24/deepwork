@@ -14,7 +14,7 @@ router.get('/', getWorkouts)
 router.post('/', createWorkout)
 
 // // UPDATE WORKOUT
-// router.patch('/', )
+// router.patch('/', updateWorkout)
 
 // // DELETE WORKOUT
 // router.delete('/',)

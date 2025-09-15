@@ -62,11 +62,11 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                 <div className="relative flex-1 mx-4">
                     <button
                         onClick={() => setExerciseTypeMenuOpen(!exerciseTypeMenuOpen)}
-                        className={`w-full flex items-center justify-center px-3 py-2 rounded-lg border-2 transition-all duration-200 hover:shadow-sm ${getTypeColor(exercise.type)}`}
+                        className={`w-full flex items-center justify-center px-3 py-2 rounded-lg border-2 transition-all duration-200 hover:shadow-sm ${getTypeColor(exercise.exerciseType)}`}
                     >
                         <span className="flex items-center gap-2">
-                            <span className="text-lg">{getTypeIcon(exercise.type)}</span>
-                            <span className="font-medium">{exercise.type}</span>
+                            <span className="text-lg">{getTypeIcon(exercise.exerciseType)}</span>
+                            <span className="font-medium">{exercise.exerciseType === "RestBetweenSets" ? "Rest Between Sets" : exercise.exerciseType}</span>
                         </span>
                         <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -76,16 +76,16 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                     {exerciseTypeMenuOpen && (
                         <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-10 max-h-48 overflow-y-auto">
                             {exerciseTypeOptions.map((option, index) => 
-                                exercise.type !== option ? (
+                                exercise.exerciseType !== option ? (
                                     <button 
                                         key={index}
                                         onClick={() => {
-                                            updateExercise({type: option});    
+                                            updateExercise({exerciseType: option});    
                                             setExerciseTypeMenuOpen(false);
                                         }}
                                         className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                                     >
-                                        {option}
+                                        {option}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
                                     </button>
                                 ) : null
                             )}
@@ -142,8 +142,8 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                 {/* Exercise Description */}
                 <div className="flex-1">
                     <input
-                        onChange={(e) => updateExercise({name: e.target.value})}
-                        value={exercise.name}
+                        onChange={(e) => updateExercise({exerciseName: e.target.value})}
+                        value={exercise.exerciseName}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
                         placeholder="Enter exercise description"
                     />
@@ -182,7 +182,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                             type="text"
                             value={exercise.timer}
                             onChange={(e) => handleTimer(e.target.value)}
-                            placeholder="00"
+                            placeholder="seconds"
                             className="flex-1 px-3 py-2 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                         />
                         <button
@@ -198,7 +198,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
             )}
 
             {/* Reps - Full width below time controls with emoji label */}
-            {exercise.type === "Work" && (
+            {exercise.exerciseType === "Work" && (
                 <div className="mb-3">
                     <div className="flex items-center gap-2">
                         <label className="text-sm font-medium text-gray-700 flex-shrink-0">💪 Reps</label>

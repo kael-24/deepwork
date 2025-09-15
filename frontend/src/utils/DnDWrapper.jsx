@@ -9,9 +9,10 @@ import {
     arrayMove,
     SortableContext,
     verticalListSortingStrategy,
+    rectSortingStrategy
 } from "@dnd-kit/sortable";
 
-export default function DnDWrapper({ items, setItems, children }) {
+export default function DnDWrapper({ items, setItems, children, type }) {
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
     );
@@ -33,7 +34,7 @@ export default function DnDWrapper({ items, setItems, children }) {
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
         >
-            <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={items.map((item) => item.id)} strategy={type === "vertical" ? verticalListSortingStrategy : rectSortingStrategy}>
                 {children}
             </SortableContext>
         </DndContext>

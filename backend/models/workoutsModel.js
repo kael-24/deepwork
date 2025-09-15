@@ -6,13 +6,12 @@ const Schema = mongoose.Schema;
 const exerciseSchema = new Schema({
     exerciseType: {
         type: String,
-        enum: ['prepare', 'work', 'rest', 'restBetweenSets', 'cooldown'],
+        enum: ['prepare', 'work', 'rest', 'restbetweensets', 'cooldown'],
         required: true
     },
     exerciseName: {
         type: String,
-        required: true,
-        default: 'Untitled'
+        default: "No description"
     },
     timeType: {
         type: String,
@@ -22,12 +21,19 @@ const exerciseSchema = new Schema({
         type: Number,
         required: function () {
             return this.timeType === 'timer';
-        }    
+        }, 
+        min: [1, "Timer must be greater than 0"],
+        validate: {
+            validator: Number.isInteger,
+            message: "Timer must be a whole number"
+        }
     },
     reps: {
         type: Number,
-        required: function () { 
-            return this.exerciseType === 'work'; 
+        min: [1, "Timer must be greater than 0"],
+        validate: {
+            validator: Number.isInteger,
+            message: "Reps must be a whole number"
         }
     }
 });
@@ -43,6 +49,11 @@ const workoutSchema = new Schema({
         required: true,
     },
     exercises: [exerciseSchema],
+    order: {
+        type: Number,
+        required: true,
+        min: [0, "Timer can never be negative"],
+    }
 }, { timestamps: true });
 
 const validateUser = async (id) => {
@@ -54,16 +65,12 @@ const validateUser = async (id) => {
         throw new Error('User does not exists');
 }
 
-
 workoutSchema.statics.getWorkoutsModel = async function (userId) {
     try {
         await validateUser(userId);
 
         const workouts = await this.find({ userId })
             .select('workoutName exercises -_id');
-
-        if (!workouts || workouts.length === 0)
-            throw new Error('Cannot find workout');
 
         return workouts;
     } catch (err) {
@@ -72,20 +79,36 @@ workoutSchema.statics.getWorkoutsModel = async function (userId) {
 }
 
 workoutSchema.statics.createWorkoutModel = async function (userId, workoutName, exercises) {
-    console.log("qwewqe", workoutName, exercises);
     try {
         await validateUser(userId);
-        const createdWorkout = await this.create({ userId, workoutName, exercises });
+
+        // clear out empty data
+        exercises.map((exercise) => {
+            if (exercise.exerciseType !== "work" || exercise.reps === 0)
+                exercise.reps = undefined;
+            if (exercise.timeType !== "timer")
+                exercise.timer = undefined;
+        })
+
+        // Order creation
+        const lastWorkout = await this
+            .findOne({ userId })
+            .sort({ order: -1 })
+            .select("order");
+        console.log("asdsad", lastWorkout);
+        const newOrder = lastWorkout ? lastWorkout.order + 100 : 100;
+
+        const createdWorkout = await this.create({ userId, workoutName, exercises, order: newOrder });
 
         return {
             workoutName: createdWorkout.workoutName,
-            exercises: createdWorkout.exercises
+            exercises: createdWorkout.exercises,
+            order: createdWorkout.order
         };
     } catch (err) {
         throw new Error(err.message || "Error creating workout");
     }
 }
-
 
 
 export default mongoose.model('Workout', workoutSchema);

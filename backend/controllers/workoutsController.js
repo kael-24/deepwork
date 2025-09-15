@@ -8,7 +8,7 @@ export const getWorkouts = async (req, res) => {
 
         res.status(200).json(workouts);
     } catch (err) {
-        res.status(400).json({ error: err.message || "Error creating workouts" });
+        res.status(400).json({ error: err.message || "Error getting workouts" });
     }
 }
 
@@ -17,23 +17,23 @@ export const createWorkout = async (req, res) => {
         const { _id } = req.user;
         const { workoutName, exercises } = req.body;
 
-        
+        // verifies the workoutName
         if (typeof workoutName !== 'string' || workoutName?.trim().length < 2) 
-            throw new Error("Invalid workout name");
+            throw new Error("Invalid workout name. Must be at least 2 characters");
         
+        // verifies the exercises
         if ((!Array.isArray(exercises) || 
         exercises.length === 0) || 
         exercises.every((obj) => Object.keys(obj).length === 0))
         throw new Error("Invalid or empty exercises data");
-        
-        const finalExercises = exercises.map(({type, timeType, ...rest}) => ({
+
+        const finalExercises = exercises.map(({exerciseType, timeType, ...rest}) => ({
             ...rest,
-            exerciseType: type.toLowerCase(),
+            exerciseType: exerciseType.toLowerCase(),
             timeType: timeType.toLowerCase()
         }));
 
         const newWorkout = await Workout.createWorkoutModel(_id, workoutName, finalExercises);
-        
         res.status(200).json(newWorkout);
     } catch (err) {
         console.log(err.message);
