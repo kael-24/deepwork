@@ -22,7 +22,7 @@ export const createWorkout = async (req, res) => {
             throw new Error("Invalid workout name. Must be at least 2 characters");
         
         // verifies the exercises
-        if ((!Array.isArray(exercises) || 
+        if ((!Array.isArray(exercises) ||   
         exercises.length === 0) || 
         exercises.every((obj) => Object.keys(obj).length === 0))
         throw new Error("Invalid or empty exercises data");
@@ -38,5 +38,17 @@ export const createWorkout = async (req, res) => {
     } catch (err) {
         console.log(err.message);
         res.status(400).json({ error: err.message || "Error creating workouts" });
+    }
+}
+
+export const deleteWorkout = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const { objectId } = req.body; 
+
+        const deletedWorkout = await Workout.deleteWorkoutModel(_id, objectId);
+        res.status(200).json(deletedWorkout);
+    } catch (err) {
+        res.status(400).json({ error: err.message || "Error deleting workout" });
     }
 }

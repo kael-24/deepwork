@@ -110,5 +110,21 @@ workoutSchema.statics.createWorkoutModel = async function (userId, workoutName, 
     }
 }
 
+workoutSchema.statics.deleteWorkoutModel = async function (userId, objectId) {
+    try {
+        validateUser(userId);
+        if (!mongoose.Types.ObjectId.isValid(objectId))
+            throw new Error("Workout Id is invalid");
+    
+        const deletedWorkout = await this.findOneAndDelete({ userId, _id: objectId });
+        if (!deletedWorkout)
+            throw new Error("Workout not found");
+
+        return deletedWorkout;
+    } catch (err) {
+        throw new Error(err.message || "Error deleting workout");
+    }
+}
+
 
 export default mongoose.model('Workout', workoutSchema);

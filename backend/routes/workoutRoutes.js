@@ -3,7 +3,7 @@ const router = express.Router();
 const app = express;
 
 import { requireAuth } from '../middleware/requireAuth.js';
-import { getWorkouts, createWorkout } from '../controllers/workoutsController.js';
+import { getWorkouts, createWorkout, deleteWorkout } from '../controllers/workoutsController.js';
 
 router.use(requireAuth);
 
@@ -16,8 +16,8 @@ router.post('/', createWorkout)
 // // UPDATE WORKOUT
 // router.patch('/', updateWorkout)
 
-// // DELETE WORKOUT
-// router.delete('/',)
+// DELETE WORKOUT
+router.delete('/', deleteWorkout)
 
 
 export default router;
