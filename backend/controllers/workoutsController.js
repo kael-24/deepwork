@@ -44,7 +44,7 @@ export const createWorkout = async (req, res) => {
 export const deleteWorkout = async (req, res) => {
     try {
         const { _id } = req.user;
-        const { objectId } = req.body; 
+        const { objectId } = req.params; 
 
         const deletedWorkout = await Workout.deleteWorkoutModel(_id, objectId);
         res.status(200).json(deletedWorkout);

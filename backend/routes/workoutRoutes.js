@@ -17,7 +17,7 @@ router.post('/', createWorkout)
 // router.patch('/', updateWorkout)
 
 // DELETE WORKOUT
-router.delete('/', deleteWorkout)
+router.delete('/:objectId', deleteWorkout)
 
 
 export default router;
