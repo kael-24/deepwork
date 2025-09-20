@@ -70,7 +70,7 @@ workoutSchema.statics.getWorkoutsModel = async function (userId) {
         await validateUser(userId);
 
         const workouts = await this.find({ userId })
-            .select('workoutName exercises -_id');
+            .select('workoutName exercises');
 
         return workouts;
     } catch (err) {
