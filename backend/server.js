@@ -18,13 +18,15 @@ const app = express();
 const allowedOrigins = [process.env.CLIENT_URL || 'http://localhost:5173']; // only the client url can connect to the backend
 app.use(cors({
     origin: function (origin, callback) {
-        if (process.env.IS_DEV === 'true' || allowedOrigins.includes(origin))
-            callback(null, true);
-        else 
-            callback(new Error('Not allowed by CORS'));
+        if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        } else {
+        callback(new Error('Not allowed by CORS'));
+        }
     },
-    credentials: true  // Important for cookies to work with CORS
+    credentials: true
 }));
+
 
 /**
  * ---------------------------------------------------------
