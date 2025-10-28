@@ -32,10 +32,11 @@ const createToken = (_id, rememberMe) => {
 const setCookieToken = (res, token, rememberMe) => {
     const isDev = process.env.IS_DEV === 'true';
     res.cookie('jwt', token, {
-        httpOnly: true,
+        httpOnly: true, // Not accessible via JavaScript
         secure: !isDev, // Only use HTTPS in production
-        sameSite: isDev ? 'strict' : 'none', // Cross-site requests in prod need 'none'
-        maxAge: rememberMe === false ? 30 * 60 * 1000 : 3 * 24 * 60 * 60 * 1000
+        // In production, frontend and backend are on different sites; require SameSite=None for cross-site cookies
+        sameSite: isDev ? 'lax' : 'none',
+        maxAge: rememberMe === false ? 30 * 60 * 1000 : 3 * 24 * 60 * 60 * 1000 // 30 mins or 3 days in milliseconds
     });
 }
 
@@ -142,7 +143,7 @@ export const userLogout = async (req, res) => {
     res.cookie('jwt', '', { 
         httpOnly: true,
         secure: !isDev,
-        sameSite: isDev ? 'strict' : 'none',  
+        sameSite: isDev ? 'lax' : 'none',  
         expires: new Date(0)
     });
     
