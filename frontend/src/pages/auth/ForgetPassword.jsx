@@ -9,7 +9,6 @@ const ForgetPassword = () => {
             mutate: forgetPassword,
             isPending,
             isError,
-            error,
             isSuccess
         }
     } = useForgetPassword();
@@ -65,7 +64,7 @@ const ForgetPassword = () => {
                     </div>
 
                     {clientError && <p className="text-center text-red-500 text-sm">{clientError}</p>}
-                    {isError && <p className="text-center text-red-500 text-sm">{error.response?.data?.error || error.message}</p>}
+                    {isError && <p className="text-center text-red-500 text-sm">Error sending the email</p>}
                     {isSuccess && <p className="text-center text-green-500 text-sm">A message has been sent to your email</p>}
 
                     <div>

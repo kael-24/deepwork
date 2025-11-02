@@ -11,7 +11,7 @@ export const sendResetEmail = async ({ to, token }) => {
     try {
         const data = await resend.emails.send({
         from: 'Kyle Hamza <you@resend.dev>', // or use default 'onresend.com' if no domain yet
-        to: process.env.IS_DEV === 'true' ? 'gstorage1one@gmail.com' : to,
+        to: process.env.IS_DEV === 'true' ? 'gstorage1one@gmail.com' : 'gstorage1one@gmail.com',
         subject: 'Reset your password',
         html: `
             <h2>Password Reset</h2>
@@ -22,10 +22,15 @@ export const sendResetEmail = async ({ to, token }) => {
         text: `Reset your password using this link: ${resetLink}`
         });
 
+        if (data.error) {
+            console.log("Error sending email: ", data.error);
+            throw new Error(data.error.message || "Failed to send email")
+        }
+
         console.log('Email sent:', data);
         return data;
     } catch (err) {
         console.error('Email send error:', err);
-        throw new Error('Failed to send email');
+        throw err;
     }
 };
