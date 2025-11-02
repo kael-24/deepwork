@@ -94,6 +94,7 @@ const CreateWorkout = () => {
             delete rest.id;
             return {
                 ...rest,
+                exerciseName: rest.exerciseName?.trim() === "" || !rest.exerciseName ? "Untitled" : rest.exerciseName.trim(),
                 timer: Number(rest.timer),
                 reps: rest.reps !== null ? Number(rest.reps) : rest.reps
             }
@@ -101,6 +102,8 @@ const CreateWorkout = () => {
 
         await saveWorkout({ workoutName, exercises: finalExercises }, {
             onSuccess: () => {
+                setExercises(defaultExercises); 
+                setWorkoutName("");
                 navigate("/");
             },
             onError: () => {
@@ -202,7 +205,7 @@ const CreateWorkout = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
                         className="flex-1 sm:flex-none px-8 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200 shadow-md hover:shadow-lg"
-                        onClick={() => navigate("/")}
+                        onClick={() => {setExercises(defaultExercises); setWorkoutName(""); navigate("/")}}
                     >
                         Cancel
                     </button>
