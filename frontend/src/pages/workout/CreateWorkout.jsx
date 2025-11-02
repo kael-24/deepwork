@@ -111,20 +111,31 @@ const CreateWorkout = () => {
     
     // recovers snapshot from local storage
     useEffect(() => {
-        const draftWorkout = JSON.parse(localStorage.getItem("draftWorkout"));
+        try {
+            const draftWorkout = JSON.parse(localStorage.getItem("draftWorkout"));
 
-        if (!draftWorkout || Object.keys(draftWorkout).length === 0) {
-            localStorage.setItem("draftWorkout", JSON.stringify({workoutName, defaultExercises}));
-        } 
-        setWorkoutName(draftWorkout.workoutName);
-        setExercises(draftWorkout.exercises);
+            if (!draftWorkout || Object.keys(draftWorkout).length === 0) {
+                localStorage.setItem("draftWorkout", JSON.stringify({workoutName, exercises: defaultExercises}));
+                setWorkoutName("");
+                setExercises(defaultExercises);
+            } else {
+                setWorkoutName(draftWorkout.workoutName || "");
+                setExercises(draftWorkout.exercises || defaultExercises);
+            }
+        } catch (error) {
+            // If localStorage data is corrupted, reset it
+            console.error("Error parsing draftWorkout from localStorage:", error);
+            localStorage.setItem("draftWorkout", JSON.stringify({workoutName, exercises: defaultExercises}));
+            setWorkoutName("");
+            setExercises(defaultExercises);
+        }
     }, []);
 
     // reflects changes to the local storage
     useEffect(() => {
         if (exercises.length !== 0)
             localStorage.setItem("draftWorkout", JSON.stringify({workoutName, exercises}));
-    }, [workoutName, exercises, defaultExercises]);
+    }, [workoutName, exercises]);
 
 
     return(

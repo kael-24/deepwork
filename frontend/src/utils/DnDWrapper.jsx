@@ -28,13 +28,16 @@ export default function DnDWrapper({ items, setItems, children, type }) {
         });
     };
 
+    const validItems = Array.isArray(items) ? items : [];
+    const itemIds = validItems.map((item) => item.id);
+
     return (
         <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
         >
-            <SortableContext items={items.map((item) => item.id)} strategy={type === "vertical" ? verticalListSortingStrategy : rectSortingStrategy}>
+            <SortableContext items={itemIds} strategy={type === "vertical" ? verticalListSortingStrategy : rectSortingStrategy}>
                 {children}
             </SortableContext>
         </DndContext>

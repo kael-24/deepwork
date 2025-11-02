@@ -32,8 +32,8 @@ const WorkoutCard = ({ workout }) => {
             style={style}
         >
             <div>{workout.workoutName}</div>
-            <div>{workout.exercises.length}</div>
-            {workout.exercises.map((exercise, index) => index <= 5 && 
+            <div>{workout.exercises?.length || 0}</div>
+            {workout.exercises?.map((exercise, index) => index <= 5 && 
                 <div key={index}>
                     {exercise.exerciseName}
                 </div>
