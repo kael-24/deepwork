@@ -30,7 +30,7 @@ const exerciseSchema = new Schema({
     },
     reps: {
         type: Number,
-        min: [1, "Timer must be greater than 0"],
+        min: [1, "Reps must be greater than 0"],
         validate: {
             validator: Number.isInteger,
             message: "Reps must be a whole number"
@@ -123,6 +123,32 @@ workoutSchema.statics.deleteWorkoutModel = async function (userId, objectId) {
         return deletedWorkout;
     } catch (err) {
         throw new Error(err.message || "Error deleting workout");
+    }
+}
+
+workoutSchema.statics.editWorkoutModel = async function (userId, objectId, workoutName, exercises) {
+    try {
+        validateUser(userId);
+
+        if (!mongoose.Types.ObjectId.isValid(objectId)) 
+            throw new Error("Workout ID is invalid");
+
+        const updateFields = {};
+
+        if (workoutName !== undefined)
+            updateFields.workoutName = workoutName;
+
+        if (exercises !== undefined) 
+            updateFields.exercises = exercises;
+
+        if (Object.keys(updateFields).length === 0) return;
+
+        const result = await this.updateOne({ _id: objectId, userId }, { $set: updateFields }, {runValidators: true});
+        
+        return result;
+    } catch (err) {
+        console.error(err.message);
+        throw err;
     }
 }
 

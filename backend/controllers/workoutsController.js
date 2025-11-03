@@ -52,3 +52,36 @@ export const deleteWorkout = async (req, res) => {
         res.status(400).json({ error: err.message || "Error deleting workout" });
     }
 }
+
+export const editWorkout = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const { objectId } = req.params;
+        const { workoutName, exercises } = req.body;
+
+        // verifies workoutName
+        if (workoutName !==  undefined) {
+            if (typeof workoutName !== 'string' || workoutName.trim().length < 2)
+                throw new Error("Invalid workout name");
+        }
+
+        // verifies exercises
+        if (exercises !== undefined) {
+            if (!Array.isArray(exercises) || exercises.length === 0 || exercises.some(ex => Object.keys(ex).length === 0))
+                throw new Error("Invalid exercises"); 
+        }
+
+        const response = await Workout.editWorkoutModel(_id, objectId, workoutName, exercises);
+
+        res.status(200).json({
+            success: true,
+            message: "Successfully updated the workout"
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).json({
+            error: true,
+            message: "Something went wrong"
+        });
+    }
+}
