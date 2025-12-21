@@ -78,6 +78,26 @@ workoutSchema.statics.getWorkoutsModel = async function (userId) {
     }
 }
 
+workoutSchema.statics.getWorkoutModel = async function (userId, objectId) {
+    try {
+        await validateUser(userId);
+    
+        if (!mongoose.Types.ObjectId.isValid(objectId))
+            throw new Error("ObjectId is invalid");
+    
+        const workout = await this.findOne({ _id: objectId, userId })
+            .select('workoutName exercises')
+    
+        if (!workout) 
+            throw new Error("Workout is not found");
+
+        return workout;
+    } catch (err) {
+        console.error(err.message);
+        throw err;
+    }
+}
+
 workoutSchema.statics.createWorkoutModel = async function (userId, workoutName, exercises) {
     try {
         await validateUser(userId);
@@ -112,7 +132,7 @@ workoutSchema.statics.createWorkoutModel = async function (userId, workoutName, 
 
 workoutSchema.statics.deleteWorkoutModel = async function (userId, objectId) {
     try {
-        validateUser(userId);
+        await validateUser(userId);
         if (!mongoose.Types.ObjectId.isValid(objectId))
             throw new Error("Workout Id is invalid");
     

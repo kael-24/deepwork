@@ -12,6 +12,23 @@ export const getWorkouts = async (req, res) => {
     }
 }
 
+export const getWorkout = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const { objectId } = req.params;
+
+        const workout = await Workout.getWorkoutModel(_id, objectId);
+
+        res.status(200).json({ success: true, workout });
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).json({
+            error: true,
+            message: "Something went wrong in getting the workout!"
+        })
+    }
+} 
+
 export const createWorkout = async (req, res) => { 
     try {
         const { _id } = req.user;
