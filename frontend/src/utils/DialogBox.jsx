@@ -18,14 +18,19 @@ const DialogBox = ({title, message, onCancel}) => {
     return(
         <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6 space-y-4" ref={dialogBoxRef}>
+                {/** Title */}
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-900">
                         {title}
                     </h2>
                 </div>
+                
+                {/** Error Message */}
                 <p className="text-gray-600 text-sm leading-relaxed">
                     {message}
                 </p>
+
+                {/** Okay Button */}
                 <div className="flex justify-end pt-2">
                     <button
                         onClick={onCancel}

@@ -75,10 +75,12 @@ const Navbar = () => {
                                 ) : (
                                     // ☰ Burger menu
                                     <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                                     </svg>
                                 )}
                             </button>
+
+                            {/** Deepwork logo Home redirect button  */}
                             <Link to="/" className="flex items-center ml-2">
                                 <span className="text-white font-bold text-xl whitespace-nowrap">🏋️‍♂️ deepwork</span>
                             </Link>
@@ -88,17 +90,19 @@ const Navbar = () => {
                         <div className="flex items-center space-x-4 mr-2">
                             {!user ? (
                                 <div className="flex items-center space-x-4">
+                                    {/** Signup button */}
                                     <Link to="/signup" className="bg-white text-green-600 hover:bg-green-50 px-4 py-2 rounded-md font-medium transition-colors duration-200">
                                         Sign Up
                                     </Link>
+                                    {/** Login button */}
                                     <Link to="/login" className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium transition-colors duration-200">
                                         Login
                                     </Link>
                                 </div>
                             ) : (
                                 <div className="flex items-center space-x-3">
+                                    {/* Profile Icon */}
                                     <Link to="/profile-settings" className="flex items-center space-x-2 text-white hover:text-green-100 transition-colors duration-200">
-                                        {/* Profile Icon */}
                                         <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
                                             <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
@@ -117,14 +121,13 @@ const Navbar = () => {
             {isMenuOpen && (
                 <div className="fixed left-0 right-0 top-16 bottom-0 z-50 flex">
                     {/* Sidebar */}
-                    {/* To adjust sidebar width, change w-80 (20rem/320px) and max-w-[33vw] below */}
                     <div 
                         className="relative w-80 max-w-[50vw] bg-white shadow-xl transform transition-transform duration-300 ease-in-out"
                         ref={sidebarRef}
                         >
                         <div className="h-full flex flex-col">
-                            {/* Sidebar Content */}
                             <div className="flex-1 p-6 space-y-4">
+                                {/** Home Button */}
                                 <Link 
                                     to="/" 
                                     onClick={closeMenu}
@@ -141,6 +144,7 @@ const Navbar = () => {
                                         <div className="border-t border-gray-200 pt-4 mt-4">
                                             <p className="text-sm text-gray-500 mb-3 px-3">Account</p>
                                         </div>
+                                        {/** Signup Button */}
                                         <Link 
                                             to="/signup" 
                                             onClick={closeMenu}
@@ -151,6 +155,7 @@ const Navbar = () => {
                                             </svg>
                                             <span className="font-medium text-green-700">Sign Up</span>
                                         </Link>
+                                        {/** Login Button */}
                                         <Link 
                                             to="/login" 
                                             onClick={closeMenu}
@@ -164,28 +169,31 @@ const Navbar = () => {
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
+                                    {/** Profile Setting Redirect Button */}
                                     <Link 
                                         to="/profile-settings" 
-                                            onClick={closeMenu}
-                                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                                        onClick={closeMenu}
+                                        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
                                         >
                                             <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                             </svg>
                                             <span className="font-medium">Profile Settings</span>
-                                        </Link>
-                                        <button 
-                                            onClick={() => {
-                                                handleLogout();
-                                                closeMenu();
-                                            }}
-                                            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-left"
-                                        >
-                                            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                            </svg>
-                                            <span className="font-medium text-red-600">Logout</span>
-                                        </button>
+                                    </Link>
+
+                                    {/** Log out Button */}
+                                    <button 
+                                        onClick={() => {
+                                            handleLogout();
+                                            closeMenu();
+                                        }}
+                                        className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-left"
+                                    >
+                                        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        <span className="font-medium text-red-600">Logout</span>
+                                    </button>
                                     </div>
                                 )}
                             </div>
@@ -194,8 +202,8 @@ const Navbar = () => {
                 </div>
             )}
 
-            {/* Add top margin to main content to account for fixed navbar */}
-            <div className="h-16"></div>
+            {/** Top margin to main content to account for fixed navbar */}
+            <div className="h-20"></div>
         </>
     )
 }

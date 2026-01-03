@@ -41,6 +41,7 @@ const ForgetPassword = () => {
                 </div>
                 
                 <form className="mt-8 space-y-6" onSubmit={handleForgetPassword}>
+                    {/** Email Address */}
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                             Email Address
@@ -49,6 +50,7 @@ const ForgetPassword = () => {
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span className="text-gray-500 sm:text-sm">✉️</span>
                             </div>
+                            {/** Email Address Input */}
                             <input
                                 id="email"
                                 name="email"
@@ -67,6 +69,7 @@ const ForgetPassword = () => {
                     {isError && <p className="text-center text-red-500 text-sm">Error sending the email</p>}
                     {isSuccess && <p className="text-center text-green-500 text-sm">A message has been sent to your email</p>}
 
+                    {/** Send Reset Link Button */}
                     <div>
                         <button
                             type="submit"
@@ -85,7 +88,8 @@ const ForgetPassword = () => {
                         </button>
                     </div>
                 </form>
-
+                
+                {/** Singin page redirect button */}
                 <div className="text-center">
                     <p className="text-sm text-gray-600">
                         Remember your password?{' '}

@@ -87,8 +87,10 @@ const Home = () => {
     return (
         <div>
             {workouts.length === 0 ? (
+                // Message if no workout is created
                 <div>No workouts created!</div>
             ) : (
+                // List of workouts mapping 
                 <div>
                     <DnDWrapper items={workouts} setItems={setWorkouts} type="grid">
                         <div className="grid grid-cols-2 gap-4">

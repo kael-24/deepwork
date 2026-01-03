@@ -108,6 +108,7 @@ const Signup = () => {
                 </div>
                 
                 <form className="mt-8 space-y-5" onSubmit={handleSignup} method="POST">
+
                     {/* Name field */}
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -117,6 +118,8 @@ const Signup = () => {
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span className="text-gray-500 sm:text-sm">👤</span>
                             </div>
+
+                            {/** Name input field */}
                             <input
                                 id="name"
                                 name="name"
@@ -129,6 +132,8 @@ const Signup = () => {
                                 onChange={(e) => validateName(e.target.value)}
                             />
                         </div>
+
+                        {/** Name input error message */}
                         {nameError && <p className="mt-1 text-xs text-red-500">{nameError}</p>}
                     </div>
 
@@ -141,6 +146,8 @@ const Signup = () => {
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span className="text-gray-500 sm:text-sm">✉️</span>
                             </div>
+
+                            {/** Email input field */}
                             <input
                                 id="email"
                                 name="email"
@@ -153,6 +160,8 @@ const Signup = () => {
                                 onChange={(e) => validateEmail(e.target.value)}
                             />
                         </div>
+
+                        {/** Email input error message */}
                         {emailError && <p className="mt-1 text-xs text-red-500">{emailError}</p>}
                     </div>
 
@@ -165,6 +174,8 @@ const Signup = () => {
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span className="text-gray-500 sm:text-sm">🔒</span>
                             </div>
+
+                            {/** Password input field */}
                             <input
                                 id="password"
                                 name="password"
@@ -176,6 +187,8 @@ const Signup = () => {
                                 value={inputPassword}
                                 onChange={(e) => setInputPassword(e.target.value)}
                             />
+
+                            {/** Password peek button */}
                             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                 <button
                                     type="button"
@@ -186,7 +199,11 @@ const Signup = () => {
                                 </button>
                             </div>
                         </div>
+
+                        {/** Password Error Message */}
                         {passwordError && <p className="mt-1 text-xs text-red-500">{passwordError}</p>}
+
+                        {/** Password Strength Indicator */}
                         {!passwordError && inputPassword && (
                             <p className="mt-1 text-xs text-green-600">
                                 Password strength: {inputPassword.length >= 12 ? 'Strong 💪' : inputPassword.length >= 8 ? 'Good ✅' : 'Weak ⚠️'}
@@ -203,6 +220,8 @@ const Signup = () => {
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span className="text-gray-500 sm:text-sm">🔐</span>
                             </div>
+
+                            {/** Confirm Password field input */}
                             <input
                                 id="confirm-password"
                                 name="confirm-password"
@@ -214,6 +233,8 @@ const Signup = () => {
                                 value={inputConfirmPassword}
                                 onChange={(e) => setInputConfirmPassword(e.target.value)}
                             />
+
+                            {/** Confirm Password peek button */}
                             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                 <button
                                     type="button"
@@ -224,9 +245,12 @@ const Signup = () => {
                                 </button>
                             </div>
                         </div>
+
+                        {/** Confirm Password Error message */}
                         {confirmPasswordError && <p className="mt-1 text-xs text-red-500">{confirmPasswordError}</p>}
                     </div>
 
+                    {/** Terms and Policies Checkbox */}
                     <div className="flex items-center">
                         <input
                             id="terms"
@@ -239,9 +263,11 @@ const Signup = () => {
                             I agree to the <a href="#" className="text-green-600 hover:text-green-500">Terms of Service</a> and <a href="#" className="text-green-600 hover:text-green-500">Privacy Policy</a>
                         </label>
                     </div>
-
+                    
+                    {/** Signup Error message */}
                     {error && <p className="text-center text-red-500 text-sm">{error}</p>}
-
+                    
+                    {/** Create Account Button */}
                     <div>
                         <button
                             type="submit"
@@ -258,6 +284,7 @@ const Signup = () => {
                     </div>
                 </form>
 
+                {/** Signin Page Redirect Button */}
                 <div className="text-center">
                     <p className="text-sm text-gray-600">
                         Already have an account?{' '}
@@ -269,6 +296,8 @@ const Signup = () => {
                         </Link>
                     </p>
                 </div>
+
+                {/** Google Authentication Redirect Button */}
                 <button
                     type="button"
                     onClick={loginWithGoogle}

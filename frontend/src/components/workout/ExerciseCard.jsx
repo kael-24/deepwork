@@ -170,6 +170,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                 <div className="mb-3">
                     <div className="flex items-center gap-2">
                         <label className="text-sm font-medium text-gray-700 flex-shrink-0">⌚ Timer</label>
+                        {/** Decrease Timer Seconds Button */}
                         <button
                             onClick={() => exercise.timer <= 0 ? 0 : updateExercise({timer: String(Number(exercise.timer) - 1)})}
                             className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors duration-200 flex-shrink-0"
@@ -178,6 +179,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                             </svg>
                         </button>
+                        {/** Manually Input Timer Seconds */}
                         <input
                             type="text"
                             value={exercise.timer}
@@ -185,6 +187,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                             placeholder="seconds"
                             className="flex-1 px-3 py-2 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                         />
+                        {/** Increase Input Timer Seconds */}
                         <button
                             onClick={() => updateExercise({timer: String(Number(exercise.timer) + 1)})}
                             className="w-10 h-10 flex items-center justify-center bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors duration-200 flex-shrink-0"
@@ -197,11 +200,12 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                 </div>
             )}
 
-            {/* Reps - Full width below time controls with emoji label */}
+            {/* Reps - Full width below time controls */}
             {exercise.exerciseType === "Work" && (
                 <div className="mb-3">
                     <div className="flex items-center gap-2">
                         <label className="text-sm font-medium text-gray-700 flex-shrink-0">💪 Reps</label>
+                        {/** Decrease reps number Button */}
                         <button
                             onClick={() => updateExercise({reps: exercise.reps <= 0 ? 0 : exercise.reps - 1})}
                             className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors duration-200 flex-shrink-0"
@@ -210,6 +214,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                             </svg>
                         </button>
+                        {/** Manually Input reps number */}
                         <input
                             type="text"
                             value={exercise.reps}
@@ -220,6 +225,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                             placeholder="0"
                             className="flex-1 px-3 py-2 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                         />
+                        {/** Increase reps timer Button */}
                         <button
                             onClick={() => updateExercise({reps: exercise.reps >= 59 ? 59 : exercise.reps + 1})}
                             className="w-10 h-10 flex items-center justify-center bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors duration-200 flex-shrink-0"

@@ -75,7 +75,10 @@ const ResetPassword = () => {
                 </div>
                 
                 <form className="mt-8 space-y-6" onSubmit={handleUpdatePassword}>
+                    {/** Password */}
                     <div className="space-y-4">
+                        
+                        {/** New password */}
                         <div>
                             <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-1">
                                 New Password
@@ -84,6 +87,8 @@ const ResetPassword = () => {
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span className="text-gray-500 sm:text-sm">🔒</span>
                                 </div>
+
+                                {/** New password input */}
                                 <input
                                     id="new-password"
                                     name="new-password"
@@ -95,6 +100,8 @@ const ResetPassword = () => {
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                 />
+
+                                {/** New password peek button */}
                                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <button
                                         type="button"
@@ -107,6 +114,7 @@ const ResetPassword = () => {
                             </div>
                         </div>
                         
+                        {/** Confirm Password */}
                         <div>
                             <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
                                 Confirm Password
@@ -115,6 +123,8 @@ const ResetPassword = () => {
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span className="text-gray-500 sm:text-sm">🔐</span>
                                 </div>
+
+                                {/** Confirm Password Input */}
                                 <input
                                     id="confirm-password"
                                     name="confirm-password"
@@ -126,6 +136,8 @@ const ResetPassword = () => {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
+
+                                {/** Confirm Password Peek button */}
                                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <button
                                         type="button"
@@ -139,9 +151,13 @@ const ResetPassword = () => {
                         </div>
                     </div>
 
+                    {/** Client-side password input error message */}
                     {clientError && <p className="text-center text-red-500 text-sm">{clientError}</p>}
+
+                    {/** Server-side password input error message */}
                     {isError && <p className="text-center text-red-500 text-sm">{error.response?.data?.error || error.message}</p>}
 
+                    {/** Update password button */}
                     <div>
                         <button
                             type="submit"
@@ -159,10 +175,11 @@ const ResetPassword = () => {
                         </button>
                     </div>
                 </form>
-
+                
+                {/** Signin page redirect button */}
                 <div className="text-center">
                     <p className="text-sm text-gray-600">
-                        Remember your password?{' '}
+                        Remembered your password?{' '}
                         <Link to="/login" className="font-medium text-green-600 hover:text-green-500">
                             Sign in
                         </Link>

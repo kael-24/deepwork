@@ -27,6 +27,7 @@ const Login = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
+
         userLogin(inputEmail, inputPassword, rememberMe);
     }
 
@@ -51,12 +52,16 @@ const Login = () => {
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleLogin}>
                     <div className="rounded-md -space-y-px">
+                        
+                        {/** Email Address */}
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span className="text-gray-500 sm:text-sm">✉️</span>
                                 </div>
+                                
+                                {/** Email Address input field */}
                                 <input
                                     id="email"
                                     name="email"
@@ -73,16 +78,22 @@ const Login = () => {
                                     onChange={(e) => validateEmail(e.target.value)}
                                 />
                             </div>
+
+                            {/** Email Address Error */}
                             {inputIsValid === false && (
                                 <p className="mt-1 text-xs text-red-500">Please enter a valid email address.</p>
                             )}
                         </div>
+
+                        {/** Password */}
                         <div className="mb-2">
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span className="text-gray-500 sm:text-sm">🔒</span>
                                 </div>
+
+                                {/** Password Input Field */}
                                 <input
                                     id="password"
                                     name="password"
@@ -94,6 +105,8 @@ const Login = () => {
                                     value={inputPassword}
                                     onChange={(e) => setInputPassword(e.target.value)}
                                 />
+
+                                {/** Password peek button */}
                                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <button
                                         type="button"
@@ -108,6 +121,7 @@ const Login = () => {
                     </div>
 
                     <div className="flex items-center justify-between">
+                        {/** Remember Me Button */}
                         <div className="flex items-center">
                             <input
                                 id="remember-me"
@@ -117,18 +131,21 @@ const Login = () => {
                                 checked={rememberMe}
                                 onChange={(e) => setRememberMe(e.target.checked)}
                             />
+
                             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                                 Remember me
                             </label>
                         </div>
-
+                        
+                        {/** Forget Password page redirect Button*/}
                         <div className="text-sm">
                             <Link to="/forget-password" className="font-medium text-green-600 hover:text-green-500">
                                 Forgot your password?
                             </Link>
                         </div>
                     </div>
-
+                    
+                    {/** Signin Button */}
                     <div>
                         <button
                             type="submit"
@@ -146,10 +163,14 @@ const Login = () => {
                         </button>
                     </div>
                 </form>
-
+                
+                {/** Success Message after password reset */}
                 {pwdResetMessage && <p className="text-center text-green-500 text-sm">{pwdResetMessage}</p>}
+                
+                {/** Error Message */}
                 {error && <p className="text-center text-red-500 text-sm">{error}</p>}
 
+                { /** Signup Page Redirect Button */}
                 <div className="text-center mt-4">
                     <p className="text-sm text-gray-600">
                         Don't have an account?{' '}
@@ -158,6 +179,8 @@ const Login = () => {
                         </Link>
                     </p>
                 </div>
+
+                {/** Google Authentication Button */}
                 <button
                     type="button"
                     onClick={loginWithGoogle}

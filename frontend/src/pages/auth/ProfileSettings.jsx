@@ -117,6 +117,8 @@ const ProfileSettings = () => {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-2xl space-y-8 bg-white p-8 rounded-xl shadow-lg">
                 <div className="flex items-center justify-between">
+                
+                    {/** Back to Home button */}    
                     <Link 
                         to='/'
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition-colors"
@@ -128,6 +130,7 @@ const ProfileSettings = () => {
                         <span>Back</span>
                     </Link>
 
+                    {/** Logout button */}
                     <button
                         type="button"
                         onClick={handleLogout}
@@ -139,6 +142,7 @@ const ProfileSettings = () => {
                         <span>Logout</span>
                     </button>
                 </div>
+
                 <div className="text-center">
                     <h1 className="text-3xl font-extrabold text-gray-900">Profile Settings</h1>
                     <p className="mt-2 text-sm text-gray-600">Manage your account information and security</p>
@@ -147,6 +151,7 @@ const ProfileSettings = () => {
                 {/* Name Section */}
                 <div className="border border-gray-200 rounded-lg p-5">
                     <div className="flex items-start justify-between">
+                        {/** Name Title and Current Name display */}
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                             {currentEdit !== 'name' ? (
@@ -155,6 +160,8 @@ const ProfileSettings = () => {
                                 </div>
                             ) : null}
                         </div>
+
+                        {/** Non-edit Mode Name Button */}
                         {currentEdit !== 'name' ? (
                             <button
                                 onClick={() => { setName(user.name || ''); setNameError(null); setCurrentEdit('name'); }}
@@ -166,10 +173,13 @@ const ProfileSettings = () => {
                         ) : null}
                     </div>
 
+                    {/** Edit Mode Name Feature */}
                     {currentEdit === 'name' && (
                         <div className="mt-4 space-y-3">
+
+                            {/** Name input field */}
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">👤</div>
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">👤</div>    
                                 <input
                                     type="text"
                                     value={name}
@@ -178,10 +188,13 @@ const ProfileSettings = () => {
                                     placeholder="Your full name"
                                 />
                             </div>
+                            {/** Name Input Error message */}
                             {(nameError || isError) && (
                                 <p className="text-sm text-red-500">{nameError || error.response?.data?.error || 'Something went wrong'}</p>
                             )}
+
                             <div className="flex items-center gap-3">
+                                {/** Save name change button */}
                                 <button
                                     onClick={handleNameChange}
                                     disabled={name.trim() === '' || nameError !== null || isPending}
@@ -189,6 +202,8 @@ const ProfileSettings = () => {
                                 >
                                     {isPending ? 'Saving…' : 'Save'}
                                 </button>
+
+                                {/** Cancel name change button */}
                                 <button
                                     onClick={() => { setCurrentEdit(null); setName(''); setNameError(null); }}
                                     disabled={isPending}
@@ -209,6 +224,8 @@ const ProfileSettings = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                                 <p className="text-gray-500 text-sm">*********</p>
                             </div>
+
+                            {/** Non-edit mode password button */}
                             {currentEdit !== 'password' && (
                                 <button
                                     onClick={() => { setCurrentEdit('password'); setPassword(''); setNewPassword(''); setConfirmPassword(''); setNewPasswordError(null); setConfirmPasswordError(null); setShowCurrentPassword(false); setShowNewPassword(false); setShowConfirmPassword(false); reset(); }}
@@ -219,13 +236,17 @@ const ProfileSettings = () => {
                                 </button>
                             )}
                         </div>
-
+                        
+                        {/** Edit-mode password feature */}
                         {currentEdit === 'password' && (
                             <div className="space-y-4">
+
+                                {/** Current Password */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">🔒</div>
+                                        {/** Current Password Input Field */}
                                         <input
                                             type={showCurrentPassword ? 'text' : 'password'}
                                             value={password}
@@ -233,19 +254,23 @@ const ProfileSettings = () => {
                                             className="appearance-none rounded-lg block w-full pl-10 pr-10 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 sm:text-sm"
                                             placeholder="Current password"
                                         />
+                                        {/** Peek Current Password Button */}
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                             <button type="button" onClick={() => setShowCurrentPassword(v => !v)} className="text-gray-500 hover:text-gray-700 focus:outline-none">{showCurrentPassword ? '👁️' : '👁️‍🗨️'}</button>
                                         </div>
                                     </div>
                                 </div>
+                                {/** Current password error message */}
                                 {(currentEdit === 'password' && isError) && (
                                     <p className="text-sm text-red-500">{error.response?.data?.error || 'Something went wrong'}</p>
                                 )}
 
+                                {/** New password */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">🔐</div>
+                                        {/** New password input field */}
                                         <input
                                             type={showNewPassword ? 'text' : 'password'}
                                             value={newPassword}
@@ -253,11 +278,14 @@ const ProfileSettings = () => {
                                             className={`appearance-none rounded-lg block w-full pl-10 pr-10 py-3 border ${newPasswordError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-green-500'} focus:outline-none focus:border-green-500 focus:ring-2 transition-colors duration-200 sm:text-sm`}
                                             placeholder="Create a strong password"
                                         />
+                                        {/** Peek New password button */}
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                             <button type="button" onClick={() => setShowNewPassword(v => !v)} className="text-gray-500 hover:text-gray-700 focus:outline-none">{showNewPassword ? '👁️' : '👁️‍🗨️'}</button>
                                         </div>
                                     </div>
+                                    {/** New password error message */}
                                     {newPasswordError && <p className="mt-1 text-xs text-red-500">{newPasswordError}</p>}
+                                    {/** New password strength indicator */}
                                     {!newPasswordError && newPassword && (
                                         <p className="mt-1 text-xs text-green-600">
                                             Password strength: {newPassword.length >= 12 ? 'Strong 💪' : newPassword.length >= 8 ? 'Good ✅' : 'Weak ⚠️'}
@@ -265,10 +293,12 @@ const ProfileSettings = () => {
                                     )}
                                 </div>
 
+                                {/** Confirm Password */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">🔐</div>
+                                        {/** Confirm Password input button */}
                                         <input
                                             type={showConfirmPassword ? 'text' : 'password'}
                                             value={confirmPassword}
@@ -276,14 +306,17 @@ const ProfileSettings = () => {
                                             className={`appearance-none rounded-lg block w-full pl-10 pr-10 py-3 border ${confirmPasswordError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-green-500'} focus:outline-none focus:border-green-500 focus:ring-2 transition-colors duration-200 sm:text-sm`}
                                             placeholder="Confirm your new password"
                                         />
+                                        {/** Peek confirm password button */}
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                             <button type="button" onClick={() => setShowConfirmPassword(v => !v)} className="text-gray-500 hover:text-gray-700 focus:outline-none">{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</button>
                                         </div>
                                     </div>
+                                    {/** Confirm Password Error Message*/}
                                     {confirmPasswordError && <p className="mt-1 text-xs text-red-500">{confirmPasswordError}</p>}
                                 </div>
-
+                                
                                 <div className="flex items-center gap-3">
+                                    {/** Save password change button */}
                                     <button
                                         onClick={handlePasswordChange}
                                         disabled={!password || !newPassword || !confirmPassword || !!newPasswordError || !!confirmPasswordError || isPending}
@@ -291,6 +324,8 @@ const ProfileSettings = () => {
                                     >
                                         {isPending ? 'Saving…' : 'Save'}
                                     </button>
+
+                                    {/** Cancel password change button */}
                                     <button
                                         onClick={() => { setCurrentEdit(null); setPassword(''); setNewPassword(''); setConfirmPassword(''); setNewPasswordError(null); setConfirmPasswordError(null); setShowCurrentPassword(false); setShowNewPassword(false); setShowConfirmPassword(false); reset(); }}
                                         disabled={isPending}
@@ -304,6 +339,7 @@ const ProfileSettings = () => {
                     </div>
                 )}
 
+                {/** Success profile edit message */}
                 {isSuccess && (
                     <p className="text-center text-green-600 text-sm">
                         Successfully saved changes
