@@ -1,12 +1,14 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-dotenv.config();
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
+import { envConfig, connectDB } from './config/index.js';
+import { errorHandler } from './middleware/errorHandler.js';
+
 import userAuthRoutes from './routes/userAuthRoutes.js';
 import workoutRoutes from './routes/workoutRoutes.js'
+
+envConfig.validateEnv();
 
 const app = express();
 
@@ -15,31 +17,22 @@ const app = express();
  * CORS MIDDLEWARE - restricting the frontend link that can connect 
  * ---------------------------------------------------------
  */
-const allowedOrigins = [process.env.CLIENT_URL || 'http://localhost:5173']; // only the client url can connect to the backend
+const allowedOrigins = [process.env.CLIENT_URL || 'http://localhost:5173'];
 app.use(cors({
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
+            callback(null, true);
         } else {
-        callback(new Error('Not allowed by CORS'));
+            callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true
 }));
 
-
-/**
- * ---------------------------------------------------------
- * CONVERTS HTTPS TO JSON
- * ---------------------------------------------------------
- */
+// Parse JSON request bodies
 app.use(express.json());
 
-/**
- * ---------------------------------------------------------
- * reads and parse any incoming cookies attached to HTTP request, so that they're available in req.cookies
- * ---------------------------------------------------------
- */
+// Parse cookies
 app.use(cookieParser());
 
 /**
@@ -52,16 +45,29 @@ app.use('/api/workouts', workoutRoutes)
 
 /**
  * ---------------------------------------------------------
- * DATABASE AND PORT CONNECTIONS
+ * ERROR HANDLING MIDDLEWARE - should be last
  * ---------------------------------------------------------
  */
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        app.listen(process.env.PORT || 5000, () => {
-            console.log('DB SUCCESSFULLY CONNECTED == 5000') // TEMPDEV
+app.use(errorHandler);
+
+/**
+ * ---------------------------------------------------------
+ * START SERVER
+ * ---------------------------------------------------------
+ */
+const startServer = async () => {
+    try {
+        await connectDB();
+
+        const PORT = process.env.PORT || 5000;
+        app.listen(PORT, () => {
+            console.log(`Server running on PORT: ${PORT}`);
         });
-    })
-    .catch((error) => {
-        console.log('DATABASE CONNECTION FAILED'); // TEMPDEV
-        console.log(error);
-    })
+
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+};
+
+startServer();

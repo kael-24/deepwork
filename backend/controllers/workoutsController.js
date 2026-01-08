@@ -1,104 +1,83 @@
-import Workout from '../models/workoutsModel.js'
+import { workoutService } from '../services/index.js';
+import { HTTP_STATUS, SUCCESS_MESSAGES } from '../constants/index.js';
 
+/**
+ * Get all workouts for authenticated user
+ */
 export const getWorkouts = async (req, res) => {
     try {
         const { _id } = req.user;
-
-        const workouts = await Workout.getWorkoutsModel(_id);
-
-        res.status(200).json(workouts);
+        const workouts = await workoutService.getAllWorkouts(_id);
+        res.status(HTTP_STATUS.OK).json(workouts);
     } catch (err) {
-        res.status(400).json({ error: err.message || "Error getting workouts" });
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
     }
 }
 
+/**
+ * Get single workout by ID
+ */
 export const getWorkout = async (req, res) => {
     try {
         const { _id } = req.user;
         const { objectId } = req.params;
 
-        const workout = await Workout.getWorkoutModel(_id, objectId);
-
-        res.status(200).json({ success: true, workout });
+        const workout = await workoutService.getWorkoutById(_id, objectId);
+        res.status(HTTP_STATUS.OK).json({ success: true, workout });
     } catch (err) {
         console.error(err.message);
-        res.status(400).json({
-            error: true,
-            message: "Something went wrong in getting the workout!"
-        })
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
     }
 } 
 
+/**
+ * Create new workout
+ */
 export const createWorkout = async (req, res) => { 
     try {
         const { _id } = req.user;
         const { workoutName, exercises } = req.body;
 
-        // verifies the workoutName
-        if (typeof workoutName !== 'string' || workoutName?.trim().length < 2) 
-            throw new Error("Invalid workout name. Must be at least 2 characters");
-        
-        // verifies the exercises
-        if ((!Array.isArray(exercises) ||   
-        exercises.length === 0) || 
-        exercises.every((obj) => Object.keys(obj).length === 0))
-        throw new Error("Invalid or empty exercises data");
-
-        const finalExercises = exercises.map(({exerciseType, timeType, ...rest}) => ({
-            ...rest,
-            exerciseType: exerciseType.toLowerCase(),
-            timeType: timeType.toLowerCase()
-        }));
-
-        const newWorkout = await Workout.createWorkoutModel(_id, workoutName, finalExercises);
-        res.status(200).json(newWorkout);
+        const newWorkout = await workoutService.createNewWorkout(_id, { workoutName, exercises });
+        res.status(HTTP_STATUS.CREATED).json(newWorkout);
     } catch (err) {
         console.log(err.message);
-        res.status(400).json({ error: err.message || "Error creating workouts" });
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
     }
 }
 
+/**
+ * Delete workout
+ */
 export const deleteWorkout = async (req, res) => {
     try {
         const { _id } = req.user;
         const { objectId } = req.params; 
 
-        const deletedWorkout = await Workout.deleteWorkoutModel(_id, objectId);
-        res.status(200).json(deletedWorkout);
+        const deletedWorkout = await workoutService.deleteWorkout(_id, objectId);
+        res.status(HTTP_STATUS.OK).json(deletedWorkout);
     } catch (err) {
-        res.status(400).json({ error: err.message || "Error deleting workout" });
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
     }
 }
 
+/**
+ * Update existing workout
+ */
 export const editWorkout = async (req, res) => {
     try {
         const { _id } = req.user;
         const { objectId } = req.params;
         const { workoutName, exercises } = req.body;
 
-        // verifies workoutName
-        if (workoutName !==  undefined) {
-            if (typeof workoutName !== 'string' || workoutName.trim().length < 2)
-                throw new Error("Invalid workout name");
-        }
+        await workoutService.updateWorkout(_id, objectId, { workoutName, exercises });
 
-        // verifies exercises
-        if (exercises !== undefined) {
-            if (!Array.isArray(exercises) || exercises.length === 0 || exercises.some(ex => Object.keys(ex).length === 0))
-                throw new Error("Invalid exercises"); 
-        }
-
-        const response = await Workout.editWorkoutModel(_id, objectId, workoutName, exercises);
-
-        res.status(200).json({
+        res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: "Successfully updated the workout"
+            message: SUCCESS_MESSAGES.WORKOUT_UPDATED
         });
     } catch (err) {
         console.error(err.message);
-        res.status(400).json({
-            error: true,
-            message: "Something went wrong"
-        });
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
     }
 }

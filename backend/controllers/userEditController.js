@@ -1,31 +1,35 @@
-import { nameValidator, passwordValidator } from '../utils/InputValidator.js'
-import User from '../models/userModel.js'
+import { HTTP_STATUS, ERROR_MESSAGES } from '../constants/index.js';
 
+import { InputValidator, authHelpers } from '../utils/index.js';
+import { userService } from '../services/index.js';
+
+/**
+ * Update user profile (name, password)
+ */
 export const userEdit = async (req, res) => {
     try {
-        const { name, password, newPassword} = req.body;
+        const { name, password, newPassword } = req.body;
         const _id = req.user._id;
 
         if (!name && !password && !newPassword)
-            throw new Error('You have not updated anything');
+            throw new Error(ERROR_MESSAGES.NOTHING_TO_UPDATE);
 
         if (name)
-            nameValidator(name);
-        
+            InputValidator.nameValidator(name);
+
         if (password || newPassword) {
-            passwordValidator({ password });
-            passwordValidator({ password: newPassword, isEnough: true, isStrong: true });
+            InputValidator.passwordValidator({ password });
+            InputValidator.passwordValidator({ password: newPassword, isEnough: true, isStrong: true });
         }
-        
-        const editedUser = await User.userEditModel(_id, name, password, newPassword); 
-        res.status(200).json({ 
-            name: editedUser.name,
-            email:  editedUser.email,
-            provider: editedUser.provider,
+
+        const editedUser = await userService.updateUserProfile(_id, { name, password, newPassword });
+
+        res.status(HTTP_STATUS.OK).json({
+            ...authHelpers.formatUserResponse(editedUser),
             isAuthenticated: true,
         })
     } catch (err) {
-        res.status(500).json({ error: err.message }); 
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: err.message });
     }
 }
 

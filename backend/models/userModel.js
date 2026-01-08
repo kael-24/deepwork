@@ -46,7 +46,7 @@ const userSchema = new Schema({
  * @param {String} password 
  * @returns 
  */
-userSchema.statics.userLoginModel = async function (email, password) {
+userSchema.statics.login = async function (email, password) {
     try {
         const user = await this.findOne({ email, provider: 'local' });
         if (!user) 
@@ -71,7 +71,7 @@ userSchema.statics.userLoginModel = async function (email, password) {
  * @param {String} password 
  * @returns 
  */
-userSchema.statics.userSignupModel = async function (name, email, password) {
+userSchema.statics.signup = async function (name, email, password) {
     try {
         const user = await this.findOne({ email });
         if (user) 
@@ -97,7 +97,7 @@ userSchema.statics.userSignupModel = async function (name, email, password) {
  * @param {String} uid 
  * @returns 
 */
-userSchema.statics.userGoogleAuthModel = async function (name, email, uid) {
+userSchema.statics.googleAuth = async function (name, email, uid) {
     try {
         let user = await this.findOne({ email });
 
@@ -118,7 +118,7 @@ userSchema.statics.userGoogleAuthModel = async function (name, email, uid) {
 }
 
 
-userSchema.statics.userEditModel = async function (id, name, password, newPassword) {
+userSchema.statics.editProfile = async function (id, name, password, newPassword) {
     try {
         if (!mongoose.Types.ObjectId.isValid(id))
             throw new Error('Object ID is invalid');

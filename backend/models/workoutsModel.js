@@ -65,7 +65,7 @@ const validateUser = async (id) => {
         throw new Error('User does not exists');
 }
 
-workoutSchema.statics.getWorkoutsModel = async function (userId) {
+workoutSchema.statics.getWorkouts = async function (userId) {
     try {
         await validateUser(userId);
 
@@ -78,7 +78,7 @@ workoutSchema.statics.getWorkoutsModel = async function (userId) {
     }
 }
 
-workoutSchema.statics.getWorkoutModel = async function (userId, objectId) {
+workoutSchema.statics.getWorkout = async function (userId, objectId) {
     try {
         await validateUser(userId);
     
@@ -98,7 +98,7 @@ workoutSchema.statics.getWorkoutModel = async function (userId, objectId) {
     }
 }
 
-workoutSchema.statics.createWorkoutModel = async function (userId, workoutName, exercises) {
+workoutSchema.statics.createWorkout = async function (userId, workoutName, exercises) {
     try {
         await validateUser(userId);
 
@@ -130,7 +130,7 @@ workoutSchema.statics.createWorkoutModel = async function (userId, workoutName, 
     }
 }
 
-workoutSchema.statics.deleteWorkoutModel = async function (userId, objectId) {
+workoutSchema.statics.deleteWorkout = async function (userId, objectId) {
     try {
         await validateUser(userId);
         if (!mongoose.Types.ObjectId.isValid(objectId))
@@ -146,7 +146,7 @@ workoutSchema.statics.deleteWorkoutModel = async function (userId, objectId) {
     }
 }
 
-workoutSchema.statics.editWorkoutModel = async function (userId, objectId, workoutName, exercises) {
+workoutSchema.statics.editWorkout = async function (userId, objectId, workoutName, exercises) {
     try {
         validateUser(userId);
 
