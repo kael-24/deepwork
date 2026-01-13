@@ -66,110 +66,89 @@ const validateUser = async (id) => {
 }
 
 workoutSchema.statics.getWorkouts = async function (userId) {
-    try {
-        await validateUser(userId);
+    await validateUser(userId);
 
-        const workouts = await this.find({ userId })
-            .select('workoutName exercises');
+    const workouts = await this.find({ userId })
+        .select('workoutName exercises order');
 
-        return workouts;
-    } catch (err) {
-        throw new Error(err.message || "Error getting workouts");
-    }
+    return workouts;
 }
 
 workoutSchema.statics.getWorkout = async function (userId, objectId) {
-    try {
-        await validateUser(userId);
-    
-        if (!mongoose.Types.ObjectId.isValid(objectId))
-            throw new Error("ObjectId is invalid");
-    
-        const workout = await this.findOne({ _id: objectId, userId })
-            .select('workoutName exercises')
-    
-        if (!workout) 
-            throw new Error("Workout is not found");
+    await validateUser(userId);
 
-        return workout;
-    } catch (err) {
-        console.error(err.message);
-        throw err;
-    }
+    if (!mongoose.Types.ObjectId.isValid(objectId))
+        throw new Error("ObjectId is invalid");
+
+    const workout = await this.findOne({ _id: objectId, userId })
+        .select('workoutName exercises')
+
+    if (!workout)
+        throw new Error("Workout is not found");
+
+    return workout;
 }
 
 workoutSchema.statics.createWorkout = async function (userId, workoutName, exercises) {
-    try {
-        await validateUser(userId);
+    await validateUser(userId);
 
-        // clear out empty data
-        exercises.map((exercise) => {
-            if (exercise.exerciseType !== "work" || exercise.reps === 0)
-                exercise.reps = undefined;
-            if (exercise.timeType !== "timer")
-                exercise.timer = undefined;
-        })
+    // clear out empty data
+    exercises.forEach((exercise) => {
+        if (exercise.exerciseType !== "work" || exercise.reps === 0)
+            exercise.reps = undefined;
+        if (exercise.timeType !== "timer")
+            exercise.timer = undefined;
+    })
 
-        // Order creation
-        const lastWorkout = await this
-            .findOne({ userId })
-            .sort({ order: -1 })
-            .select("order");
-        console.log("asdsad", lastWorkout);
-        const newOrder = lastWorkout ? lastWorkout.order + 100 : 100;
+    // Order creation
+    const lastWorkout = await this
+        .findOne({ userId })
+        .sort({ order: -1 })
+        .select("order");
+    const newOrder = lastWorkout ? lastWorkout.order + 100 : 100;
 
-        const createdWorkout = await this.create({ userId, workoutName, exercises, order: newOrder });
+    const createdWorkout = await this.create({ userId, workoutName, exercises, order: newOrder });
 
-        return {
-            workoutName: createdWorkout.workoutName,
-            exercises: createdWorkout.exercises,
-            order: createdWorkout.order
-        };
-    } catch (err) {
-        throw new Error(err.message || "Error creating workout");
-    }
+    return {
+        workoutName: createdWorkout.workoutName,
+        exercises: createdWorkout.exercises,
+        order: createdWorkout.order
+    };
 }
 
 workoutSchema.statics.deleteWorkout = async function (userId, objectId) {
-    try {
-        await validateUser(userId);
-        if (!mongoose.Types.ObjectId.isValid(objectId))
-            throw new Error("Workout Id is invalid");
-    
-        const deletedWorkout = await this.findOneAndDelete({ userId, _id: objectId });
-        if (!deletedWorkout)
-            throw new Error("Workout not found");
+    await validateUser(userId);
+    if (!mongoose.Types.ObjectId.isValid(objectId))
+        throw new Error("Workout Id is invalid");
 
-        return deletedWorkout;
-    } catch (err) {
-        throw new Error(err.message || "Error deleting workout");
-    }
+    const deletedWorkout = await this.findOneAndDelete({ userId, _id: objectId });
+    if (!deletedWorkout)
+        throw new Error("Workout not found");
+
+    return deletedWorkout;
 }
 
 workoutSchema.statics.editWorkout = async function (userId, objectId, workoutName, exercises) {
-    try {
-        validateUser(userId);
+    validateUser(userId);
 
-        if (!mongoose.Types.ObjectId.isValid(objectId)) 
-            throw new Error("Workout ID is invalid");
+    if (!mongoose.Types.ObjectId.isValid(objectId))
+        throw new Error("Workout ID is invalid");
 
-        const updateFields = {};
+    const updateFields = {};
 
-        if (workoutName !== undefined)
-            updateFields.workoutName = workoutName;
+    if (workoutName !== undefined)
+        updateFields.workoutName = workoutName;
 
-        if (exercises !== undefined) 
-            updateFields.exercises = exercises;
+    if (exercises !== undefined)
+        updateFields.exercises = exercises;
 
-        if (Object.keys(updateFields).length === 0) return;
+    if (Object.keys(updateFields).length === 0) return;
 
-        const result = await this.updateOne({ _id: objectId, userId }, { $set: updateFields }, {runValidators: true});
-        
-        return result;
-    } catch (err) {
-        console.error(err.message);
-        throw err;
-    }
+    const result = await this.updateOne({ _id: objectId, userId }, { $set: updateFields }, { runValidators: true });
+    if (result.matchedCount === 0)
+        throw new Error("Workout not found");
+
+    return result;
 }
 
 

@@ -47,19 +47,15 @@ const userSchema = new Schema({
  * @returns 
  */
 userSchema.statics.login = async function (email, password) {
-    try {
-        const user = await this.findOne({ email, provider: 'local' });
-        if (!user) 
-            throw new Error('User does not exists');
-    
-        const match = await bcrypt.compare(password, user.password);
-        if (!match)
-            throw new Error('Invalid credentials');  
-    
-        return user;
-    } catch (err) {
-        throw err;
-    }
+    const user = await this.findOne({ email, provider: 'local' });
+    if (!user) 
+        throw new Error('User does not exists');
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match)
+        throw new Error('Invalid credentials');  
+
+    return user;
 }
 
 /**
@@ -72,20 +68,16 @@ userSchema.statics.login = async function (email, password) {
  * @returns 
  */
 userSchema.statics.signup = async function (name, email, password) {
-    try {
-        const user = await this.findOne({ email });
-        if (user) 
-            throw new Error('email already in use');
-    
-        const salt = await bcrypt.genSalt(12);
-        const hashedPassword = await bcrypt.hash(password, salt);
-    
-        const newUser = await this.create({name, email, password: hashedPassword});
-    
-        return newUser;
-    } catch (err) {
-        throw err;
-    }
+    const user = await this.findOne({ email });
+    if (user) 
+        throw new Error('email already in use');
+
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = await this.create({name, email, password: hashedPassword});
+
+    return newUser;
 }
 
 /**
@@ -98,59 +90,50 @@ userSchema.statics.signup = async function (name, email, password) {
  * @returns 
 */
 userSchema.statics.googleAuth = async function (name, email, uid) {
-    try {
-        let user = await this.findOne({ email });
+    let user = await this.findOne({ email });
 
-        if (!user) {
-            user = await this.create({
-                email,
-                name, 
-                uid,
-                provider: 'google'
-            });
-        }
-    
-        return user;
-    } catch (err) {
-        throw err;
+    if (!user) {
+        user = await this.create({
+            email,
+            name, 
+            uid,
+            provider: 'google'
+        });
     }
 
+    return user;
 }
 
 
 userSchema.statics.editProfile = async function (id, name, password, newPassword) {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(id))
-            throw new Error('Object ID is invalid');
+    if (!mongoose.Types.ObjectId.isValid(id))
+        throw new Error('Object ID is invalid');
 
-        const query = {_id: id};
-        if (password && newPassword) {
-            query.provider = 'local';
-        }
-
-        const user = await this.findOne(query);
-        if (!user)
-            throw new Error("User not found");
-        
-        if (password && newPassword) {
-            const match = await bcrypt.compare(password, user.password);
-            if (!match)
-                throw new Error("Incorrect credentials");
-            
-            const salt = await bcrypt.genSalt(12);
-            const hash = await bcrypt.hash(newPassword, salt);
-            user.password = hash;
-        }
-
-        if (name)
-            user.name = name;
-
-        await user.save();
-
-        return user;
-    } catch (err) {
-        throw err;
+    const query = {_id: id};
+    if (password && newPassword) {
+        query.provider = 'local';
     }
+
+    const user = await this.findOne(query);
+    if (!user)
+        throw new Error("User not found");
+    
+    if (password && newPassword) {
+        const match = await bcrypt.compare(password, user.password);
+        if (!match)
+            throw new Error("Incorrect credentials");
+        
+        const salt = await bcrypt.genSalt(12);
+        const hash = await bcrypt.hash(newPassword, salt);
+        user.password = hash;
+    }
+
+    if (name)
+        user.name = name;
+
+    await user.save();
+
+    return user;
 }
 
 export default mongoose.model('User', userSchema);

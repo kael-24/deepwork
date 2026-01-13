@@ -15,37 +15,33 @@ import { HTTP_STATUS, ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants/inde
  * @param {*} res 
  */
 export const userLogin = async (req, res) => {
-    try {
-        const { email, password, rememberMe } = req.body;
+    const { email, password, rememberMe } = req.body;
 
-        // VALIDATION
-        if (email)
-            InputValidator.emailValidator(email.trim());
-        else
-            throw new Error(ERROR_MESSAGES.EMAIL_REQUIRED);
+    // VALIDATION
+    if (email)
+        InputValidator.emailValidator(email.trim());
+    else
+        throw new Error(ERROR_MESSAGES.EMAIL_REQUIRED);
 
-        if (password)
-            InputValidator.passwordValidator({ password });
-        else
-            throw new Error(ERROR_MESSAGES.PASSWORD_REQUIRED);
+    if (password)
+        InputValidator.passwordValidator({ password });
+    else
+        throw new Error(ERROR_MESSAGES.PASSWORD_REQUIRED);
 
-        if (typeof rememberMe !== 'boolean')
-            throw new Error(ERROR_MESSAGES.REMEMBER_ME_INVALID);
+    if (typeof rememberMe !== 'boolean')
+        throw new Error(ERROR_MESSAGES.REMEMBER_ME_INVALID);
 
-        // SERVICE CALL
-        const result = await authService.login(email, password, rememberMe);
+    // SERVICE CALL
+    const result = await authService.login(email, password, rememberMe);
 
-        // Set HTTP-only cookie
-        authHelpers.setAuthCookie(res, result.token, rememberMe);
+    // Set HTTP-only cookie
+    authHelpers.setAuthCookie(res, result.token, rememberMe);
 
-        // Send user info without token
-        res.status(HTTP_STATUS.OK).json({
-            ...authHelpers.formatUserResponse(result.validatedUser),
-            isAuthenticated: true
-        });
-    } catch (err) {
-        res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
-    }
+    // Send user info without token
+    res.status(HTTP_STATUS.OK).json({
+        ...authHelpers.formatUserResponse(result.validatedUser),
+        isAuthenticated: true
+    });
 }
 
 /**
@@ -56,40 +52,35 @@ export const userLogin = async (req, res) => {
  * @param {*} res 
  */
 export const userSignup = async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
+    const { name, email, password } = req.body;
 
-        // VALIDATION
-        if (name)
-            InputValidator.nameValidator(name);
-        else
-            throw new Error(ERROR_MESSAGES.NAME_REQUIRED);
+    // VALIDATION
+    if (name)
+        InputValidator.nameValidator(name);
+    else
+        throw new Error(ERROR_MESSAGES.NAME_REQUIRED);
 
-        if (email)
-            InputValidator.emailValidator(email);
-        else
-            throw new Error(ERROR_MESSAGES.EMAIL_REQUIRED);
+    if (email)
+        InputValidator.emailValidator(email);
+    else
+        throw new Error(ERROR_MESSAGES.EMAIL_REQUIRED);
 
-        if (password)
-            InputValidator.passwordValidator({ password, isEnough: true, isStrong: true });
-        else
-            throw new Error(ERROR_MESSAGES.PASSWORD_REQUIRED);
+    if (password)
+        InputValidator.passwordValidator({ password, isEnough: true, isStrong: true });
+    else
+        throw new Error(ERROR_MESSAGES.PASSWORD_REQUIRED);
 
-        // SERVICE CALL
-        const result = await authService.signup(name, email, password);
+    // SERVICE CALL
+    const result = await authService.signup(name, email, password);
 
-        // Set HTTP-only cookie
-        authHelpers.setAuthCookie(res, result.token);
+    // Set HTTP-only cookie
+    authHelpers.setAuthCookie(res, result.token);
 
-        // Send user info without token
-        res.status(HTTP_STATUS.CREATED).json({
-            ...authHelpers.formatUserResponse(result.newUser),
-            isAuthenticated: true
-        });
-    } catch (err) {
-        console.log("ERROR", err.message);
-        res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
-    }
+    // Send user info without token
+    res.status(HTTP_STATUS.CREATED).json({
+        ...authHelpers.formatUserResponse(result.newUser),
+        isAuthenticated: true
+    });
 }
 
 /**
@@ -113,27 +104,23 @@ export const userLogout = async (req, res) => {
  * @returns 
  */
 export const checkAuth = async (req, res) => {
-    try {
-        // The requireAuth middleware will already verify the token
-        // If we reach this point, the user is authenticated
-        const id = req.user._id;
+    // The requireAuth middleware will already verify the token
+    // If we reach this point, the user is authenticated
+    const id = req.user._id;
 
-        if (!mongoose.Types.ObjectId.isValid(id))
-            return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Object ID is invalid' });
+    if (!mongoose.Types.ObjectId.isValid(id))
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Object ID is invalid' });
 
-        const user = await User.findById(id).select('name email provider');
+    const user = await User.findById(id).select('name email provider');
 
-        if (!user) {
-            return res.status(HTTP_STATUS.NOT_FOUND).json({ isAuthenticated: false });
-        }
-
-        return res.status(HTTP_STATUS.OK).json({
-            ...authHelpers.formatUserResponse(user),
-            isAuthenticated: true
-        });
-    } catch (err) {
-        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ isAuthenticated: false });
+    if (!user) {
+        return res.status(HTTP_STATUS.NOT_FOUND).json({ isAuthenticated: false });
     }
+
+    return res.status(HTTP_STATUS.OK).json({
+        ...authHelpers.formatUserResponse(user),
+        isAuthenticated: true
+    });
 }
 
 /**
@@ -144,50 +131,35 @@ export const checkAuth = async (req, res) => {
  * @param {*} res 
  */
 export const googleAuth = async (req, res) => {
-    try {
-        const { idToken } = req.body;
-        const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
-        const { uid, name, email } = decoded;
+    const { idToken } = req.body;
+    const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
+    const { uid, name, email } = decoded;
 
-        const result = await authService.googleAuth(name, email, uid);
+    const result = await authService.googleAuth(name, email, uid);
 
-        authHelpers.setAuthCookie(res, result.token);
+    authHelpers.setAuthCookie(res, result.token);
 
-        res.status(HTTP_STATUS.OK).json({
-            ...authHelpers.formatUserResponse(result.user),
-            uid: result.user.uid,
-            isAuthenticated: true,
-        });
-    } catch (err) {
-        console.log(err.message);
-        res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message })
-    }
+    res.status(HTTP_STATUS.OK).json({
+        ...authHelpers.formatUserResponse(result.user),
+        uid: result.user.uid,
+        isAuthenticated: true,
+    });
 }
 
 export const forgetPassword = async (req, res) => {
     const { email } = req.body;
 
-    try {
-        InputValidator.emailValidator(email);
+    InputValidator.emailValidator(email);
 
-        await authService.forgetPassword(email);
+    await authService.forgetPassword(email);
 
-        res.status(HTTP_STATUS.OK).json({ message: SUCCESS_MESSAGES.RESET_EMAIL_SENT });
-    } catch (err) {
-        console.error(err);
-        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: err.message || ERROR_MESSAGES.SERVER_ERROR });
-    }
+    res.status(HTTP_STATUS.OK).json({ message: SUCCESS_MESSAGES.RESET_EMAIL_SENT });
 }
 
 export const resetPassword = async (req, res) => {
-    try {
-        const { token, newPassword } = req.body;
+    const { token, newPassword } = req.body;
 
-        await authService.resetPassword(token, newPassword);
+    await authService.resetPassword(token, newPassword);
 
-        res.status(HTTP_STATUS.OK).json({ message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS });
-    } catch (err) {
-        console.error(err);
-        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: err.message || ERROR_MESSAGES.SERVER_ERROR });
-    }
+    res.status(HTTP_STATUS.OK).json({ message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS });
 }

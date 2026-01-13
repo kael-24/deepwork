@@ -5,27 +5,19 @@ import { ERROR_MESSAGES } from '../constants/messages.js';
  * Get all workouts for a user
  */
 export const getAllWorkouts = async (userId) => {
-    try {
-        const workouts = await Workout.getWorkouts(userId);
-        return workouts;
-    } catch (err) {
-        throw new Error(ERROR_MESSAGES.FAILED_TO_GET_WORKOUTS);
-    }
+    const workouts = await Workout.getWorkouts(userId);
+    return workouts;
 };
 
 /**
  * Get single workout by ID
  */
 export const getWorkoutById = async (userId, workoutId) => {
-    try {
         const workout = await Workout.getWorkout(userId, workoutId);
         if (!workout) {
             throw new Error(ERROR_MESSAGES.WORKOUT_NOT_FOUND);
         }
         return workout;
-    } catch (err) {
-        throw new Error(ERROR_MESSAGES.FAILED_TO_GET_WORKOUT);
-    }
 };
 
 /**
@@ -53,12 +45,8 @@ export const createNewWorkout = async (userId, { workoutName, exercises }) => {
         timeType: timeType.toLowerCase(),
     }));
 
-    try {
-        const workout = await Workout.createWorkout(userId, workoutName, normalizedExercises);
-        return workout;
-    } catch (err) {
-        throw new Error(ERROR_MESSAGES.FAILED_TO_CREATE_WORKOUT);
-    }
+    const workout = await Workout.createWorkout(userId, workoutName, normalizedExercises);
+    return workout;
 };
 
 /**
@@ -73,22 +61,14 @@ export const updateWorkout = async (userId, workoutId, { workoutName, exercises 
         throw new Error(ERROR_MESSAGES.INVALID_EXERCISES);
     }
 
-    try {
-        const workout = await Workout.updateWorkout(userId, workoutId, workoutName, exercises);
-        return workout;
-    } catch (err) {
-        throw new Error(ERROR_MESSAGES.FAILED_TO_UPDATE_WORKOUT);
-    }
+    const workout = await Workout.editWorkout(userId, workoutId, workoutName, exercises);
+    return workout;
 };
 
 /**
  * Delete a workout
  */
 export const deleteWorkout = async (userId, workoutId) => {
-    try {
-        const result = await Workout.deleteWorkout(userId, workoutId);
-        return result;
-    } catch (err) {
-        throw new Error(ERROR_MESSAGES.FAILED_TO_DELETE_WORKOUT);
-    }
+    const result = await Workout.deleteWorkout(userId, workoutId);
+    return result;
 };

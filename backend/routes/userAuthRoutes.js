@@ -2,37 +2,38 @@ import express from 'express';
 import { userLogin, userSignup, userLogout, checkAuth, googleAuth, forgetPassword, resetPassword } from '../controllers/userAuthController.js';
 import { userEdit } from '../controllers/userEditController.js';
 import { requireAuth } from '../middleware/requireAuth.js';
+import { asyncHandler } from '../middleware/errorHandler.js';
 const router = express.Router();
 
 //*---------------LOCAL AUTH---------------*//
 // login route
-router.post('/user/login', userLogin);
+router.post('/user/login', asyncHandler(userLogin));
 
 // Signup route
-router.post('/user/signup', userSignup);
+router.post('/user/signup', asyncHandler(userSignup));
 
 // forget-password route
-router.post('/forget-password', forgetPassword);
+router.post('/forget-password', asyncHandler(forgetPassword));
 
 // reset-password route
-router.patch('/reset-password', resetPassword);
+router.patch('/reset-password', asyncHandler(resetPassword));
 
 
 //*---------------GOOGLE AUTH---------------*//
 // google route
-router.post('/user/google', googleAuth);
+router.post('/user/google', asyncHandler(googleAuth));
 
 
 ///*---------------GENERAL---------------*//
 // Logout route
-router.post('/user/logout', userLogout);
+router.post('/user/logout', asyncHandler(userLogout));
 
 // Check authentication status route
-router.get('/user/check-auth', requireAuth, checkAuth);
+router.get('/user/check-auth', requireAuth, asyncHandler(checkAuth));
 
 
 //*---------------EDIT PROFILE---------------*//
 // Edit User route
-router.patch('/user/edit-user', requireAuth, userEdit);
+router.patch('/user/edit-user', requireAuth, asyncHandler(userEdit));
 
 export default router;
