@@ -3,25 +3,25 @@ const router = express.Router();
 const app = express;
 
 import { requireAuth } from '../middleware/requireAuth.js';
-import { getWorkouts, createWorkout, deleteWorkout, editWorkout, getWorkout } from '../controllers/workoutsController.js';
+import { workoutsController } from '../controllers/index.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 
 router.use(requireAuth);
 
 // GET WORKOUTS
-router.get('/', asyncHandler(getWorkouts))
+router.get('/', asyncHandler(workoutsController.getWorkouts))
 
 // GET WORKOUT
-router.get('/:objectId', asyncHandler(getWorkout))
+router.get('/:objectId', asyncHandler(workoutsController.getWorkout))
 
 // ADD WORKOUT
-router.post('/', asyncHandler(createWorkout))
+router.post('/', asyncHandler(workoutsController.createWorkout))
 
 // // UPDATE WORKOUT
-router.patch('/:objectId', asyncHandler(editWorkout))
+router.patch('/:objectId', asyncHandler(workoutsController.editWorkout))
 
 // DELETE WORKOUT
-router.delete('/:objectId', asyncHandler(deleteWorkout))
+router.delete('/:objectId', asyncHandler(workoutsController.deleteWorkout))
 
 
 export default router;

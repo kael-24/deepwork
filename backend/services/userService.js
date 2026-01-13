@@ -1,5 +1,5 @@
 import User from '../models/userModel.js';
-import { ERROR_MESSAGES } from '../constants/messages.js';
+import { ERROR_MESSAGES } from '../constants/index.js';
 
 /**
  * Update user profile (name, password)
