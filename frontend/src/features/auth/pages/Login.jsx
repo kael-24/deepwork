@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import validate from 'validator';
 import { Link } from 'react-router-dom';
-import { useAuthHandler } from "@/hooks/auth/useAuthHandler";
-import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
-import { usePwdResetStore } from "@/store/usePwdResetStore";
+import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler";
+import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth";
+import { usePwdResetStore } from "@/features/auth/store/usePwdResetStore";
 
 const Login = () => {
     const { userLogin, error, isLoading } = useAuthHandler();
     const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
     const { pwdResetMessage, pwdClearMessage } = usePwdResetStore();
-    
+
     const [inputEmail, setInputEmail] = useState('');
     const [inputIsValid, setInputIsValid] = useState('');
     const [inputPassword, setInputPassword] = useState('');
@@ -21,7 +21,7 @@ const Login = () => {
 
         if (!validate.isEmail(value))
             setInputIsValid(false);
-        else 
+        else
             setInputIsValid(true);
     }
 
@@ -36,10 +36,10 @@ const Login = () => {
             const messageInterval = setTimeout(() => pwdClearMessage(), 3000);
             return () => clearTimeout(messageInterval);
         }
-        
+
     }, [pwdResetMessage]);
-    
-    return(
+
+    return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
                 <div className="text-center">
@@ -52,7 +52,7 @@ const Login = () => {
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleLogin}>
                     <div className="rounded-md -space-y-px">
-                        
+
                         {/** Email Address */}
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
@@ -60,7 +60,7 @@ const Login = () => {
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span className="text-gray-500 sm:text-sm">✉️</span>
                                 </div>
-                                
+
                                 {/** Email Address input field */}
                                 <input
                                     id="email"
@@ -68,11 +68,10 @@ const Login = () => {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className={`appearance-none rounded-lg block w-full pl-10 pr-3 py-3 border ${
-                                        inputIsValid === true ? "border-green-500 focus:ring-green-500" : 
-                                        inputIsValid === false ? "border-red-500 focus:ring-red-500" : 
-                                        "border-gray-300 focus:ring-green-500"
-                                    } focus:border-green-500 focus:outline-none focus:ring-2 transition-colors duration-200 sm:text-sm`}
+                                    className={`appearance-none rounded-lg block w-full pl-10 pr-3 py-3 border ${inputIsValid === true ? "border-green-500 focus:ring-green-500" :
+                                            inputIsValid === false ? "border-red-500 focus:ring-red-500" :
+                                                "border-gray-300 focus:ring-green-500"
+                                        } focus:border-green-500 focus:outline-none focus:ring-2 transition-colors duration-200 sm:text-sm`}
                                     placeholder="Your email address"
                                     value={inputEmail}
                                     onChange={(e) => validateEmail(e.target.value)}
@@ -136,7 +135,7 @@ const Login = () => {
                                 Remember me
                             </label>
                         </div>
-                        
+
                         {/** Forget Password page redirect Button*/}
                         <div className="text-sm">
                             <Link to="/forget-password" className="font-medium text-green-600 hover:text-green-500">
@@ -144,15 +143,14 @@ const Login = () => {
                             </Link>
                         </div>
                     </div>
-                    
+
                     {/** Signin Button */}
                     <div>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${
-                                isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                            }`}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                                }`}
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg className="h-5 w-5 text-green-100 group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -163,10 +161,10 @@ const Login = () => {
                         </button>
                     </div>
                 </form>
-                
+
                 {/** Success Message after password reset */}
                 {pwdResetMessage && <p className="text-center text-green-500 text-sm">{pwdResetMessage}</p>}
-                
+
                 {/** Error Message */}
                 {error && <p className="text-center text-red-500 text-sm">{error}</p>}
 
@@ -187,7 +185,7 @@ const Login = () => {
                     disabled={gLoading}
                     className="w-full flex justify-center mt-4 bg-white text-gray-700 border
                                 border-gray-300 rounded-lg py-3 hover:bg-gray-50"
-                    >
+                >
                     <img src="https://developers.google.com/identity/images/g-logo.png"
                         alt="G" className="h-5 w-5 mr-3" />
                     {gLoading ? 'Signing in…' : 'Continue with Google'}

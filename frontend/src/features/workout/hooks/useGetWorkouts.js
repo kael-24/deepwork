@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useWorkoutsStore } from "@/store/useWorkoutsStore";
+import { useWorkoutsStore } from "@/features/workout/store/useWorkoutsStore";
 
 export const useGetWorkouts = () => {
     const { getWorkouts } = useWorkoutsStore();

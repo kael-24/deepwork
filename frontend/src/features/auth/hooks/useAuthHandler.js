@@ -1,20 +1,20 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 export const useAuthHandler = () => {
-    const { setUser, logoutUser } = useAuthStore(); 
+    const { setUser, logoutUser } = useAuthStore();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const userSignup = async (name, email, password) => {
         setIsLoading(true);
         setError(null);
-        
+
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/signup`, { 
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/signup`, {
                 name,
-                email, 
+                email,
                 password
             }, {
                 withCredentials: true // Ensure cookies are sent/received
@@ -22,7 +22,7 @@ export const useAuthHandler = () => {
 
             // Update context with user data
             setUser({
-                name: response.data.name, 
+                name: response.data.name,
                 email: response.data.email,
                 uid: response.data.uid ?? undefined,
                 provider: response.data.provider,
@@ -41,7 +41,7 @@ export const useAuthHandler = () => {
 
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/login`, {
-                email, 
+                email,
                 password,
                 rememberMe
             }, {
@@ -50,7 +50,7 @@ export const useAuthHandler = () => {
 
             // Update context with user data
             setUser({
-                name: response.data.name, 
+                name: response.data.name,
                 email: response.data.email,
                 uid: response.data.uid ?? undefined,
                 provider: response.data.provider,
@@ -65,12 +65,12 @@ export const useAuthHandler = () => {
 
     const userLogout = async () => {
         setIsLoading(true);
-        
+
         try {
             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/logout`, {}, {
                 withCredentials: true
             });
-            
+
             // Clear user from context
             logoutUser();
         } catch (err) {

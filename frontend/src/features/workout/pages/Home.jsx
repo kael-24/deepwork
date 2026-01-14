@@ -1,13 +1,13 @@
 // TODO drag and drop
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useGetWorkouts } from '@/hooks/workout/useGetWorkouts';
-import DnDWrapper from '@/utils/DnDWrapper';
+import { useGetWorkouts } from '@/features/workout/hooks/useGetWorkouts';
+import DnDWrapper from '@/shared/components/DnDWrapper';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from "react-router-dom";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useClickOutside } from "@/utils/useClickOutside";
-import { useDeleteWorkout } from "@/hooks/workout/useDeleteWorkout";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { useClickOutside } from "@/shared/hooks/useClickOutside";
+import { useDeleteWorkout } from "@/features/workout/hooks/useDeleteWorkout";
 
 const WorkoutCard = ({ workout }) => {
     const { setNodeRef, attributes, transform, listeners, transition } = useSortable({ id: workout._id });
@@ -16,15 +16,15 @@ const WorkoutCard = ({ workout }) => {
         transition
     };
     const workoutCardOption = ["Edit", "Delete"];
-    const [isWorkoutOptionOpen, setIsWorkoutOptionOpen] = useState(false); 
+    const [isWorkoutOptionOpen, setIsWorkoutOptionOpen] = useState(false);
     const workoutDropdownRef = useRef(null);
     const { deleteWorkoutMutation } = useDeleteWorkout();
 
     useClickOutside(workoutDropdownRef, () => setIsWorkoutOptionOpen(false));
 
-    return(
-        <div 
-            key={workout._id} 
+    return (
+        <div
+            key={workout._id}
             className='border border-black'
             ref={setNodeRef}
             {...attributes}
@@ -33,24 +33,24 @@ const WorkoutCard = ({ workout }) => {
         >
             <div>{workout.workoutName}</div>
             <div>{workout.exercises?.length || 0}</div>
-            {workout.exercises?.map((exercise, index) => index <= 5 && 
+            {workout.exercises?.map((exercise, index) => index <= 5 &&
                 <div key={index}>
                     {exercise.exerciseName}
                 </div>
             )}
             <div ref={workoutDropdownRef}>
-                <div 
+                <div
                     onClick={() => setIsWorkoutOptionOpen(prev => !prev)}
                 >...
                 </div>
-                {isWorkoutOptionOpen && 
-                    workoutCardOption.map((option, index) => 
-                        <button 
-                            key={index} 
+                {isWorkoutOptionOpen &&
+                    workoutCardOption.map((option, index) =>
+                        <button
+                            key={index}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                if (option === workoutCardOption[1]) 
-                                    deleteWorkoutMutation.mutate(workout._id) 
+                                if (option === workoutCardOption[1])
+                                    deleteWorkoutMutation.mutate(workout._id)
                             }}
                             disabled={deleteWorkoutMutation.isLoading}
                         >
@@ -59,10 +59,10 @@ const WorkoutCard = ({ workout }) => {
                     )
                 }
             </div>
-            
+
             {deleteWorkoutMutation.isError &&
                 <div>
-                    Error: {deleteWorkoutMutation.error?.response?.data.error || deleteWorkoutMutation.error.message} 
+                    Error: {deleteWorkoutMutation.error?.response?.data.error || deleteWorkoutMutation.error.message}
                 </div>
             }
         </div>
@@ -73,7 +73,7 @@ const Home = () => {
     const { data, isLoading, isError, error } = useGetWorkouts();
     const [workouts, setWorkouts] = useState([]);
     const { user } = useAuthStore();
-    
+
     useEffect(() => {
         if (data) {
             setWorkouts(data);
@@ -98,7 +98,7 @@ const Home = () => {
                         </div>
                     </DnDWrapper>
                 </div>
-            )} 
+            )}
             <Link to="/create-workout">+</Link>
         </div>
     );

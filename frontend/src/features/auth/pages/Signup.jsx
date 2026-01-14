@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import validate from 'validator'
 import { Link } from 'react-router-dom'
-import { useAuthHandler } from "@/hooks/auth/useAuthHandler"
-import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth"
-import { passwordValidator } from "@/utils/auth/inputValidator"
+import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler"
+import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth"
+import { passwordValidator } from "@/features/auth/utils/inputValidator"
 
 const Signup = () => {
     const { userSignup, error, isLoading } = useAuthHandler();
@@ -19,10 +19,10 @@ const Signup = () => {
     const [emailError, setEmailError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
     const [confirmPasswordError, setConfirmPasswordError] = useState(null);
-    
+
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    
+
     /**
      * ----------------------------------------
      * VALIDATE NAME INPUT
@@ -32,7 +32,7 @@ const Signup = () => {
     const validateName = (name) => {
         setInputName(name);
         setNameError(null);
-        
+
         if (name?.length === 1)
             setNameError('Name is too short');
     }
@@ -52,7 +52,7 @@ const Signup = () => {
         else if (!validate.isEmail(email))
             setEmailError('Invalid Email');
     }
-    
+
     /**
      * ---------------------------------------------------------
      * Verify passwords (password and confirm)
@@ -61,10 +61,10 @@ const Signup = () => {
     useEffect(() => {
         setPasswordError(null);
         setConfirmPasswordError(null);
-        
+
         if (inputPassword) {
             const result = passwordValidator({ password: inputPassword, isEnough: true, isStrong: true });
-            if (result) 
+            if (result)
                 setPasswordError(result);
 
             if (inputConfirmPassword && inputConfirmPassword !== inputPassword) {
@@ -80,22 +80,22 @@ const Signup = () => {
      */
     const handleSignup = async (e) => {
         e.preventDefault();
-        
+
         // Check for validation errors first
         if (nameError || emailError || passwordError || confirmPasswordError) {
             return;
         }
-        
+
         // Check if fields are empty
         if (!inputName || !inputEmail || !inputPassword || !inputConfirmPassword) {
             return;
         }
-        
+
         // All validation passed, call the signup function
         await userSignup(inputName, inputEmail, inputPassword);
     }
 
-    return(
+    return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-xl shadow-lg">
                 <div>
@@ -106,7 +106,7 @@ const Signup = () => {
                         Start your fitness journey with us
                     </p>
                 </div>
-                
+
                 <form className="mt-8 space-y-5" onSubmit={handleSignup} method="POST">
 
                     {/* Name field */}
@@ -263,10 +263,10 @@ const Signup = () => {
                             I agree to the <a href="#" className="text-green-600 hover:text-green-500">Terms of Service</a> and <a href="#" className="text-green-600 hover:text-green-500">Privacy Policy</a>
                         </label>
                     </div>
-                    
+
                     {/** Signup Error message */}
                     {error && <p className="text-center text-red-500 text-sm">{error}</p>}
-                    
+
                     {/** Create Account Button */}
                     <div>
                         <button
@@ -288,8 +288,8 @@ const Signup = () => {
                 <div className="text-center">
                     <p className="text-sm text-gray-600">
                         Already have an account?{' '}
-                        <Link 
-                            to="/login" 
+                        <Link
+                            to="/login"
                             className="font-medium text-green-600 hover:text-green-500"
                         >
                             Sign in
@@ -304,7 +304,7 @@ const Signup = () => {
                     disabled={gLoading}
                     className="w-full flex justify-center mt-4 bg-white text-gray-700 border
                                 border-gray-300 rounded-lg py-3 hover:bg-gray-50"
-                    >
+                >
                     <img src="https://developers.google.com/identity/images/g-logo.png"
                         alt="G" className="h-5 w-5 mr-3" />
                     {gLoading ? 'Signing in…' : 'Continue with Google'}

@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
-import useForgetPassword from "@/hooks/auth/useForgetPassword"; 
-import { usePwdResetStore } from "@/store/usePwdResetStore";
-import { passwordValidator } from "@/utils/auth/inputValidator";
+import useForgetPassword from "@/features/auth/hooks/useForgetPassword";
+import { usePwdResetStore } from "@/features/auth/store/usePwdResetStore";
+import { passwordValidator } from "@/features/auth/utils/inputValidator";
 
 const ResetPassword = () => {
     const {
@@ -30,7 +30,7 @@ const ResetPassword = () => {
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
-        
+
         if (!token) {
             setClientError('Token required');
             return;
@@ -40,7 +40,7 @@ const ResetPassword = () => {
             setClientError('Password fields should not be empty');
             return;
         }
-        
+
         await resetPassword({ token, newPassword }, {
             onSuccess: () => {
                 pwdResetSuccess();
@@ -56,13 +56,13 @@ const ResetPassword = () => {
             if (result) {
                 setClientError(result);
                 return;
-            } 
+            }
             if (confirmPassword && confirmPassword !== newPassword)
                 setClientError("Passwords does not match");
         }
     }, [newPassword, confirmPassword])
 
-    return(
+    return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
                 <div className="text-center">
@@ -73,11 +73,11 @@ const ResetPassword = () => {
                         Enter your new password to continue
                     </p>
                 </div>
-                
+
                 <form className="mt-8 space-y-6" onSubmit={handleUpdatePassword}>
                     {/** Password */}
                     <div className="space-y-4">
-                        
+
                         {/** New password */}
                         <div>
                             <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-1">
@@ -113,7 +113,7 @@ const ResetPassword = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/** Confirm Password */}
                         <div>
                             <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
@@ -162,9 +162,8 @@ const ResetPassword = () => {
                         <button
                             type="submit"
                             disabled={isPending}
-                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${
-                                isPending ? 'opacity-70 cursor-not-allowed' : ''
-                            }`}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${isPending ? 'opacity-70 cursor-not-allowed' : ''
+                                }`}
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg className="h-5 w-5 text-green-100 group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -175,7 +174,7 @@ const ResetPassword = () => {
                         </button>
                     </div>
                 </form>
-                
+
                 {/** Signin page redirect button */}
                 <div className="text-center">
                     <p className="text-sm text-gray-600">

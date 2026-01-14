@@ -1,18 +1,18 @@
-import { googlePopupLogin, firebaseLogout } from "@/utils/auth/firebase";
+import { googlePopupLogin, firebaseLogout } from "@/features/auth/utils/firebase";
 import { useState } from "react"
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import axios from "axios";
 
 export const useGoogleAuth = () => {
-    const { setUser, logoutUser} = useAuthStore();
+    const { setUser, logoutUser } = useAuthStore();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
 
     const loginWithGoogle = async () => {
         setError(null);
-        setLoading(true); 
-        
+        setLoading(true);
+
         try {
             const result = await googlePopupLogin();
             const idToken = await result.user.getIdToken();
@@ -29,7 +29,7 @@ export const useGoogleAuth = () => {
                 provider: response.data.provider,
                 isAuthenticated: true
             })
-        } catch (err) { 
+        } catch (err) {
             console.error(err);
             setError(`${err?.response?.data?.error} -- ${err.message}`);
         } finally {
@@ -45,5 +45,5 @@ export const useGoogleAuth = () => {
         logoutUser();
     }
 
-    return {loginWithGoogle, logoutGoogle, error, loading}
+    return { loginWithGoogle, logoutGoogle, error, loading }
 };

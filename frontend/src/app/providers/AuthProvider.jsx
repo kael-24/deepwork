@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { useEffect } from 'react';
 
 const AuthProvider = ({ children }) => {
-    const {user, setUser, logoutUser, setIsAuthLoading} = useAuthStore();
+    const { user, setUser, logoutUser, setIsAuthLoading } = useAuthStore();
 
     useEffect(() => {
         const checkAuthStatus = async () => {
@@ -14,17 +14,17 @@ const AuthProvider = ({ children }) => {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/check-auth`, {
                     withCredentials: true // Important to send cookies
                 });
-                
+
 
                 if (response.data.isAuthenticated) {
-                    setUser({ 
+                    setUser({
                         name: response.data.name,
                         email: response.data.email,
                         uid: response.data.uid ?? undefined,
                         provider: response.data.provider,
                         isAuthenticated: true
                     })
-                    
+
                 }
             } catch (error) {
                 console.log('Error checking auth status: ', error)

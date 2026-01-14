@@ -1,8 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import '@/styles/index.css'
-import App from '@/routes/App.jsx'
-import AuthProvider from '@/provider/AuthProvider'
+import '@/shared/styles/index.css'
+import App from '@/app/App'
+import AuthProvider from '@/app/providers/AuthProvider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();

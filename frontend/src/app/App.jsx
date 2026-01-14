@@ -1,23 +1,23 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
-import Home from "@/pages/Home"
-import Navbar from '@/components/Navbar';
+import Home from "@/features/workout/pages/Home"
+import Navbar from '@/shared/components/Navbar';
 
-import Signup from '@/pages/auth/Signup';
-import Login from '@/pages/auth/Login';
-import ForgetPassword from '@/pages/auth/ForgetPassword';
-import ResetPassword from '@/pages/auth/ResetPassword';
-import ProfileSettings from '@/pages/auth/ProfileSettings';
+import Signup from '@/features/auth/pages/Signup';
+import Login from '@/features/auth/pages/Login';
+import ForgetPassword from '@/features/auth/pages/ForgetPassword';
+import ResetPassword from '@/features/auth/pages/ResetPassword';
+import ProfileSettings from '@/features/auth/pages/ProfileSettings';
 
-import CreateWorkout from '@/pages/workout/CreateWorkout';
+import CreateWorkout from '@/features/workout/pages/CreateWorkout';
 
 function AuthRoutes({ user, excludeNavbar }) {
-  return(
+  return (
     <>
       {!excludeNavbar && <Navbar />}
       <Routes>
-        <Route 
+        <Route
           path='/'
           element={<Home />}
         />
@@ -29,15 +29,15 @@ function AuthRoutes({ user, excludeNavbar }) {
           path='/login'
           element={!user ? <Login /> : <Navigate to='/' />}
         />
-        <Route 
+        <Route
           path='/forget-password'
           element={!user ? <ForgetPassword /> : <Navigate to='/' />}
         />
-        <Route 
+        <Route
           path='/reset-password'
           element={!user ? <ResetPassword /> : <Navigate to='/' />}
         />
-        <Route 
+        <Route
           path='/profile-settings'
           element={user ? <ProfileSettings /> : <Navigate to='/login' />}
         />
@@ -47,11 +47,11 @@ function AuthRoutes({ user, excludeNavbar }) {
 }
 
 function WorkoutRoutes({ user }) {
-  return(
+  return (
     <Routes>
       <Route
         path='/create-workout'
-        element={user ? <CreateWorkout /> : <Navigate to ='/login' />}
+        element={user ? <CreateWorkout /> : <Navigate to='/login' />}
       />
     </Routes>
   );
@@ -64,19 +64,19 @@ function AppRoutes() {
   const excludeNavbarPaths = ['/forget-password', '/reset-password'];
   const excludeNavbar = excludeNavbarPaths.includes(location.pathname);
 
-  if (isAuthLoading) 
+  if (isAuthLoading)
     return null;
-  
-  return(
+
+  return (
     <>
-      <AuthRoutes user={user} excludeNavbar={excludeNavbar}/>
-      <WorkoutRoutes user={user} excludeNavbar={excludeNavbar}/>
+      <AuthRoutes user={user} excludeNavbar={excludeNavbar} />
+      <WorkoutRoutes user={user} excludeNavbar={excludeNavbar} />
     </>
   )
 }
 
-function App(){
-  return(
+function App() {
+  return (
     <BrowserRouter>
       <AppRoutes />
     </BrowserRouter>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import validate from 'validator';
 import { Link } from 'react-router-dom';
-import useForgetPassword from "@/hooks/auth/useForgetPassword";
+import useForgetPassword from "@/features/auth/hooks/useForgetPassword";
 
 const ForgetPassword = () => {
     const {
@@ -20,15 +20,15 @@ const ForgetPassword = () => {
         e.preventDefault();
         setClientError(null);
 
-        if(!validate.isEmail(email)) {
+        if (!validate.isEmail(email)) {
             setClientError("Your email is invalid");
             return;
         }
-    
+
         forgetPassword(email);
     }
 
-    return(
+    return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
                 <div className="text-center">
@@ -39,7 +39,7 @@ const ForgetPassword = () => {
                         Enter your email to receive a reset link
                     </p>
                 </div>
-                
+
                 <form className="mt-8 space-y-6" onSubmit={handleForgetPassword}>
                     {/** Email Address */}
                     <div>
@@ -74,9 +74,8 @@ const ForgetPassword = () => {
                         <button
                             type="submit"
                             disabled={isPending}
-                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${
-                                isPending ? 'opacity-70 cursor-not-allowed' : ''
-                            }`}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${isPending ? 'opacity-70 cursor-not-allowed' : ''
+                                }`}
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg className="h-5 w-5 text-green-100 group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -88,7 +87,7 @@ const ForgetPassword = () => {
                         </button>
                     </div>
                 </form>
-                
+
                 {/** Singin page redirect button */}
                 <div className="text-center">
                     <p className="text-sm text-gray-600">

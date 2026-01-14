@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import { useAuthStore } from "@/store/useAuthStore";
-import { nameValidator, passwordValidator } from "@/utils/auth/inputValidator";
-import useEditUser from "@/hooks/auth/useEditUser";
-import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
-import { useAuthHandler } from "@/hooks/auth/useAuthHandler";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { nameValidator, passwordValidator } from "@/features/auth/utils/inputValidator";
+import useEditUser from "@/features/auth/hooks/useEditUser";
+import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth";
+import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler";
 
-const ProfileSettings = () => { 
+const ProfileSettings = () => {
     const { user, setUser } = useAuthStore();
     const { logoutGoogle } = useGoogleAuth();
-    const { userLogout } = useAuthHandler(); 
+    const { userLogout } = useAuthHandler();
 
-    const { 
+    const {
         editUserMutation: {
             mutate: editUser,
             reset,
@@ -19,7 +19,7 @@ const ProfileSettings = () => {
             isError,
             error,
             isSuccess,
-        } 
+        }
     } = useEditUser();
 
 
@@ -40,7 +40,7 @@ const ProfileSettings = () => {
     const [confirmPasswordError, setConfirmPasswordError] = useState(null);
 
     const [currentEdit, setCurrentEdit] = useState(null);
-    
+
     /**
      * ---------------------------------------------------------
      * NAME CHANGE HANDLER
@@ -50,7 +50,7 @@ const ProfileSettings = () => {
         reset();
         await editUser({ name }, {
             onSuccess: (data) => {
-                setUser({ 
+                setUser({
                     name: data.name,
                 })
                 setCurrentEdit(null);
@@ -76,7 +76,7 @@ const ProfileSettings = () => {
         userLogout();
         if (!isLocalUser)
             logoutGoogle();
-    }   
+    }
 
     /**
      * ---------------------------------------------------------
@@ -107,19 +107,19 @@ const ProfileSettings = () => {
     }, [newPassword, isLocalUser])
 
     useEffect(() => {
-        if (isLocalUser && confirmPassword && confirmPassword !== newPassword) 
+        if (isLocalUser && confirmPassword && confirmPassword !== newPassword)
             setConfirmPasswordError('Password do not match');
-        else 
+        else
             setConfirmPasswordError(null);
-    },[isLocalUser, confirmPassword, newPassword]);
+    }, [isLocalUser, confirmPassword, newPassword]);
 
-    return(
+    return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-2xl space-y-8 bg-white p-8 rounded-xl shadow-lg">
                 <div className="flex items-center justify-between">
-                
-                    {/** Back to Home button */}    
-                    <Link 
+
+                    {/** Back to Home button */}
+                    <Link
                         to='/'
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition-colors"
                         aria-label="Go back"
@@ -179,7 +179,7 @@ const ProfileSettings = () => {
 
                             {/** Name input field */}
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">👤</div>    
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">👤</div>
                                 <input
                                     type="text"
                                     value={name}
@@ -236,7 +236,7 @@ const ProfileSettings = () => {
                                 </button>
                             )}
                         </div>
-                        
+
                         {/** Edit-mode password feature */}
                         {currentEdit === 'password' && (
                             <div className="space-y-4">
@@ -314,7 +314,7 @@ const ProfileSettings = () => {
                                     {/** Confirm Password Error Message*/}
                                     {confirmPasswordError && <p className="mt-1 text-xs text-red-500">{confirmPasswordError}</p>}
                                 </div>
-                                
+
                                 <div className="flex items-center gap-3">
                                     {/** Save password change button */}
                                     <button

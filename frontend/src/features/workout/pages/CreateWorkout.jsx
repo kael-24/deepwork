@@ -1,18 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
-import ExerciseCard from "@/components/workout/ExerciseCard";
-import DnDWrapper from "@/utils/DnDWrapper";
-import DialogBox from "@/utils/DialogBox";
-import { useSaveWorkout } from "@/hooks/workout/useSaveWorkout";
+import ExerciseCard from "@/features/workout/components/ExerciseCard";
+import DnDWrapper from "@/shared/components/DnDWrapper";
+import DialogBox from "@/shared/components/DialogBox";
+import { useSaveWorkout } from "@/features/workout/hooks/useSaveWorkout";
 import { useNavigate } from 'react-router-dom';
 
-const CreateWorkout = () => {    
-    const { 
+const CreateWorkout = () => {
+    const {
         saveWorkoutMutation: {
             mutate: saveWorkout,
             isError,
             error,
-    }} = useSaveWorkout();
+        } } = useSaveWorkout();
 
     const navigate = useNavigate();
 
@@ -20,20 +20,20 @@ const CreateWorkout = () => {
     const [exercises, setExercises] = useState([]);
     const [dialogBoxOpen, setIsDialogBoxOpen] = useState(false);
     const [clientError, setClientError] = useState(null);
-    
+
     const [addExerciseMenuOpen, setAddExerciseMenuOpen] = useState(false);
     const [addExerciseBetween, setAddExerciseBetween] = useState(null);
-    
+
     const exerciseTypeOptions = ["Prepare", "Work", "Rest", "RestBetweenSets", "Cooldown"];
     const defaultExercises = [
-        {id: uuidv4(), exerciseType: "Prepare", exerciseName: "Prepare yourself", timeType: "Timer", timer: '60', reps: 0},
-        {id: uuidv4(), exerciseType: "Work", exerciseName: "Here lies the workout", timeType: "Timer", timer: '120', reps: 12},
-        {id: uuidv4(), exerciseType: "Cooldown", exerciseName: "Stretch yourself", timeType: "Timer", timer: '180', reps: 0}
+        { id: uuidv4(), exerciseType: "Prepare", exerciseName: "Prepare yourself", timeType: "Timer", timer: '60', reps: 0 },
+        { id: uuidv4(), exerciseType: "Work", exerciseName: "Here lies the workout", timeType: "Timer", timer: '120', reps: 12 },
+        { id: uuidv4(), exerciseType: "Cooldown", exerciseName: "Stretch yourself", timeType: "Timer", timer: '180', reps: 0 }
     ]
 
     const updateExercise = (id, update) => {
         setExercises(prev =>
-            prev.map((exercise) => 
+            prev.map((exercise) =>
                 exercise.id === id
                     ? { ...exercise, ...update }
                     : exercise
@@ -44,27 +44,27 @@ const CreateWorkout = () => {
     const handleCreateExercise = (option) => {
         let arr = {};
         if (option === "Prepare")
-            arr = {exerciseType: "Prepare", exerciseName: "", timeType: "None", timer: '', reps: 0};
+            arr = { exerciseType: "Prepare", exerciseName: "", timeType: "None", timer: '', reps: 0 };
         else if (option === "Work")
-            arr = {exerciseType: "Work", exerciseName: "", timeType: "Timer", timer: '', reps: 0};
+            arr = { exerciseType: "Work", exerciseName: "", timeType: "Timer", timer: '', reps: 0 };
         else if (option === "Rest")
-            arr = {exerciseType: "Rest", exerciseName: "", timeType: "Timer", timer: '', reps: 0};
+            arr = { exerciseType: "Rest", exerciseName: "", timeType: "Timer", timer: '', reps: 0 };
         else if (option === "RestBetweenSets")
-            arr = {exerciseType: "RestBetweenSets", exerciseName: "", timeType: "Timer", timer: '', reps: 0};
+            arr = { exerciseType: "RestBetweenSets", exerciseName: "", timeType: "Timer", timer: '', reps: 0 };
         else if (option === "Cooldown")
-            arr = {exerciseType: "Cooldown", exerciseName: "", timeType: "Timer", timer: '', reps: 0};
+            arr = { exerciseType: "Cooldown", exerciseName: "", timeType: "Timer", timer: '', reps: 0 };
 
-        arr = {id: uuidv4(), ...arr}
+        arr = { id: uuidv4(), ...arr }
 
-        if (addExerciseBetween !== null) 
+        if (addExerciseBetween !== null)
             setExercises(prev => {
-                            const newArr = [...prev];
-                            newArr.splice(addExerciseBetween[0] === "before" 
-                                ? addExerciseBetween[1] 
-                                : addExerciseBetween[1] + 1, 0, arr);
-                            return newArr;
-                            })
-        else 
+                const newArr = [...prev];
+                newArr.splice(addExerciseBetween[0] === "before"
+                    ? addExerciseBetween[1]
+                    : addExerciseBetween[1] + 1, 0, arr);
+                return newArr;
+            })
+        else
             setExercises(prev => [...prev, arr]);
         setAddExerciseMenuOpen(false);
     }
@@ -102,7 +102,7 @@ const CreateWorkout = () => {
 
         await saveWorkout({ workoutName, exercises: finalExercises }, {
             onSuccess: () => {
-                setExercises(defaultExercises); 
+                setExercises(defaultExercises);
                 setWorkoutName("");
                 navigate("/");
             },
@@ -111,14 +111,14 @@ const CreateWorkout = () => {
             }
         });
     }
-    
+
     // recovers snapshot from local storage
     useEffect(() => {
         try {
             const draftWorkout = JSON.parse(localStorage.getItem("draftWorkout"));
 
             if (!draftWorkout || Object.keys(draftWorkout).length === 0) {
-                localStorage.setItem("draftWorkout", JSON.stringify({workoutName, exercises: defaultExercises}));
+                localStorage.setItem("draftWorkout", JSON.stringify({ workoutName, exercises: defaultExercises }));
                 setWorkoutName("");
                 setExercises(defaultExercises);
             } else {
@@ -128,7 +128,7 @@ const CreateWorkout = () => {
         } catch (error) {
             // If localStorage data is corrupted, reset it
             console.error("Error parsing draftWorkout from localStorage:", error);
-            localStorage.setItem("draftWorkout", JSON.stringify({workoutName, exercises: defaultExercises}));
+            localStorage.setItem("draftWorkout", JSON.stringify({ workoutName, exercises: defaultExercises }));
             setWorkoutName("");
             setExercises(defaultExercises);
         }
@@ -137,11 +137,11 @@ const CreateWorkout = () => {
     // reflects changes to the local storage
     useEffect(() => {
         if (exercises.length !== 0)
-            localStorage.setItem("draftWorkout", JSON.stringify({workoutName, exercises}));
+            localStorage.setItem("draftWorkout", JSON.stringify({ workoutName, exercises }));
     }, [workoutName, exercises]);
 
 
-    return(
+    return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8 px-4 sm:px-6 lg:px-8 relative">
             <div className="max-w-4xl mx-auto">
                 {/* Header Section */}
@@ -172,7 +172,7 @@ const CreateWorkout = () => {
                         />
                     </div>
                 </div>
-                
+
                 {/* Exercises Section */}
                 <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
                     <div className="flex items-center justify-between mb-4">
@@ -184,13 +184,13 @@ const CreateWorkout = () => {
                         {exercises.length > 0 ? (
                             <div className="space-y-3">
                                 {exercises.map((exercise, index) => (
-                                    <ExerciseCard 
+                                    <ExerciseCard
                                         key={exercise.id}
-                                        id={exercise.id} 
-                                        exercise={exercise} 
+                                        id={exercise.id}
+                                        exercise={exercise}
                                         sequence={index + 1}
                                         addExercise={(direction) => {
-                                            setAddExerciseMenuOpen(true); 
+                                            setAddExerciseMenuOpen(true);
                                             setAddExerciseBetween([direction, index]);
                                         }}
                                         updateExercise={(update) => updateExercise(exercise.id, update)}
@@ -216,11 +216,11 @@ const CreateWorkout = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
                         className="flex-1 sm:flex-none px-8 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200 shadow-md hover:shadow-lg"
-                        onClick={() => {setExercises(defaultExercises); setWorkoutName(""); navigate("/")}}
+                        onClick={() => { setExercises(defaultExercises); setWorkoutName(""); navigate("/") }}
                     >
                         Cancel
                     </button>
-                    <button 
+                    <button
                         className="flex-1 sm:flex-none px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
                         onClick={handleSaveWorkout}
                         disabled={exercises.length === 0}
@@ -233,8 +233,8 @@ const CreateWorkout = () => {
                 </div>
 
                 {/* Error Dialog */}
-                {dialogBoxOpen && (clientError || (isError && error)) && 
-                    <DialogBox 
+                {dialogBoxOpen && (clientError || (isError && error)) &&
+                    <DialogBox
                         title="Error"
                         message={clientError || error.response?.data?.error || error.message || "Something went wrong"}
                         onCancel={() => setIsDialogBoxOpen(false)}

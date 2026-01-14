@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { useAuthStore } from '@/store/useAuthStore'
-import { useAuthHandler } from '@/hooks/auth/useAuthHandler'
-import { useGoogleAuth } from '@/hooks/auth/useGoogleAuth'
+import { useAuthStore } from '@/features/auth/store/useAuthStore'
+import { useAuthHandler } from '@/features/auth/hooks/useAuthHandler'
+import { useGoogleAuth } from '@/features/auth/hooks/useGoogleAuth'
 
 const Navbar = () => {
     const { user } = useAuthStore();
@@ -22,7 +22,7 @@ const Navbar = () => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (isMenuOpen && sidebarRef.current && !sidebarRef.current.contains(event.target) && burgerRef.current &&
-        !burgerRef.current.contains(event.target)) {
+                !burgerRef.current.contains(event.target)) {
                 closeMenu();
             }
         };
@@ -33,7 +33,7 @@ const Navbar = () => {
         };
     }, [isMenuOpen]);
 
-    
+
     /**
      * ---------------------------------------------------------
      * HANDLES LOGOUT FEATURE
@@ -54,7 +54,7 @@ const Navbar = () => {
     const closeMenu = () => {
         setIsMenuOpen(false);
     }
-    
+
     return (
         <>
             <nav className="bg-gradient-to-r from-green-400 to-emerald-500 shadow-lg fixed top-0 left-0 right-0 z-50">
@@ -62,7 +62,7 @@ const Navbar = () => {
                     <div className="flex items-center justify-between h-16 w-full">
                         {/* Left group: burger + logo */}
                         <div className="flex items-center min-w-0">
-                            <button 
+                            <button
                                 ref={burgerRef}
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 className="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-green-500 focus:outline-none transition-colors duration-200 ml-2"
@@ -70,7 +70,7 @@ const Navbar = () => {
                                 {isMenuOpen ? (
                                     // ← Left arrow
                                     <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                                     </svg>
                                 ) : (
                                     // ☰ Burger menu
@@ -121,15 +121,15 @@ const Navbar = () => {
             {isMenuOpen && (
                 <div className="fixed left-0 right-0 top-16 bottom-0 z-50 flex">
                     {/* Sidebar */}
-                    <div 
+                    <div
                         className="relative w-80 max-w-[50vw] bg-white shadow-xl transform transition-transform duration-300 ease-in-out"
                         ref={sidebarRef}
-                        >
+                    >
                         <div className="h-full flex flex-col">
                             <div className="flex-1 p-6 space-y-4">
                                 {/** Home Button */}
-                                <Link 
-                                    to="/" 
+                                <Link
+                                    to="/"
                                     onClick={closeMenu}
                                     className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
                                 >
@@ -145,8 +145,8 @@ const Navbar = () => {
                                             <p className="text-sm text-gray-500 mb-3 px-3">Account</p>
                                         </div>
                                         {/** Signup Button */}
-                                        <Link 
-                                            to="/signup" 
+                                        <Link
+                                            to="/signup"
                                             onClick={closeMenu}
                                             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-green-50 transition-colors duration-200 border border-green-200"
                                         >
@@ -156,8 +156,8 @@ const Navbar = () => {
                                             <span className="font-medium text-green-700">Sign Up</span>
                                         </Link>
                                         {/** Login Button */}
-                                        <Link 
-                                            to="/login" 
+                                        <Link
+                                            to="/login"
                                             onClick={closeMenu}
                                             className="flex items-center space-x-3 p-3 rounded-lg bg-green-600 hover:bg-green-700 transition-colors duration-200 text-white"
                                         >
@@ -169,31 +169,31 @@ const Navbar = () => {
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
-                                    {/** Profile Setting Redirect Button */}
-                                    <Link 
-                                        to="/profile-settings" 
-                                        onClick={closeMenu}
-                                        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                                        {/** Profile Setting Redirect Button */}
+                                        <Link
+                                            to="/profile-settings"
+                                            onClick={closeMenu}
+                                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
                                         >
                                             <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                             </svg>
                                             <span className="font-medium">Profile Settings</span>
-                                    </Link>
+                                        </Link>
 
-                                    {/** Log out Button */}
-                                    <button 
-                                        onClick={() => {
-                                            handleLogout();
-                                            closeMenu();
-                                        }}
-                                        className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-left"
-                                    >
-                                        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                        </svg>
-                                        <span className="font-medium text-red-600">Logout</span>
-                                    </button>
+                                        {/** Log out Button */}
+                                        <button
+                                            onClick={() => {
+                                                handleLogout();
+                                                closeMenu();
+                                            }}
+                                            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-left"
+                                        >
+                                            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            </svg>
+                                            <span className="font-medium text-red-600">Logout</span>
+                                        </button>
                                     </div>
                                 )}
                             </div>
