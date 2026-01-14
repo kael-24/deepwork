@@ -1,7 +1,8 @@
+import { apiClient } from "@/shared/api/client";
 import { googlePopupLogin, firebaseLogout } from "@/features/auth/utils/firebase";
 import { useState } from "react"
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import axios from "axios";
+
 
 export const useGoogleAuth = () => {
     const { setUser, logoutUser } = useAuthStore();
@@ -18,9 +19,7 @@ export const useGoogleAuth = () => {
             const idToken = await result.user.getIdToken();
 
             // send token to the backend
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/google`, { idToken }, {
-                withCredentials: true
-            });
+            const response = await apiClient.post(`/api/auth/user/google`, { idToken });
 
             setUser({
                 name: response.data.name,
@@ -39,9 +38,7 @@ export const useGoogleAuth = () => {
 
     const logoutGoogle = async () => {
         await firebaseLogout();
-        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/logout`, null, {
-            withCredentials: true
-        })
+        await apiClient.post(`/api/auth/user/logout`, null)
         logoutUser();
     }
 

@@ -1,14 +1,12 @@
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
-import axios from 'axios';
+import { apiClient } from "@/shared/api/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useDeleteWorkout = () => {
     const queryClient = useQueryClient(); // get React Query's cache manager
     
     const deleteWorkoutMutation = useMutation({
         mutationFn: async (objectId) => {
-            const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/workouts/${objectId}`, {
-                withCredentials: true
-            });
+            const response = await apiClient.delete(`/api/workouts/${objectId}`);
             return response;
         },
         onSuccess: () => {

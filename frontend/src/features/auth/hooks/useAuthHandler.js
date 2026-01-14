@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { apiClient } from '@/shared/api/client';
 import { useState } from 'react'
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
@@ -12,13 +12,7 @@ export const useAuthHandler = () => {
         setError(null);
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/signup`, {
-                name,
-                email,
-                password
-            }, {
-                withCredentials: true // Ensure cookies are sent/received
-            });
+            const response = await apiClient(`/api/auth/user/signup`, { name, email, password });
 
             // Update context with user data
             setUser({
@@ -40,13 +34,7 @@ export const useAuthHandler = () => {
         setError(null);
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/login`, {
-                email,
-                password,
-                rememberMe
-            }, {
-                withCredentials: true // Ensure cookies are sent/received
-            });
+            const response = await apiClient.post(`/api/auth/user/login`, { email, password, rememberMe });
 
             // Update context with user data
             setUser({
@@ -67,9 +55,7 @@ export const useAuthHandler = () => {
         setIsLoading(true);
 
         try {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/logout`, {}, {
-                withCredentials: true
-            });
+            await apiClient.post(`/api/auth/user/logout`);
 
             // Clear user from context
             logoutUser();

@@ -46,6 +46,7 @@ backend/.env.*.local
 *.njsproj
 *.sln
 *.sw?
+/md
 
 
 # ---------------------

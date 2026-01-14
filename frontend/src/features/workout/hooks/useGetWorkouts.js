@@ -1,5 +1,5 @@
+import { apiClient } from "@/shared/api/client";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useWorkoutsStore } from "@/features/workout/store/useWorkoutsStore";
 
 export const useGetWorkouts = () => {
@@ -8,9 +8,7 @@ export const useGetWorkouts = () => {
     return useQuery({
         queryKey: ["workouts"],
         queryFn: async () => {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/workouts/`, {
-                withCredentials: true,
-            });
+            const res = await apiClient.get(`/api/workouts/`);
             getWorkouts(res.data);
             return res.data;
         },

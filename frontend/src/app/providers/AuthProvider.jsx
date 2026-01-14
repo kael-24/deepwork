@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { apiClient } from 'shared/api/client';
 
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { useEffect } from 'react';
@@ -11,9 +11,7 @@ const AuthProvider = ({ children }) => {
             setIsAuthLoading(true);
             try {
                 // Make a request to an endpoint that checks if the cookie is valid
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/check-auth`, {
-                    withCredentials: true // Important to send cookies
-                });
+                const response = await apiClient.get(`/api/auth/user/check-auth`);
 
 
                 if (response.data.isAuthenticated) {

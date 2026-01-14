@@ -1,11 +1,11 @@
-import axios from "axios"
+import { apiClient } from '@/shared/api/client';
 import { useMutation } from '@tanstack/react-query';
 
 const useForgetPassword = () => {
 
     const forgetPasswordMutation = useMutation({
         mutationFn: async (email) => {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/forget-password`, { email });
+            await apiClient.post(`/api/auth/forget-password`, { email });
             // still needed so that mutate can know what to output
             return true;
         }
@@ -13,7 +13,7 @@ const useForgetPassword = () => {
 
     const resetPasswordMutation = useMutation({
         mutationFn: async ({ token, newPassword }) => {
-            await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/reset-password`, { token, newPassword });
+            await apiClient.patch(`/api/auth/reset-password`, { token, newPassword });
             return true;
         }
     });
