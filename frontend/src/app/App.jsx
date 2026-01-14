@@ -1,34 +1,32 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
-import Home from "@/features/workout/pages/Home"
-import Navbar from '@/shared/components/Navbar';
+// layout
+import MainLayout from '@/App/layouts/MainLayout';
 
+// auth pages
+import Home from "@/features/workout/pages/Home"
 import Signup from '@/features/auth/pages/Signup';
 import Login from '@/features/auth/pages/Login';
 import ForgetPassword from '@/features/auth/pages/ForgetPassword';
 import ResetPassword from '@/features/auth/pages/ResetPassword';
 import ProfileSettings from '@/features/auth/pages/ProfileSettings';
 
+// workout pages
 import CreateWorkout from '@/features/workout/pages/CreateWorkout';
 
-function AuthRoutes({ user, excludeNavbar }) {
+function App() {
+  const { user, isAuthLoading } = useAuthStore();
+
+  if (isAuthLoading)
+    return null;
+
   return (
-    <>
-      {!excludeNavbar && <Navbar />}
+    <BrowserRouter>
+
       <Routes>
-        <Route
-          path='/'
-          element={<Home />}
-        />
-        <Route
-          path='/signup'
-          element={!user ? <Signup /> : <Navigate to='/' />}
-        />
-        <Route
-          path='/login'
-          element={!user ? <Login /> : <Navigate to='/' />}
-        />
+
+        {/* No navbar routes */}
         <Route
           path='/forget-password'
           element={!user ? <ForgetPassword /> : <Navigate to='/' />}
@@ -37,48 +35,35 @@ function AuthRoutes({ user, excludeNavbar }) {
           path='/reset-password'
           element={!user ? <ResetPassword /> : <Navigate to='/' />}
         />
-        <Route
-          path='/profile-settings'
-          element={user ? <ProfileSettings /> : <Navigate to='/login' />}
-        />
+
+        {/* With navbar routes */}
+        <Route element={<MainLayout />}>
+
+          <Route
+            path='/'
+            element={<Home />}
+          />
+          <Route
+            path='/signup'
+            element={!user ? <Signup /> : <Navigate to='/' />}
+          />
+          <Route
+            path='/login'
+            element={!user ? <Login /> : <Navigate to='/' />}
+          />
+          <Route
+            path='/profile-settings'
+            element={user ? <ProfileSettings /> : <Navigate to='/login' />}
+          />
+          <Route
+            path='/create-workout'
+            element={user ? <CreateWorkout /> : <Navigate to='/login' />}
+          />
+
+        </Route>
+
       </Routes>
-    </>
-  )
-}
 
-function WorkoutRoutes({ user }) {
-  return (
-    <Routes>
-      <Route
-        path='/create-workout'
-        element={user ? <CreateWorkout /> : <Navigate to='/login' />}
-      />
-    </Routes>
-  );
-}
-
-function AppRoutes() {
-  const { user, isAuthLoading } = useAuthStore();
-  const location = useLocation();
-
-  const excludeNavbarPaths = ['/forget-password', '/reset-password'];
-  const excludeNavbar = excludeNavbarPaths.includes(location.pathname);
-
-  if (isAuthLoading)
-    return null;
-
-  return (
-    <>
-      <AuthRoutes user={user} excludeNavbar={excludeNavbar} />
-      <WorkoutRoutes user={user} excludeNavbar={excludeNavbar} />
-    </>
-  )
-}
-
-function App() {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
     </BrowserRouter>
   )
 }

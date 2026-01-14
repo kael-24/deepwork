@@ -1,4 +1,4 @@
-import { apiClient } from 'shared/api/client';
+import { apiClient } from '@/shared/api/client';
 
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { useEffect } from 'react';

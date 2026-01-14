@@ -38,7 +38,7 @@ export const useGoogleAuth = () => {
 
     const logoutGoogle = async () => {
         await firebaseLogout();
-        await apiClient.post(`/api/auth/user/logout`, null)
+        await apiClient.post(`/api/auth/user/logout`)
         logoutUser();
     }
 
