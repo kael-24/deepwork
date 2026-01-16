@@ -1,5 +1,5 @@
 // external
-import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query';
 
 // internal
 import { apiClient } from '@/shared/index';
@@ -7,69 +7,51 @@ import useAuthStore from '../store/useAuthStore';
 
 const useAuthHandler = () => {
     const { setUser, logoutUser } = useAuthStore();
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
-    const userSignup = async (name, email, password) => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const response = await apiClient(`/api/auth/user/signup`, { name, email, password });
-
-            // Update context with user data
+    const userSignupMutation = useMutation({
+        mutationFn: async ({ name, email, password }) => {
+            const res = await apiClient.post(`/api/auth/user/signup`, { name, email, password });
+            return res.data
+        },
+        onSuccess: (data) => {
             setUser({
-                name: response.data.name,
-                email: response.data.email,
-                uid: response.data.uid ?? undefined,
-                provider: response.data.provider,
+                name: data.name,
+                email: data.email,
+                uid: data.uid ?? undefined,
+                provider: data.provider,
                 isAuthenticated: true,
             });
-        } catch (err) {
-            setError(err.response?.data?.error || 'Error signing up');
-        } finally {
-            setIsLoading(false)
         }
-    }
+    });
 
-    const userLogin = async (email, password, rememberMe) => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const response = await apiClient.post(`/api/auth/user/login`, { email, password, rememberMe });
-
-            // Update context with user data
+    const userLoginMutation = useMutation({
+        mutationFn: async ({ email, password, rememberMe }) => {
+            const res = await apiClient.post("/api/auth/user/login", {email, password, rememberMe});
+            return res.data;
+        },
+        onSuccess: (data) => {
             setUser({
-                name: response.data.name,
-                email: response.data.email,
-                uid: response.data.uid ?? undefined,
-                provider: response.data.provider,
+                name: data.name,
+                email: data.email,
+                uid: data.uid ?? undefined,
+                provider: data.provider,
                 isAuthenticated: true,
             });
-        } catch (err) {
-            setError(err.response?.data?.error || 'Error logging in');
-        } finally {
-            setIsLoading(false);
         }
-    }
+    });
 
-    const userLogout = async () => {
-        setIsLoading(true);
-
-        try {
+    const userLogoutMutation = useMutation({
+        mutationFn: async () => {
             await apiClient.post(`/api/auth/user/logout`);
-
-            // Clear user from context
             logoutUser();
-        } catch (err) {
-            console.error("Error logging out", err);
-        } finally {
-            setIsLoading(false);
         }
-    }
+    });
 
-    return { userSignup, userLogin, userLogout, error, isLoading };
+    return {
+        userSignupMutation,
+        userLoginMutation,
+        userLogoutMutation
+    }
 }
 
 export default useAuthHandler;

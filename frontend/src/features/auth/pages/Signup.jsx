@@ -9,8 +9,8 @@ import useGoogleAuth from "../hooks/useGoogleAuth";
 import { passwordValidator } from "../utils/inputValidator";
 
 const Signup = () => {
-    const { userSignup, error, isLoading } = useAuthHandler();
-    const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
+    const { userSignupMutation } = useAuthHandler();
+    const { loginWithGoogleMutation } = useGoogleAuth();
 
 
     const [inputName, setInputName] = useState('');
@@ -95,7 +95,7 @@ const Signup = () => {
         }
 
         // All validation passed, call the signup function
-        await userSignup(inputName, inputEmail, inputPassword);
+        await userSignupMutation.mutate({ name: inputName, email: inputEmail, password: inputPassword });
     }
 
     return (
@@ -268,21 +268,21 @@ const Signup = () => {
                     </div>
 
                     {/** Signup Error message */}
-                    {error && <p className="text-center text-red-500 text-sm">{error}</p>}
+                    {userSignupMutation.isError && <p className="text-center text-red-500 text-sm">{userSignupMutation.error.response?.data?.error || userSignupMutation.error.message}</p>}
 
                     {/** Create Account Button */}
                     <div>
                         <button
                             type="submit"
-                            disabled={isLoading}
-                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            disabled={userSignupMutation.isPending}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${userSignupMutation.isPending ? 'opacity-70 cursor-not-allowed' : ''}`}
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg className="h-5 w-5 text-green-100 group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
                                 </svg>
                             </span>
-                            {isLoading ? 'Creating Account...' : 'Create Account'}
+                            {userSignupMutation.isPending ? 'Creating Account...' : 'Create Account'}
                         </button>
                     </div>
                 </form>
@@ -303,14 +303,14 @@ const Signup = () => {
                 {/** Google Authentication Redirect Button */}
                 <button
                     type="button"
-                    onClick={loginWithGoogle}
-                    disabled={gLoading}
+                    onClick={() => loginWithGoogleMutation.mutate()}
+                    disabled={loginWithGoogleMutation.isPending}
                     className="w-full flex justify-center mt-4 bg-white text-gray-700 border
                                 border-gray-300 rounded-lg py-3 hover:bg-gray-50"
                 >
                     <img src="https://developers.google.com/identity/images/g-logo.png"
                         alt="G" className="h-5 w-5 mr-3" />
-                    {gLoading ? 'Signing in…' : 'Continue with Google'}
+                    {loginWithGoogleMutation.isPending ? 'Signing in…' : 'Continue with Google'}
                 </button>
             </div>
         </div>

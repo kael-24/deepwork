@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { useAuthStore } from '@/features/auth/store/useAuthStore'
-import { useAuthHandler } from '@/features/auth/hooks/useAuthHandler'
-import { useGoogleAuth } from '@/features/auth/hooks/useGoogleAuth'
+import useAuthStore from '@/features/auth/store/useAuthStore'
+import useAuthHandler from '@/features/auth/hooks/useAuthHandler'
+import useGoogleAuth from '@/features/auth/hooks/useGoogleAuth'
 
 const Navbar = () => {
     const { user } = useAuthStore();
-    const { userLogout } = useAuthHandler();
-    const { logoutGoogle } = useGoogleAuth();
+    const { userLogoutMutation } = useAuthHandler();
+    const { logoutGoogleMutation } = useGoogleAuth();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -41,9 +41,9 @@ const Navbar = () => {
      */
     const handleLogout = async () => {
         if (user?.provider === 'google')
-            await logoutGoogle();
+            await logoutGoogleMutation.mutate();
         else
-            await userLogout();
+            await userLogoutMutation.mutate();
     }
 
     /**

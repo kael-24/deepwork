@@ -11,8 +11,8 @@ import useAuthHandler from "../hooks/useAuthHandler";
 
 const ProfileSettings = () => {
     const { user, setUser } = useAuthStore();
-    const { logoutGoogle } = useGoogleAuth();
-    const { userLogout } = useAuthHandler();
+    const { logoutGoogleMutation } = useGoogleAuth();
+    const { userLogoutMutation } = useAuthHandler();
 
     const {
         editUserMutation: {
@@ -76,9 +76,9 @@ const ProfileSettings = () => {
     }
 
     const handleLogout = () => {
-        userLogout();
+        userLogoutMutation.mutate();
         if (!isLocalUser)
-            logoutGoogle();
+            logoutGoogleMutation.mutate();
     }
 
     /**

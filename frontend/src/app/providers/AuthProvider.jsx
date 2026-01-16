@@ -2,8 +2,8 @@
 import { useEffect } from 'react';
 
 // internal
-import apiClient from '@/shared/index';
-import useAuthStore from '@/features/auth/index';
+import { apiClient } from '@/shared/index';
+import { useAuthStore } from '@/features/auth/index';
 
 const AuthProvider = ({ children }) => {
     const { user, setUser, logoutUser, setIsAuthLoading } = useAuthStore();

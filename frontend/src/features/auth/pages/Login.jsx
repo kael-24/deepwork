@@ -9,8 +9,8 @@ import useGoogleAuth from "../hooks/useGoogleAuth";
 import usePwdResetStore from "../store/usePwdResetStore";
 
 const Login = () => {
-    const { userLogin, error, isLoading } = useAuthHandler();
-    const { loginWithGoogle, loading: gLoading } = useGoogleAuth();
+    const { userLoginMutation } = useAuthHandler();
+    const { loginWithGoogleMutation } = useGoogleAuth();
     const { pwdResetMessage, pwdClearMessage } = usePwdResetStore();
 
     const [inputEmail, setInputEmail] = useState('');
@@ -31,7 +31,7 @@ const Login = () => {
     const handleLogin = (e) => {
         e.preventDefault();
 
-        userLogin(inputEmail, inputPassword, rememberMe);
+        userLoginMutation.mutate({ email: inputEmail, password: inputPassword, rememberMe });
     }
 
     useEffect(() => {
@@ -40,7 +40,7 @@ const Login = () => {
             return () => clearTimeout(messageInterval);
         }
 
-    }, [pwdResetMessage]);
+    }, [pwdResetMessage, pwdClearMessage]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -151,8 +151,8 @@ const Login = () => {
                     <div>
                         <button
                             type="submit"
-                            disabled={isLoading}
-                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                            disabled={userLoginMutation.isPending}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg ${userLoginMutation.isPending ? 'opacity-70 cursor-not-allowed' : ''
                                 }`}
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -160,7 +160,7 @@ const Login = () => {
                                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                                 </svg>
                             </span>
-                            {isLoading ? 'Signing in...' : 'Sign in'}
+                            {userLoginMutation.isPending ? 'Signing in...' : 'Sign in'}
                         </button>
                     </div>
                 </form>
@@ -169,7 +169,7 @@ const Login = () => {
                 {pwdResetMessage && <p className="text-center text-green-500 text-sm">{pwdResetMessage}</p>}
 
                 {/** Error Message */}
-                {error && <p className="text-center text-red-500 text-sm">{error}</p>}
+                {userLoginMutation.isError && <p className="text-center text-red-500 text-sm">{userLoginMutation.error.response?.data?.error || userLoginMutation.error.message}</p>}
 
                 { /** Signup Page Redirect Button */}
                 <div className="text-center mt-4">
@@ -184,18 +184,18 @@ const Login = () => {
                 {/** Google Authentication Button */}
                 <button
                     type="button"
-                    onClick={loginWithGoogle}
-                    disabled={gLoading}
+                    onClick={() => loginWithGoogleMutation.mutate()}
+                    disabled={loginWithGoogleMutation.isPending}
                     className="w-full flex justify-center mt-4 bg-white text-gray-700 border
                                 border-gray-300 rounded-lg py-3 hover:bg-gray-50"
                 >
                     <img src="https://developers.google.com/identity/images/g-logo.png"
                         alt="G" className="h-5 w-5 mr-3" />
-                    {gLoading ? 'Signing in…' : 'Continue with Google'}
+                    {loginWithGoogleMutation.isPending ? 'Signing in…' : 'Continue with Google'}
                 </button>
             </div>
         </div>
     );
 }
 
-export default Login
+export default Login;
