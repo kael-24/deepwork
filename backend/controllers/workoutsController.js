@@ -1,5 +1,5 @@
-import { workoutService } from '../services/index.js';
-import { HTTP_STATUS, SUCCESS_MESSAGES } from '../constants/index.js';
+import { workoutService } from '../services';
+import { HTTP_STATUS, SUCCESS_MESSAGES } from '../constants';
 
 /**
  * Get all workouts for authenticated user

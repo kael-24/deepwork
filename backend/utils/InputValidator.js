@@ -1,30 +1,31 @@
 import validator from 'validator'
 
+import errorThrower from './errorThrower';
+import { ERROR_MESSAGES, HTTP_STATUS } from '../constants';
+
 export const nameValidator = (name) => {
     if (typeof name !== 'string')
-        throw new Error('Invalid input');
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_NAME_FORMAT);
     
     if (name?.trim().length < 2)
-        throw new Error('Name should not be less than 2 characters');
+        errorThrower(HTTP_STATUS.BAD_REQUEST, 'Name should not be less than 2 characters');
 }
 
 export const emailValidator = (email) => {
     if (typeof email !== 'string') 
-        throw new Error('Invalid input');
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_EMAIL_FORMAT);
 
     if (!validator.isEmail(email))
-        throw new Error('Invalid Email');
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_EMAIL_FORMAT);
 }
 
 export const passwordValidator = ({ password, isEnough = false, isStrong = false }) => {
     if (typeof password !== 'string')
-        throw new Error('Invalid input');
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_PASSWORD_FORMAT);
 
-    if (isEnough && !validator.isLength(password, { min: 8 })) {
-        throw new Error('Password too short');
-    }
+    if (isEnough && !validator.isLength(password, { min: 8 }))
+        errorThrower(HTTP_STATUS.BAD_REQUEST, 'Password too short');
 
-    if (isStrong && !(/^(?=.*[A-Za-z])(?=.*\d)/.test(password))) {
-        throw new Error('It should atleast have a number and a letter');
-    }
+    if (isStrong && !(/^(?=.*[A-Za-z])(?=.*\d)/.test(password)))
+        errorThrower(HTTP_STATUS.BAD_REQUEST, 'It should atleast have a number and a letter');
 }

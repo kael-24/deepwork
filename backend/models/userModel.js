@@ -1,6 +1,9 @@
 import mongoose, { mongo } from "mongoose";
 import bcrypt from 'bcrypt';
 
+import { errorThrower } from "../utils";
+import { ERROR_MESSAGES, HTTP_STATUS } from "../constants";
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -49,11 +52,11 @@ const userSchema = new Schema({
 userSchema.statics.login = async function (email, password) {
     const user = await this.findOne({ email, provider: 'local' });
     if (!user) 
-        throw new Error('User does not exists');
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
 
     const match = await bcrypt.compare(password, user.password);
     if (!match)
-        throw new Error('Invalid credentials');  
+        errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);  
 
     return user;
 }
@@ -70,7 +73,7 @@ userSchema.statics.login = async function (email, password) {
 userSchema.statics.signup = async function (name, email, password) {
     const user = await this.findOne({ email });
     if (user) 
-        throw new Error('email already in use');
+        errorThrower(HTTP_STATUS.CONFLICT, ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
 
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -107,7 +110,7 @@ userSchema.statics.googleAuth = async function (name, email, uid) {
 
 userSchema.statics.editProfile = async function (id, name, password, newPassword) {
     if (!mongoose.Types.ObjectId.isValid(id))
-        throw new Error('Object ID is invalid');
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_OBJECT_ID);
 
     const query = {_id: id};
     if (password && newPassword) {
@@ -116,12 +119,12 @@ userSchema.statics.editProfile = async function (id, name, password, newPassword
 
     const user = await this.findOne(query);
     if (!user)
-        throw new Error("User not found");
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
     
     if (password && newPassword) {
         const match = await bcrypt.compare(password, user.password);
         if (!match)
-            throw new Error("Incorrect credentials");
+            errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);
         
         const salt = await bcrypt.genSalt(12);
         const hash = await bcrypt.hash(newPassword, salt);
@@ -134,6 +137,8 @@ userSchema.statics.editProfile = async function (id, name, password, newPassword
     await user.save();
 
     return user;
-}
+};
+
+
 
 export default mongoose.model('User', userSchema);

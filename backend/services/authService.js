@@ -43,7 +43,7 @@ export const googleAuth = async (name, email, uid) => {
 export const forgetPassword = async (email) => {
     const user = await User.findOne({ email, provider: 'local' });
     if (!user)
-        throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
 
     const token = crypto.randomBytes(32).toString('hex');
     user.resetToken = token;
@@ -62,7 +62,7 @@ export const resetPassword = async (token, newPassword) => {
     });
 
     if (!user)
-        throw new Error(ERROR_MESSAGES.TOKEN_EXPIRED);
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.TOKEN_EXPIRED);
 
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(newPassword, salt);

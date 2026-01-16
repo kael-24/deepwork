@@ -1,17 +1,17 @@
 import { HTTP_STATUS, ERROR_MESSAGES } from '../constants/index.js';
 
-import { InputValidator, authHelpers } from '../utils/index.js';
-import { userService } from '../services/index.js';
+import { InputValidator, authHelpers, errorThrower } from '../utils';
+import { userService } from '../services';
 
 /**
  * Update user profile (name, password)
  */
-export const userEdit = async (req, res) => {
+const userEdit = async (req, res) => {
     const { name, password, newPassword } = req.body;
     const _id = req.user._id;
 
     if (!name && !password && !newPassword)
-        throw new Error(ERROR_MESSAGES.NOTHING_TO_UPDATE);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.NOTHING_TO_UPDATE);
 
     if (name)
         InputValidator.nameValidator(name);
@@ -29,5 +29,6 @@ export const userEdit = async (req, res) => {
     })
 }
 
+export default userEdit;
 
 

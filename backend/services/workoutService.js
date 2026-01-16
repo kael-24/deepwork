@@ -15,7 +15,7 @@ export const getAllWorkouts = async (userId) => {
 export const getWorkoutById = async (userId, workoutId) => {
         const workout = await Workout.getWorkout(userId, workoutId);
         if (!workout) {
-            throw new Error(ERROR_MESSAGES.WORKOUT_NOT_FOUND);
+            errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
         }
         return workout;
 };
@@ -26,7 +26,7 @@ export const getWorkoutById = async (userId, workoutId) => {
 export const createNewWorkout = async (userId, { workoutName, exercises }) => {
     // Validate workout name
     if (typeof workoutName !== 'string' || workoutName?.trim().length < 2) {
-        throw new Error(ERROR_MESSAGES.INVALID_WORKOUT_NAME);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_WORKOUT_NAME);
     }
 
     // Validate exercises
@@ -35,7 +35,7 @@ export const createNewWorkout = async (userId, { workoutName, exercises }) => {
         exercises.length === 0 ||
         exercises.every((obj) => Object.keys(obj).length === 0)
     ) {
-        throw new Error(ERROR_MESSAGES.INVALID_EXERCISES);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_EXERCISES);
     }
 
     // Normalize exercise data
@@ -54,11 +54,11 @@ export const createNewWorkout = async (userId, { workoutName, exercises }) => {
  */
 export const updateWorkout = async (userId, workoutId, { workoutName, exercises }) => {
     if (workoutName && (typeof workoutName !== 'string' || workoutName?.trim().length < 2)) {
-        throw new Error(ERROR_MESSAGES.INVALID_WORKOUT_NAME);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_WORKOUT_NAME);
     }
 
     if (exercises && (!Array.isArray(exercises) || exercises.length === 0)) {
-        throw new Error(ERROR_MESSAGES.INVALID_EXERCISES);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_EXERCISES);
     }
 
     const workout = await Workout.editWorkout(userId, workoutId, workoutName, exercises);

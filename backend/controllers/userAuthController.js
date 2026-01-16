@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 
 import User from '../models/userModel.js';
 
-import { authHelpers, InputValidator } from '../utils/index.js';
-import { authService } from '../services/index.js'
-import { firebaseAdmin } from '../config/index.js'
-import { HTTP_STATUS, ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants/index.js';
+import { authHelpers, InputValidator } from '../utils';
+import { authService } from '../services';
+import { firebaseAdmin } from '../config';
+import { HTTP_STATUS, ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants';
 
 /**
  * ---------------------------------------------------------
@@ -21,15 +21,15 @@ export const userLogin = async (req, res) => {
     if (email)
         InputValidator.emailValidator(email.trim());
     else
-        throw new Error(ERROR_MESSAGES.EMAIL_REQUIRED);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.EMAIL_REQUIRED);
 
     if (password)
         InputValidator.passwordValidator({ password });
     else
-        throw new Error(ERROR_MESSAGES.PASSWORD_REQUIRED);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.PASSWORD_REQUIRED);
 
     if (typeof rememberMe !== 'boolean')
-        throw new Error(ERROR_MESSAGES.REMEMBER_ME_INVALID);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.REMEMBER_ME_INVALID);
 
     // SERVICE CALL
     const result = await authService.login(email, password, rememberMe);
@@ -58,17 +58,17 @@ export const userSignup = async (req, res) => {
     if (name)
         InputValidator.nameValidator(name);
     else
-        throw new Error(ERROR_MESSAGES.NAME_REQUIRED);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.NAME_REQUIRED);
 
     if (email)
         InputValidator.emailValidator(email);
     else
-        throw new Error(ERROR_MESSAGES.EMAIL_REQUIRED);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.EMAIL_REQUIRED);
 
     if (password)
         InputValidator.passwordValidator({ password, isEnough: true, isStrong: true });
     else
-        throw new Error(ERROR_MESSAGES.PASSWORD_REQUIRED);
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.PASSWORD_REQUIRED);
 
     // SERVICE CALL
     const result = await authService.signup(name, email, password);
@@ -109,12 +109,12 @@ export const checkAuth = async (req, res) => {
     const id = req.user._id;
 
     if (!mongoose.Types.ObjectId.isValid(id))
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Object ID is invalid' });
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_OBJECT_ID);
 
     const user = await User.findById(id).select('name email provider');
 
     if (!user) {
-        return res.status(HTTP_STATUS.NOT_FOUND).json({ isAuthenticated: false });
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
     }
 
     return res.status(HTTP_STATUS.OK).json({

@@ -1,6 +1,8 @@
 import mongoose, { mongo } from "mongoose";
 import User from './userModel.js'
 
+import { HTTP_STATUS, ERROR_MESSAGES } from "../constants";
+
 const Schema = mongoose.Schema;
 
 const exerciseSchema = new Schema({
@@ -58,11 +60,11 @@ const workoutSchema = new Schema({
 
 const validateUser = async (id) => {
     if (!mongoose.Types.ObjectId.isValid(id))
-        throw new Error('Object ID is not valid');
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_OBJECT_ID);
 
     const userExists = await User.findById(id);
     if (!userExists)
-        throw new Error('User does not exists');
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
 }
 
 workoutSchema.statics.getWorkouts = async function (userId) {
@@ -78,13 +80,13 @@ workoutSchema.statics.getWorkout = async function (userId, objectId) {
     await validateUser(userId);
 
     if (!mongoose.Types.ObjectId.isValid(objectId))
-        throw new Error("ObjectId is invalid");
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_OBJECT_ID);
 
     const workout = await this.findOne({ _id: objectId, userId })
         .select('workoutName exercises')
 
     if (!workout)
-        throw new Error("Workout is not found");
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
 
     return workout;
 }
@@ -119,11 +121,11 @@ workoutSchema.statics.createWorkout = async function (userId, workoutName, exerc
 workoutSchema.statics.deleteWorkout = async function (userId, objectId) {
     await validateUser(userId);
     if (!mongoose.Types.ObjectId.isValid(objectId))
-        throw new Error("Workout Id is invalid");
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_OBJECT_ID);
 
     const deletedWorkout = await this.findOneAndDelete({ userId, _id: objectId });
     if (!deletedWorkout)
-        throw new Error("Workout not found");
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
 
     return deletedWorkout;
 }
@@ -132,7 +134,7 @@ workoutSchema.statics.editWorkout = async function (userId, objectId, workoutNam
     validateUser(userId);
 
     if (!mongoose.Types.ObjectId.isValid(objectId))
-        throw new Error("Workout ID is invalid");
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_OBJECT_ID);
 
     const updateFields = {};
 
@@ -146,7 +148,7 @@ workoutSchema.statics.editWorkout = async function (userId, objectId, workoutNam
 
     const result = await this.updateOne({ _id: objectId, userId }, { $set: updateFields }, { runValidators: true });
     if (result.matchedCount === 0)
-        throw new Error("Workout not found");
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
 
     return result;
 }

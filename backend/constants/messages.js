@@ -10,17 +10,22 @@ export const ERROR_MESSAGES = {
     REMEMBER_ME_INVALID: 'Unrecognized value for RememberMe',
     USER_NOT_FOUND: 'User not found',
     INVALID_CREDENTIALS: 'Invalid email or password',
+    INVALID_PASSWORD: 'Invalid Password',
     EMAIL_ALREADY_EXISTS: 'Email already exists',
     TOKEN_EXPIRED: 'Token expired or invalid',
+
+    // Database Errors
+    INVALID_OBJECT_ID: 'Invalid object ID',
 
     // Password Errors
     PASSWORD_RESET_FAILED: 'Failed to reset password',
     PASSWORD_UPDATE_FAILED: 'Failed to update password',
 
     // Validation Errors
-    INVALID_EMAIL: 'Invalid email format',
-    INVALID_NAME: 'Invalid name format',
-    INVALID_PASSWORD: 'Invalid password format',
+    INVALID_INPUT: 'Invalid input',
+    INVALID_EMAIL_FORMAT: 'Invalid email format',
+    INVALID_NAME_FORMAT: 'Invalid name format',
+    INVALID_PASSWORD_FORMAT: 'Invalid password format',
     NOTHING_TO_UPDATE: 'You have not updated anything',
 
     // Workout Errors
