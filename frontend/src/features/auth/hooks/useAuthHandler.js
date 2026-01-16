@@ -1,8 +1,11 @@
-import { apiClient } from '@/shared/api/client';
+// external
 import { useState } from 'react'
-import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
-export const useAuthHandler = () => {
+// internal
+import { apiClient } from '@/shared/index';
+import useAuthStore from '../store/useAuthStore';
+
+const useAuthHandler = () => {
     const { setUser, logoutUser } = useAuthStore();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -68,3 +71,5 @@ export const useAuthHandler = () => {
 
     return { userSignup, userLogin, userLogout, error, isLoading };
 }
+
+export default useAuthHandler;

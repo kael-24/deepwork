@@ -1,7 +1,10 @@
-import { apiClient } from "@/shared/api/client";
+// external
 import { useMutation } from "@tanstack/react-query" 
 
-export const useSaveWorkout = () => {
+// internal
+import { apiClient } from "@/shared/index";
+
+const useSaveWorkout = () => {
 
     const saveWorkoutMutation = useMutation({
         mutationFn: async ({ workoutName, exercises }) => {
@@ -14,3 +17,5 @@ export const useSaveWorkout = () => {
         saveWorkoutMutation
     }
 }
+
+export default useSaveWorkout;

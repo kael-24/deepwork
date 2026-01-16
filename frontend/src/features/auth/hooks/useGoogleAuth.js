@@ -1,10 +1,13 @@
-import { apiClient } from "@/shared/api/client";
-import { googlePopupLogin, firebaseLogout } from "@/features/auth/utils/firebase";
+// external
 import { useState } from "react"
-import { useAuthStore } from "@/features/auth/store/useAuthStore";
+
+// internal
+import { apiClient } from "@/shared/index";
+import { googlePopupLogin, firebaseLogout } from "../utils/firebase"
+import useAuthStore from "../store/useAuthStore";
 
 
-export const useGoogleAuth = () => {
+const useGoogleAuth = () => {
     const { setUser, logoutUser } = useAuthStore();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -44,3 +47,5 @@ export const useGoogleAuth = () => {
 
     return { loginWithGoogle, logoutGoogle, error, loading }
 };
+
+export default useGoogleAuth;

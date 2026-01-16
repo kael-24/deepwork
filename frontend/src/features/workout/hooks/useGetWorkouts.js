@@ -1,6 +1,9 @@
-import { apiClient } from "@/shared/api/client";
+// internal
 import { useQuery } from "@tanstack/react-query";
 import { useWorkoutsStore } from "@/features/workout/store/useWorkoutsStore";
+
+// external
+import { apiClient } from "@/shared/api/client";
 
 export const useGetWorkouts = () => {
     const { getWorkouts } = useWorkoutsStore();
@@ -14,3 +17,5 @@ export const useGetWorkouts = () => {
         },
     });
 };
+
+export default useGetWorkouts;

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const apiClient = axios.create({
+const apiClient = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
     withCredentials: true
 });
@@ -12,3 +12,5 @@ apiClient.interceptors.response.use(
         return Promise.reject(new Error(message));
     }
 );
+
+export default apiClient;

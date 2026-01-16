@@ -1,13 +1,14 @@
-// TODO drag and drop
+// external
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useGetWorkouts } from '@/features/workout/hooks/useGetWorkouts';
-import DnDWrapper from '@/shared/components/DnDWrapper';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from "react-router-dom";
-import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import { useClickOutside } from "@/shared/hooks/useClickOutside";
-import { useDeleteWorkout } from "@/features/workout/hooks/useDeleteWorkout";
+
+// internal
+import { DnDWrapper, useClickOutside } from '@/shared/index';
+import { useAuthStore } from "@/features/auth/index";
+import useGetWorkouts from "../hooks/useGetWorkouts";
+import useDeleteWorkout from "../hooks/useDeleteWorkout";
 
 const WorkoutCard = ({ workout }) => {
     const { setNodeRef, attributes, transform, listeners, transition } = useSortable({ id: workout._id });

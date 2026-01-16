@@ -1,9 +1,12 @@
+// external
 import { useEffect, useState } from "react"
-import validate from 'validator'
 import { Link } from 'react-router-dom'
-import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler"
-import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth"
-import { passwordValidator } from "@/features/auth/utils/inputValidator"
+import validate from 'validator'
+
+// internal
+import useAuthHandler from "../hooks/useAuthHandler";
+import useGoogleAuth from "../hooks/useGoogleAuth";
+import { passwordValidator } from "../utils/inputValidator";
 
 const Signup = () => {
     const { userSignup, error, isLoading } = useAuthHandler();

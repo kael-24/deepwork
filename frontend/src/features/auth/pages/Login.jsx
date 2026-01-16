@@ -1,9 +1,12 @@
+// external
 import { useEffect, useState } from "react";
-import validate from 'validator';
 import { Link } from 'react-router-dom';
-import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler";
-import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth";
-import { usePwdResetStore } from "@/features/auth/store/usePwdResetStore";
+import validate from 'validator';
+
+// internal
+import useAuthHandler from "../hooks/useAuthHandler";
+import useGoogleAuth from "../hooks/useGoogleAuth";
+import usePwdResetStore from "../store/usePwdResetStore";
 
 const Login = () => {
     const { userLogin, error, isLoading } = useAuthHandler();
@@ -69,8 +72,8 @@ const Login = () => {
                                     autoComplete="email"
                                     required
                                     className={`appearance-none rounded-lg block w-full pl-10 pr-3 py-3 border ${inputIsValid === true ? "border-green-500 focus:ring-green-500" :
-                                            inputIsValid === false ? "border-red-500 focus:ring-red-500" :
-                                                "border-gray-300 focus:ring-green-500"
+                                        inputIsValid === false ? "border-red-500 focus:ring-red-500" :
+                                            "border-gray-300 focus:ring-green-500"
                                         } focus:border-green-500 focus:outline-none focus:ring-2 transition-colors duration-200 sm:text-sm`}
                                     placeholder="Your email address"
                                     value={inputEmail}

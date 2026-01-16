@@ -1,5 +1,8 @@
-import { apiClient } from '@/shared/api/client';
+// external
 import { useMutation } from '@tanstack/react-query';
+
+// internal
+import { apiClient } from '@/shared/index';
 
 const useForgetPassword = () => {
 
@@ -24,7 +27,7 @@ const useForgetPassword = () => {
     };
 }
 
-export default useForgetPassword
+export default useForgetPassword;
 
 
 

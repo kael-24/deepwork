@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export const useAuthStore = create((set) => ({
+const useAuthStore = create((set) => ({
     // states
     user: null,
     isAuthLoading: true,
@@ -16,3 +16,5 @@ export const useAuthStore = create((set) => ({
     // set isAuthLoading (seems like not needed) // TODO
     setIsAuthLoading: (value) => set({ isAuthLoading: value }),
 }));
+
+export default useAuthStore;

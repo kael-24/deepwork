@@ -1,10 +1,12 @@
+// external
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
-import ExerciseCard from "@/features/workout/components/ExerciseCard";
-import DnDWrapper from "@/shared/components/DnDWrapper";
-import DialogBox from "@/shared/components/DialogBox";
-import { useSaveWorkout } from "@/features/workout/hooks/useSaveWorkout";
 import { useNavigate } from 'react-router-dom';
+
+// internal
+import { DnDWrapper, DialogBox } from "@/shared/index";
+import ExerciseCard from "../components/ExerciseCard";
+import useSaveWorkout from "../hooks/useSaveWorkout";
 
 const CreateWorkout = () => {
     const {

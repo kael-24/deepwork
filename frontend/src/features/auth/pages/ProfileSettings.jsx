@@ -1,10 +1,13 @@
+// internal
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import { nameValidator, passwordValidator } from "@/features/auth/utils/inputValidator";
-import useEditUser from "@/features/auth/hooks/useEditUser";
-import { useGoogleAuth } from "@/features/auth/hooks/useGoogleAuth";
-import { useAuthHandler } from "@/features/auth/hooks/useAuthHandler";
+
+// external
+import useAuthStore from "../store/useAuthStore";
+import { nameValidator, passwordValidator } from "../utils/inputValidator";
+import useEditUser from "../hooks/useEditUser";
+import useGoogleAuth from "../hooks/useGoogleAuth";
+import useAuthHandler from "../hooks/useAuthHandler";
 
 const ProfileSettings = () => {
     const { user, setUser } = useAuthStore();

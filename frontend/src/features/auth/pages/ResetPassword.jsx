@@ -1,10 +1,11 @@
+// external
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 
-import useForgetPassword from "@/features/auth/hooks/useForgetPassword";
-import { usePwdResetStore } from "@/features/auth/store/usePwdResetStore";
-import { passwordValidator } from "@/features/auth/utils/inputValidator";
+// internal
+import useForgetPassword from "../hooks/useForgetPassword";
+import usePwdResetStore from "../store/usePwdResetStore";
+import { passwordValidator } from "../utils/inputValidator";
 
 const ResetPassword = () => {
     const {

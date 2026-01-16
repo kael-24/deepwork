@@ -1,19 +1,24 @@
+// external
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 // layout
-import MainLayout from '@/App/layouts/MainLayout';
+import MainLayout from './layouts/MainLayout';
 
-// auth pages
-import Home from "@/features/workout/pages/Home"
-import Signup from '@/features/auth/pages/Signup';
-import Login from '@/features/auth/pages/Login';
-import ForgetPassword from '@/features/auth/pages/ForgetPassword';
-import ResetPassword from '@/features/auth/pages/ResetPassword';
-import ProfileSettings from '@/features/auth/pages/ProfileSettings';
+// auth feature
+import {
+  useAuthStore,
+  Signup,
+  Login,
+  ForgetPassword,
+  ResetPassword,
+  ProfileSettings
+} from '@/features/auth';
 
-// workout pages
-import CreateWorkout from '@/features/workout/pages/CreateWorkout';
+// workout feature
+import {
+  Home,
+  CreateWorkout
+} from '@/features/workout';
 
 function App() {
   const { user, isAuthLoading } = useAuthStore();

@@ -1,7 +1,10 @@
+// external
 import { useState } from "react";
-import validate from 'validator';
 import { Link } from 'react-router-dom';
-import useForgetPassword from "@/features/auth/hooks/useForgetPassword";
+import validate from 'validator';
+
+// internal
+import useForgetPassword from "../hooks/useForgetPassword";
 
 const ForgetPassword = () => {
     const {

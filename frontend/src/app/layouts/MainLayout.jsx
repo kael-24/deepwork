@@ -1,8 +1,11 @@
+// external
 import { Outlet } from "react-router-dom";
-import Navbar from "@/shared/components/Navbar";
+
+//internal
+import { Navbar } from "@/shared/index";
 
 const MainLayout = () => {
-    return(
+    return (
         <div>
             <Navbar />
             <Outlet />

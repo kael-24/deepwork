@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const useWorkoutsStore = create((set) => ({
+const useWorkoutsStore = create((set) => ({
     // states
     workouts: [],
 
@@ -14,4 +14,6 @@ export const useWorkoutsStore = create((set) => ({
     // update workouts
     // updateWorkout
 }));
+
+export default useWorkoutsStore;
 

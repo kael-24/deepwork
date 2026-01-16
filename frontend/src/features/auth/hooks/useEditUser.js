@@ -1,5 +1,8 @@
-import { apiClient } from "@/shared/api/client";
+// external
 import { useMutation } from "@tanstack/react-query"
+
+// internal
+import { apiClient } from "@/shared/index";
 
 const useEditUser = () => {
 
@@ -11,7 +14,7 @@ const useEditUser = () => {
         }
     });
 
-    return {editUserMutation}
+    return { editUserMutation }
 }
 
 export default useEditUser;

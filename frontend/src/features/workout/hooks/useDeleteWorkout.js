@@ -1,7 +1,10 @@
-import { apiClient } from "@/shared/api/client";
+// external
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-export const useDeleteWorkout = () => {
+// internal
+import { apiClient } from "@/shared/index";
+
+const useDeleteWorkout = () => {
     const queryClient = useQueryClient(); // get React Query's cache manager
     
     const deleteWorkoutMutation = useMutation({
@@ -17,3 +20,5 @@ export const useDeleteWorkout = () => {
         deleteWorkoutMutation
     }
 }
+
+export default useDeleteWorkout;
