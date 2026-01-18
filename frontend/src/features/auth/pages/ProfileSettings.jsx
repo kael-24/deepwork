@@ -5,14 +5,16 @@ import { Link } from 'react-router-dom';
 // external
 import useAuthStore from "../store/useAuthStore";
 import { nameValidator, passwordValidator } from "../utils/inputValidator";
-import useEditUser from "../hooks/useEditUser";
 import useGoogleAuth from "../hooks/useGoogleAuth";
 import useAuthHandler from "../hooks/useAuthHandler";
+import useEditUser from "../hooks/useEditUser";
+import useDeleteUser from "../hooks/useDeleteUser";
 
 const ProfileSettings = () => {
     const { user, setUser } = useAuthStore();
     const { logoutGoogleMutation } = useGoogleAuth();
     const { userLogoutMutation } = useAuthHandler();
+    const { deleteUser } = useDeleteUser();
 
     const {
         editUserMutation: {
@@ -49,9 +51,9 @@ const ProfileSettings = () => {
      * NAME CHANGE HANDLER
      * ---------------------------------------------------------
      */
-    const handleNameChange = async () => {
+    const handleNameChange = () => {
         reset();
-        await editUser({ name }, {
+        editUser({ name }, {
             onSuccess: (data) => {
                 setUser({
                     name: data.name,
@@ -66,13 +68,54 @@ const ProfileSettings = () => {
      * PASSWORD CHANGE HANDLER
      * ---------------------------------------------------------
      */
-    const handlePasswordChange = async () => {
+    const handlePasswordChange = () => {
         reset();
-        await editUser({ password, newPassword }, {
+        editUser({ password, newPassword }, {
             onSuccess: () => {
                 setCurrentEdit(null);
             }
         })
+    }
+
+    /**
+     * ---------------------------------------------------------
+     * DELETE ACCOUNT HANDLER
+     * ---------------------------------------------------------
+     */
+    const handleDeleteUser = () => {
+        reset();
+        deleteUser.reset();
+        deleteUser.mutate({ password })
+    }
+
+    const handleClearStates = (editMode) => {
+        if (currentEdit !== editMode)
+            setCurrentEdit(editMode);
+        else
+            setCurrentEdit(null);
+
+        if (editMode === 'name') {
+            setName(user.name);
+            setNameError(null);
+            reset();
+        } else if (editMode === 'password') {
+            setCurrentEdit('password');
+            setPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+            setNewPasswordError(null);
+            setConfirmPasswordError(null);
+            setShowCurrentPassword(false);
+            setShowNewPassword(false);
+            setShowConfirmPassword(false);
+            reset();
+        } else if (editMode === 'deleteUser') {
+            if (user.provider === 'local') {
+                setShowCurrentPassword(false);
+                setPassword('');
+            }
+            deleteUser.reset();
+        }
     }
 
     const handleLogout = () => {
@@ -167,7 +210,7 @@ const ProfileSettings = () => {
                         {/** Non-edit Mode Name Button */}
                         {currentEdit !== 'name' ? (
                             <button
-                                onClick={() => { setName(user.name || ''); setNameError(null); setCurrentEdit('name'); }}
+                                onClick={() => handleClearStates('name')}
                                 className="inline-flex items-center justify-center h-9 px-3 rounded-md text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 transition-colors"
                                 aria-label="Edit name"
                             >
@@ -208,7 +251,7 @@ const ProfileSettings = () => {
 
                                 {/** Cancel name change button */}
                                 <button
-                                    onClick={() => { setCurrentEdit(null); setName(''); setNameError(null); }}
+                                    onClick={() => handleClearStates('name')}
                                     disabled={isPending}
                                     className={`inline-flex justify-center px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition ${isPending ? 'opacity-70 cursor-not-allowed' : ''}`}
                                 >
@@ -231,7 +274,7 @@ const ProfileSettings = () => {
                             {/** Non-edit mode password button */}
                             {currentEdit !== 'password' && (
                                 <button
-                                    onClick={() => { setCurrentEdit('password'); setPassword(''); setNewPassword(''); setConfirmPassword(''); setNewPasswordError(null); setConfirmPasswordError(null); setShowCurrentPassword(false); setShowNewPassword(false); setShowConfirmPassword(false); reset(); }}
+                                    onClick={() => handleClearStates('password')}
                                     className="inline-flex items-center justify-center h-9 px-3 rounded-md text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 transition-colors"
                                     aria-label="Edit password"
                                 >
@@ -330,7 +373,7 @@ const ProfileSettings = () => {
 
                                     {/** Cancel password change button */}
                                     <button
-                                        onClick={() => { setCurrentEdit(null); setPassword(''); setNewPassword(''); setConfirmPassword(''); setNewPasswordError(null); setConfirmPasswordError(null); setShowCurrentPassword(false); setShowNewPassword(false); setShowConfirmPassword(false); reset(); }}
+                                        onClick={() => handleClearStates('password')}
                                         disabled={isPending}
                                         className={`inline-flex justify-center px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition ${isPending ? 'opacity-70 cursor-not-allowed' : ''}`}
                                     >
@@ -341,6 +384,86 @@ const ProfileSettings = () => {
                         )}
                     </div>
                 )}
+
+                {/* Delete User Section */}
+                <div className="border border-gray-200 rounded-lg p-5">
+                    <div className="flex items-center justify-between">
+                        {/** Delete Account title */}
+                        <div className="flex-1">
+                            <label className="block text-sm font-bold text-red-600">Delete Account</label>
+                        </div>
+
+                        {/** Non-edit Mode Name Button // TODO */}
+                        {currentEdit !== 'deleteUser' ? (
+                            <button
+                                onClick={() => handleClearStates('deleteUser')}
+                                className="inline-flex items-center justify-center h-9 px-3 rounded-md text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
+                                aria-label="Delete account"
+                            >
+                                ✏️ Delete
+                            </button>
+                        ) : null}
+                    </div>
+
+                    {/** Edit Mode Delete Account Feature */}
+                    {currentEdit === 'deleteUser' && (
+                        <div className="mt-4 space-y-3">
+                            {/** Notice to the user */}
+                            <p className="text-sm text-red-600">Deleting your account will result to the deletion of all workouts. This action cannot be undone. Be careful.</p>
+
+                            {/** Password */}
+                            {user.provider === 'local' && (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">🔒</div>
+                                            {/** Password Input Field */}
+                                            <input
+                                                type={showCurrentPassword ? 'text' : 'password'}
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className="appearance-none rounded-lg block w-full pl-10 pr-10 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 sm:text-sm"
+                                                placeholder="Current password"
+                                            />
+                                            {/** Peek Current Password Button */}
+                                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                                <button type="button" onClick={() => setShowCurrentPassword(v => !v)} className="text-gray-500 hover:text-gray-700 focus:outline-none">{showCurrentPassword ? '👁️' : '👁️‍🗨️'}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {/** Password/server error message */}
+                            {(currentEdit === 'deleteUser' && deleteUser.isError) && (
+                                <>
+                                    <p className="text-sm text-red-500">{deleteUser.error.response?.data.error || 'Something went wrong'}</p>
+                                </>
+                            )}
+
+                            <div className="flex items-center gap-3">
+                                {/** Delete account button */}
+                                <button
+                                    onClick={handleDeleteUser}
+                                    disabled={deleteUser.isPending || (user.provider === 'local' && password.trim() === '')}
+                                    className={`inline-flex justify-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-red-500 to-emerald-600 hover:from-red-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all shadow-md ${deleteUser.isPending || (user.provider === 'local' && password.trim() === '') ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                >
+                                    {deleteUser.isPending ? 'Deleting...' : 'Delete Account'}
+                                </button>
+
+                                {/** Cancel name change button */}
+                                <button
+                                    onClick={() => handleClearStates('deleteUser')}
+                                    disabled={deleteUser.isPending}
+                                    className={`inline-flex justify-center px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition ${deleteUser.isPending ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 {/** Success profile edit message */}
                 {isSuccess && (
