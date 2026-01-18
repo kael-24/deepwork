@@ -1,6 +1,6 @@
 import { HTTP_STATUS, ERROR_MESSAGES } from "../constants/index.js";
 import User from '../models/userModel.js';
-import { errorThrower } from "../utils/index.js";
+import { errorThrower, authHelpers } from "../utils/index.js";
 
 const userDelete = async (req, res) => {
     const { _id, provider } = req.user;
@@ -15,7 +15,8 @@ const userDelete = async (req, res) => {
 
     await User.deleteUser({ id: _id, provider, password });
 
-    res.status(HTTP_STATUS.ACCEPTED).send();
+    authHelpers.clearAuthCookie(res);
+    res.status(HTTP_STATUS.ACCEPTED).json({ message: "User deleted successfully" });
 };
 
 export default userDelete;
