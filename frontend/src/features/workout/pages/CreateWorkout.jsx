@@ -102,7 +102,7 @@ const CreateWorkout = () => {
             }
         })
 
-        await saveWorkout({ workoutName, exercises: finalExercises }, {
+        saveWorkout({ workoutName, exercises: finalExercises }, {
             onSuccess: () => {
                 setExercises(defaultExercises);
                 setWorkoutName("");

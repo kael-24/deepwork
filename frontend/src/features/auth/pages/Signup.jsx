@@ -81,7 +81,7 @@ const Signup = () => {
      * HANDLES SIGNUP BUTTON
      * ---------------------------------------------------------
      */
-    const handleSignup = async (e) => {
+    const handleSignup = (e) => {
         e.preventDefault();
 
         // Check for validation errors first
@@ -95,7 +95,7 @@ const Signup = () => {
         }
 
         // All validation passed, call the signup function
-        await userSignupMutation.mutate({ name: inputName, email: inputEmail, password: inputPassword });
+        userSignupMutation.mutate({ name: inputName, email: inputEmail, password: inputPassword });
     }
 
     return (

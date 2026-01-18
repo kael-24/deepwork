@@ -1,5 +1,6 @@
 import Workout from '../models/workoutsModel.js';
-import { ERROR_MESSAGES } from '../constants/index.js';
+import { HTTP_STATUS, ERROR_MESSAGES } from '../constants/index.js';
+import { errorThrower } from '../utils/index.js'
 
 /**
  * Get all workouts for a user

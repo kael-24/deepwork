@@ -29,7 +29,7 @@ const ResetPassword = () => {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleUpdatePassword = async (e) => {
+    const handleUpdatePassword = (e) => {
         e.preventDefault();
 
         if (!token) {
@@ -42,7 +42,7 @@ const ResetPassword = () => {
             return;
         }
 
-        await resetPassword({ token, newPassword }, {
+        resetPassword({ token, newPassword }, {
             onSuccess: () => {
                 pwdResetSuccess();
                 navigate('/login', { replace: true });

@@ -39,11 +39,11 @@ const Navbar = () => {
      * HANDLES LOGOUT FEATURE
      * ---------------------------------------------------------
      */
-    const handleLogout = async () => {
+    const handleLogout = () => {
         if (user?.provider === 'google')
-            await logoutGoogleMutation.mutate();
+            logoutGoogleMutation.mutate();
         else
-            await userLogoutMutation.mutate();
+            userLogoutMutation.mutate();
     }
 
     /**
