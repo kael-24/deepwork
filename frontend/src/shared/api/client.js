@@ -8,8 +8,7 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        const message = error.response?.data?.error || "Something went wrong";
-        return Promise.reject(new Error(message));
+        return Promise.reject(error);
     }
 );
 
