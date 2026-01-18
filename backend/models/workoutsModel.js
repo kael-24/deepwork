@@ -2,6 +2,7 @@ import mongoose, { mongo } from "mongoose";
 import User from './userModel.js'
 
 import { HTTP_STATUS, ERROR_MESSAGES } from "../constants/index.js";
+import errorThrower from "../utils/errorThrower.js";
 
 const Schema = mongoose.Schema;
 
@@ -144,7 +145,8 @@ workoutSchema.statics.editWorkout = async function (userId, objectId, workoutNam
     if (exercises !== undefined)
         updateFields.exercises = exercises;
 
-    if (Object.keys(updateFields).length === 0) return;
+    if (Object.keys(updateFields).length === 0)
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_EXERCISES)
 
     const result = await this.updateOne({ _id: objectId, userId }, { $set: updateFields }, { runValidators: true });
     if (result.matchedCount === 0)
