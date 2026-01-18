@@ -1,6 +1,5 @@
 import express from 'express';
-import { userAuthController } from '../controllers/index.js';
-import { userEditController } from '../controllers/index.js';
+import { userAuthController, userEditController, userDeleteController } from '../controllers/index.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 const router = express.Router();
@@ -34,6 +33,9 @@ router.get('/user/check-auth', requireAuth, asyncHandler(userAuthController.chec
 
 //*---------------EDIT PROFILE---------------*//
 // Edit User route
-router.patch('/user/edit-user', requireAuth, asyncHandler(userEditController.userEdit));
+router.patch('/user/edit-user', requireAuth, asyncHandler(userEditController));
+
+// Delete user 
+router.delete('/user/delete-user', requireAuth, asyncHandler(userDeleteController));
 
 export default router;

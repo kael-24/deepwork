@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 
 import User from '../models/userModel.js';
 
-import { authHelpers, InputValidator } from '../utils';
-import { authService } from '../services';
-import { firebaseAdmin } from '../config';
-import { HTTP_STATUS, ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants';
+import { authHelpers, InputValidator } from '../utils/index.js';
+import { authService } from '../services/index.js';
+import { firebaseAdmin } from '../config/index.js';
+import { HTTP_STATUS, ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants/index.js';
 
 /**
  * ---------------------------------------------------------

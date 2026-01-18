@@ -1,7 +1,7 @@
 import { HTTP_STATUS, ERROR_MESSAGES } from '../constants/index.js';
 
-import { InputValidator, authHelpers, errorThrower } from '../utils';
-import { userService } from '../services';
+import { InputValidator, authHelpers, errorThrower } from '../utils/index.js';
+import { userService } from '../services/index.js';
 
 /**
  * Update user profile (name, password)

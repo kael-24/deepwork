@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { workoutsController } from '../controllers';
+import { workoutsController } from '../controllers/index.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 

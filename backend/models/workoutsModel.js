@@ -1,7 +1,7 @@
 import mongoose, { mongo } from "mongoose";
 import User from './userModel.js'
 
-import { HTTP_STATUS, ERROR_MESSAGES } from "../constants";
+import { HTTP_STATUS, ERROR_MESSAGES } from "../constants/index.js";
 
 const Schema = mongoose.Schema;
 

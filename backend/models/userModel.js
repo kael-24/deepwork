@@ -1,8 +1,10 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
 
-import { errorThrower } from "../utils";
-import { ERROR_MESSAGES, HTTP_STATUS } from "../constants";
+import Workout from './workoutsModel.js'
+
+import { errorThrower } from "../utils/index.js";
+import { ERROR_MESSAGES, HTTP_STATUS } from "../constants/index.js";
 
 const Schema = mongoose.Schema;
 
@@ -11,7 +13,7 @@ const userSchema = new Schema({
         type: String,
         required: true,
         trim: true
-    }, 
+    },
     email: {
         type: String,
         required: true,
@@ -35,8 +37,8 @@ const userSchema = new Schema({
     },
     resetToken: {
         type: String
-    }, 
-    resetTokenExpiry: { 
+    },
+    resetTokenExpiry: {
         type: Date
     }
 }, { timestamps: true });
@@ -51,12 +53,12 @@ const userSchema = new Schema({
  */
 userSchema.statics.login = async function (email, password) {
     const user = await this.findOne({ email, provider: 'local' });
-    if (!user) 
+    if (!user)
         errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
 
     const match = await bcrypt.compare(password, user.password);
     if (!match)
-        errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);  
+        errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);
 
     return user;
 }
@@ -72,13 +74,13 @@ userSchema.statics.login = async function (email, password) {
  */
 userSchema.statics.signup = async function (name, email, password) {
     const user = await this.findOne({ email });
-    if (user) 
+    if (user)
         errorThrower(HTTP_STATUS.CONFLICT, ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
 
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = await this.create({name, email, password: hashedPassword});
+    const newUser = await this.create({ name, email, password: hashedPassword });
 
     return newUser;
 }
@@ -98,7 +100,7 @@ userSchema.statics.googleAuth = async function (name, email, uid) {
     if (!user) {
         user = await this.create({
             email,
-            name, 
+            name,
             uid,
             provider: 'google'
         });
@@ -112,7 +114,7 @@ userSchema.statics.editProfile = async function (id, name, password, newPassword
     if (!mongoose.Types.ObjectId.isValid(id))
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_OBJECT_ID);
 
-    const query = {_id: id};
+    const query = { _id: id };
     if (password && newPassword) {
         query.provider = 'local';
     }
@@ -120,12 +122,12 @@ userSchema.statics.editProfile = async function (id, name, password, newPassword
     const user = await this.findOne(query);
     if (!user)
         errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
-    
+
     if (password && newPassword) {
         const match = await bcrypt.compare(password, user.password);
         if (!match)
             errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);
-        
+
         const salt = await bcrypt.genSalt(12);
         const hash = await bcrypt.hash(newPassword, salt);
         user.password = hash;
@@ -138,6 +140,25 @@ userSchema.statics.editProfile = async function (id, name, password, newPassword
 
     return user;
 };
+
+userSchema.statics.deleteUser = async function (userData) {
+    if (!mongoose.Types.ObjectId.isValid(userData.id))
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_OBJECT_ID);
+
+    const user = await this.findOne({ _id: userData.id });
+    if (!user)
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
+
+    if (user.provider === 'local') {
+        const match = await bcrypt.compare(userData.password, user.password);
+        if (!match)
+            errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);
+    }
+
+    await user.deleteOne();
+
+    await Workout.deleteMany({ userId: user._id })
+}
 
 
 

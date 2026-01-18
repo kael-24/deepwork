@@ -1,7 +1,7 @@
 import validator from 'validator'
 
-import errorThrower from './errorThrower';
-import { ERROR_MESSAGES, HTTP_STATUS } from '../constants';
+import errorThrower from './errorThrower.js';
+import { ERROR_MESSAGES, HTTP_STATUS } from '../constants/index.js';
 
 export const nameValidator = (name) => {
     if (typeof name !== 'string')

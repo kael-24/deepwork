@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import { envConfig, connectDB } from './config';
+import { envConfig, connectDB } from './config/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import userAuthRoutes from './routes/userAuthRoutes.js';
