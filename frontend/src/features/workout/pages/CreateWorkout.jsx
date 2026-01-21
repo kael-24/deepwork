@@ -80,17 +80,23 @@ const CreateWorkout = () => {
     const handleSaveWorkout = async () => {
         console.log("WORKOUTS", exercises);
         setClientError(null);
-        if (!Array.isArray(exercises) || exercises.length === 0) {
-            setClientError("Workout Should not be empty");
+
+        // checks if timer is empty
+        const hasEmptyTimer = exercises.some(ex => ex.timeType === 'Timer' && (ex.timer === '' || ex.timer === "0" || ex.timer === null))
+        if (hasEmptyTimer) {
+            setClientError("Timer cannot be 0. You can set it to none if you do not want a timer")
             setIsDialogBoxOpen(true);
             return;
         }
 
-        const hasEmptyTimer = exercises.some(ex => ex.timeType === 'Timer' && (ex.timer === '' || ex.timer === "0" || ex.timer === null))
-        if (hasEmptyTimer) {
-            setClientError("Timer cannot be 0. You can set it to none if you do not want a timer")
+        // checks if workout name is not less than 2 characters
+        if (workoutName.length < 3) {
+            setClientError("Workout name should not be less than 2 characters");
+            setIsDialogBoxOpen(true);
+            return;
         }
 
+        // cleaning the data
         const finalExercises = exercises.map(exercise => {
             const rest = { ...exercise }
             delete rest.id;
@@ -102,6 +108,7 @@ const CreateWorkout = () => {
             }
         })
 
+        // hook call
         saveWorkout({ workoutName, exercises: finalExercises }, {
             onSuccess: () => {
                 setExercises(defaultExercises);
@@ -278,5 +285,7 @@ const CreateWorkout = () => {
         </div>
     );
 }
+
+
 
 export default CreateWorkout;

@@ -2,9 +2,9 @@
 import { useQuery } from "@tanstack/react-query";
 
 // external
-import apiClient from "@/shared/api/client";
+import { apiClient } from "@/shared/index";
 
-export const useGetWorkouts = () => {
+const useGetWorkouts = () => {
     return useQuery({
         queryKey: ["workouts"],
         queryFn: async () => {
