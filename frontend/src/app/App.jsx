@@ -11,13 +11,14 @@ import {
   Login,
   ForgetPassword,
   ResetPassword,
-  ProfileSettings
+  ProfileSettings,
 } from '@/features/auth';
 
 // workout feature
 import {
   Home,
-  CreateWorkout
+  CreateWorkout,
+  EditWorkout
 } from '@/features/workout';
 
 function App() {
@@ -63,6 +64,10 @@ function App() {
           <Route
             path='/create-workout'
             element={user ? <CreateWorkout /> : <Navigate to='/login' />}
+          />
+          <Route
+            path='/edit-workout/:workoutId'
+            element={user ? <EditWorkout /> : <Navigate to='/login' />}
           />
 
         </Route>

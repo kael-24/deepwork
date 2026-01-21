@@ -2,7 +2,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useEffect, useRef, useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // internal
 import { DnDWrapper, useClickOutside } from '@/shared/index';
@@ -12,6 +12,7 @@ import useDeleteWorkout from "../hooks/useDeleteWorkout";
 
 const WorkoutCard = ({ workout }) => {
     const { setNodeRef, attributes, transform, listeners, transition } = useSortable({ id: workout._id });
+    const navigate = useNavigate();
     const style = {
         transform: CSS.Transform.toString(transform),
         transition
@@ -52,6 +53,8 @@ const WorkoutCard = ({ workout }) => {
                                 e.stopPropagation();
                                 if (option === workoutCardOption[1])
                                     deleteWorkoutMutation.mutate(workout._id)
+                                else if (option == workoutCardOption[0])
+                                    navigate(`/edit-workout/${workout._id}`);
                             }}
                             disabled={deleteWorkoutMutation.isLoading}
                         >
