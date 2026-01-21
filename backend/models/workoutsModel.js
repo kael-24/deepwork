@@ -9,7 +9,7 @@ const Schema = mongoose.Schema;
 const exerciseSchema = new Schema({
     exerciseType: {
         type: String,
-        enum: ['prepare', 'work', 'rest', 'restbetweensets', 'cooldown'],
+        enum: ['Prepare', 'Work', 'Rest', 'RestBetweenSets', 'Cooldown'],
         required: true
     },
     exerciseName: {
@@ -18,12 +18,12 @@ const exerciseSchema = new Schema({
     },
     timeType: {
         type: String,
-        enum: ['timer', 'stopwatch', 'none']
+        enum: ['Timer', 'Stopwatch', 'None']
     },
     timer: {
         type: Number,
         required: function () {
-            return this.timeType === 'timer';
+            return this.timeType === 'Timer';
         }, 
         min: [1, "Timer must be greater than 0"],
         validate: {
@@ -97,9 +97,9 @@ workoutSchema.statics.createWorkout = async function (userId, workoutName, exerc
 
     // clear out empty data
     exercises.forEach((exercise) => {
-        if (exercise.exerciseType !== "work" || exercise.reps === 0)
+        if (exercise.exerciseType !== "Work" || exercise.reps === 0)
             exercise.reps = undefined;
-        if (exercise.timeType !== "timer")
+        if (exercise.timeType !== "Timer")
             exercise.timer = undefined;
     })
 

@@ -39,14 +39,7 @@ export const createNewWorkout = async (userId, { workoutName, exercises }) => {
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_EXERCISES);
     }
 
-    // Normalize exercise data
-    const normalizedExercises = exercises.map(({ exerciseType, timeType, ...rest }) => ({
-        ...rest,
-        exerciseType: exerciseType.toLowerCase(),
-        timeType: timeType.toLowerCase(),
-    }));
-
-    const workout = await Workout.createWorkout(userId, workoutName, normalizedExercises);
+    const workout = await Workout.createWorkout(userId, workoutName, exercises);
     return workout;
 };
 
