@@ -247,6 +247,7 @@ const CreateWorkout = () => {
                         title="Error"
                         message={clientError || error.response?.data?.error || error.message || "Something went wrong"}
                         onCancel={() => setIsDialogBoxOpen(false)}
+                        onCancelName="Cancel"
                     />
                 }
             </div>

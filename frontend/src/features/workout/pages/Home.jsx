@@ -25,7 +25,7 @@ const WorkoutCard = ({ workout }) => {
     useClickOutside(workoutDropdownRef, () => setIsWorkoutOptionOpen(false));
 
     return (
-        <div
+        <div 
             key={workout._id}
             className='border border-black'
             ref={setNodeRef}
@@ -42,7 +42,11 @@ const WorkoutCard = ({ workout }) => {
             )}
             <div ref={workoutDropdownRef}>
                 <div
-                    onClick={() => setIsWorkoutOptionOpen(prev => !prev)}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsWorkoutOptionOpen(prev => !prev);
+                    }} 
                 >...
                 </div>
                 {isWorkoutOptionOpen &&
@@ -50,11 +54,12 @@ const WorkoutCard = ({ workout }) => {
                         <button
                             key={index}
                             onClick={(e) => {
+                                e.preventDefault();
                                 e.stopPropagation();
                                 if (option === workoutCardOption[1])
                                     deleteWorkoutMutation.mutate(workout._id)
                                 else if (option == workoutCardOption[0])
-                                    navigate(`/edit-workout/${workout._id}`);
+                                    navigate(`/edit-workout/${workout._id}`, { state: { from: '/'}});
                             }}
                             disabled={deleteWorkoutMutation.isLoading}
                         >
@@ -98,7 +103,11 @@ const Home = () => {
                 <div>
                     <DnDWrapper items={workouts} setItems={setWorkouts} type="grid">
                         <div className="grid grid-cols-2 gap-4">
-                            {workouts.map((workout) => <WorkoutCard key={workout._id} workout={workout} />)}
+                            {workouts.map((workout) => 
+                                <Link to={`/view-workout/${workout._id}`}>
+                                    <WorkoutCard key={workout._id} workout={workout} />
+                                </Link>
+                            )}
                         </div>
                     </DnDWrapper>
                 </div>

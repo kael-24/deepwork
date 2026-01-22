@@ -18,7 +18,8 @@ import {
 import {
   Home,
   CreateWorkout,
-  EditWorkout
+  EditWorkout,
+  ViewWorkout
 } from '@/features/workout';
 
 function App() {
@@ -68,6 +69,10 @@ function App() {
           <Route
             path='/edit-workout/:workoutId'
             element={user ? <EditWorkout /> : <Navigate to='/login' />}
+          />
+          <Route
+            path='/view-workout/:workoutId'
+            element={user ? <ViewWorkout /> : <Navigate to='/login' />}
           />
 
         </Route>

@@ -1,5 +1,5 @@
 // external
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from "react";
 
@@ -10,8 +10,9 @@ import useEditWorkout from "../hooks/useEditWorkout";
 import ExerciseCard from "../components/ExerciseCard";
 
 const EditWorkout = () => {
-    const { workoutId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const { workoutId } = useParams();
     const { data } = useGetWorkout(workoutId);
     const { editWorkout } = useEditWorkout();
 
@@ -25,6 +26,7 @@ const EditWorkout = () => {
     const [dialogBoxOpen, setIsDialogBoxOpen] = useState(false);
 
     const exerciseTypeOptions = ["Prepare", "Work", "Rest", "RestBetweenSets", "Cooldown"];
+    const previousPage = location.state?.from || '/';
 
     useEffect(() => {
         if (data?.workout) {
@@ -74,7 +76,6 @@ const EditWorkout = () => {
     const handleEditWorkout = async () => {
         setClientError(null);
 
-        // 
         if (workoutName.length < 3) {
             setClientError("Workout name should not be less than 2 characters");
             setIsDialogBoxOpen(true);
@@ -107,7 +108,7 @@ const EditWorkout = () => {
             },
             {
                 onSuccess: () => {
-                    navigate(`/`);
+                    navigate(previousPage);
                 },
                 onError: (error) => {
                     console.log(error);
@@ -191,7 +192,7 @@ const EditWorkout = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
                         className="flex-1 sm:flex-none px-8 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200 shadow-md hover:shadow-lg"
-                        onClick={() => { navigate(`/`); JSON.parse(localStorage.removeItem("draftWorkout")); }}
+                        onClick={() => { navigate(previousPage); JSON.parse(localStorage.removeItem("draftWorkout")); }}
                     >
                         Cancel
                     </button>

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const DialogBox = ({title, message, onCancel}) => {
+const DialogBox = ({title, message, onSave, onSaveName, onCancel, onCancelName}) => {
     const dialogBoxRef = useRef();
 
     useEffect(() => {
@@ -30,13 +30,25 @@ const DialogBox = ({title, message, onCancel}) => {
                     {message}
                 </p>
 
-                {/** Okay Button */}
+                {/** Save Button */}
+                {onSave && (
+                    <div className="flex justify-end pt-2">
+                        <button
+                            onClick={onSave}
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 text-sm font-medium"
+                        >
+                            {onSaveName}
+                        </button>
+                    </div>
+                )}
+
+                {/** Cancel Button */}
                 <div className="flex justify-end pt-2">
                     <button
                         onClick={onCancel}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 text-sm font-medium"
                     >
-                        Got it
+                        {onCancelName}
                     </button>
                 </div>
             </div>
