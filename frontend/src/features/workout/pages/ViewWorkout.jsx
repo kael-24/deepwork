@@ -25,7 +25,7 @@ const ViewWorkout = () => {
     const { workoutId } = useParams();
     const { data } = useGetWorkout(workoutId);
 
-    const [openDialogBox, setOpenDialogBox] = useState(false);
+    const [ openDialogBox, setOpenDialogBox ] = useState(false);
     const { deleteWorkoutMutation } = useDeleteWorkout();
 
     const [ workoutName, setWorkoutName ] = useState("");
@@ -70,6 +70,12 @@ const ViewWorkout = () => {
                     onCancelName="Cancel"
                 />
             )}
+            <Link
+                to={`/play-workout/${workoutId}`}
+                state={{ from: `/view-workout/${workoutId}` }}
+            >
+                PLAY
+            </Link>
         </div>
     );
 };
