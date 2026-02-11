@@ -153,7 +153,7 @@ workoutSchema.statics.editWorkout = async function (userId, objectId, workoutNam
         errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
 
     return result;
-}
+};
 
 
 export default mongoose.model('Workout', workoutSchema);

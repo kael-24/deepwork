@@ -22,5 +22,8 @@ router.patch('/:objectId', asyncHandler(workoutsController.editWorkout))
 // DELETE WORKOUT
 router.delete('/:objectId', asyncHandler(workoutsController.deleteWorkout))
 
+// ADD WORKOUT RECORD
+router.post('/record/:workoutId', asyncHandler(workoutsController.recordWorkout))
+
 
 export default router;
