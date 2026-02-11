@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import useGetWorkout from "../hooks/useGetWorkout";
@@ -7,14 +7,14 @@ import { DialogBox } from "@/shared/index";
 const Banner = ({ exercise, timerIsRunning, setTimerIsRunning, workoutName, lockIsOn, setLockIsOn }) => {
     const { workoutId } = useParams();
     const navigate = useNavigate();
-    const [ dialogBoxOpen, setDialogBoxOpen ] = useState(false);
+    const [exitDialogBoxOpen, setExitDialogBoxOpen] = useState(false);
 
     return (
         <div>
             <div>workoutName:{workoutName}</div>
             <button
                 className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
-                onClick={() => setDialogBoxOpen(true)}
+                onClick={() => setExitDialogBoxOpen(true)}
             >
                 X
             </button>
@@ -34,13 +34,13 @@ const Banner = ({ exercise, timerIsRunning, setTimerIsRunning, workoutName, lock
                 </button>
             )}
             <div>------------</div>
-            {dialogBoxOpen && (
+            {exitDialogBoxOpen && (
                 <DialogBox // UNFINISHED
                     title="Exit Workout"
                     message="Exiting workout wont save your progress"
                     onSave={() => navigate(`/view-workout/${workoutId}`)}
                     onSaveName="Exit"
-                    onCancel={() => setDialogBoxOpen(false)}
+                    onCancel={() => setExitDialogBoxOpen(false)}
                     onCancelName="Cancel"
                 />
             )}
@@ -105,23 +105,24 @@ const TimerInterface = ({ exercise, timerIsRunning, setTimerIsRunning, exerciseO
     );
 }
 
-const NextExercise = ({ exercise, setPreviousExercise, setNextExercise, exerciseNumber, exerciseLength, lockIsOn }) => {
+const NextExercise = ({ exercise, setPreviousExercise, setNextExercise, exerciseNumber, exerciseLength, lockIsOn, finishWorkout }) => {
+    const [finishDialogBoxOpen, setFinishDialogBoxOpen] = useState(false)
 
     return (
         <div>
-            {exerciseNumber < exerciseLength - 1 ? (
+            <button // UNFINISHED
+                    onClick={() => setFinishDialogBoxOpen(true)}
+                    className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
+                >
+                    Finish
+                </button>
+            {exerciseNumber < exerciseLength - 1 && 
                 <div>
                     <div>Up next</div>
                     <div>{exercise.exerciseType}</div>
                     <div>{exercise.exerciseName}</div>
                 </div>
-            ) : (
-                <button // UNFINISHED
-                    // onClick={}
-                >
-                    Finish
-                </button>
-            )}
+            }
             {exerciseNumber > 0 && (
                 <button
                     className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
@@ -140,6 +141,15 @@ const NextExercise = ({ exercise, setPreviousExercise, setNextExercise, exercise
                     Next
                 </button>
             )}
+            {finishDialogBoxOpen &&
+                <DialogBox
+                    title="Finish workout?"
+                    onSave={finishWorkout}
+                    onSaveName="Save"
+                    onCancel={() => setFinishDialogBoxOpen(false)}
+                    onCancelName="Cancel"
+                />
+            }
         </div>
     );
 }
@@ -155,11 +165,26 @@ const PlayWorkout = () => {
     const [exercises, setExercises] = useState(null);
     const [exerciseNumber, setExerciseNumber] = useState(0);
     const [lockIsOn, setLockIsOn] = useState(false);
+    const [exercisesDuration, setExercisesDuration] = useState([]);
+    const prevExerciseId = useRef("");
+
+    const [startExerciseTime, setStartExerciseTime] = useState(Date.now());
+    const workoutStartTime = useRef(Date.now());
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (data?.workout) {
             setWorkoutName(data.workout.workoutName);
             setExercises(data.workout.exercises);
+
+            const exerciseRecord = data.workout.exercises.map(ex => ({
+                exerciseId: ex._id,
+                duration: 0
+            }))
+
+            prevExerciseId.current = exerciseRecord[0].exerciseId;
+            setExercisesDuration(exerciseRecord);
         }
     }, [data]);
 
@@ -177,8 +202,55 @@ const PlayWorkout = () => {
         };
     }, []);
 
-    if (isLoading) return <div>Loading...</div>;
+    // TOTAL WORKOUT TIME SPENT
+    const finishWorkout = () => {
+        const startWorkoutDate = new Date(workoutStartTime.current).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})
+        const startWorkoutTime = new Date(workoutStartTime.current).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true});
 
+        const endWorkoutTime = new Date().toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true});
+
+        navigate(`/result-workout/${workoutId}`, { 
+            state: { 
+                startWorkoutDate,
+                startWorkoutTime,
+                endWorkoutTime,
+                totalWorkoutDuration: Math.floor((Date.now() - workoutStartTime.current) / 1000),
+                exercisesDuration
+            }}
+        );
+    };
+
+    // SPENT ON EACH EXERCISE
+    useEffect(() => {
+        const prevId = prevExerciseId.current;
+
+        // end time
+        const endExerciseTime = Math.floor((Date.now() - startExerciseTime) / 1000);
+
+        // record duration
+        setExercisesDuration(prev => prev.map(item => {
+            if (item.exerciseId === prevId) {
+                return {
+                    ...item,
+                    duration: item.duration + endExerciseTime
+                }
+            };
+
+            return item;
+        }));
+
+        // start time
+        setStartExerciseTime(Date.now());
+        
+        if (exercisesDuration.length > 0) {
+            console.log("exerciseNumber", exercisesDuration[exerciseNumber].exerciseId);
+            prevExerciseId.current = exercisesDuration[exerciseNumber].exerciseId;
+        }
+    }, [exerciseNumber]);
+    
+    if (isLoading) return <div>Loading...</div>;
+    
+    console.log("query", exercisesDuration, "exerciseNumber", exerciseNumber, "prev", prevExerciseId.current);
     return (
         <div>
             {exercises && exercises.length > 0 && (
@@ -209,6 +281,7 @@ const PlayWorkout = () => {
                         lockIsOn={lockIsOn}
                         exerciseLength={exercises.length}
                         setTimerIsRunning={(state) => setTimerIsRunning(state)}
+                        finishWorkout={finishWorkout}
                     />
                 </div>
             )}
