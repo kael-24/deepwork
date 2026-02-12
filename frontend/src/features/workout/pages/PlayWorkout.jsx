@@ -10,30 +10,43 @@ const Banner = ({ exercise, timerIsRunning, setTimerIsRunning, workoutName, lock
     const [exitDialogBoxOpen, setExitDialogBoxOpen] = useState(false);
 
     return (
-        <div>
-            <div>workoutName:{workoutName}</div>
-            <button
-                className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
-                onClick={() => setExitDialogBoxOpen(true)}
-            >
-                X
-            </button>
-            <button
-                className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
-                onClick={setLockIsOn}
-            >
-                {lockIsOn ? "UNLOCK" : "LOCK"}
-            </button>
-            {exercise.timer && (
+        <div className="flex items-center justify-between mb-10">
+            {/** Back Button */}
+            <div className="">
                 <button
-                    className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
-                    disabled={lockIsOn}
-                    onClick={() => setTimerIsRunning(!timerIsRunning)}
+                    className="border border-green-500 rounded-md px-4 py-2 text-green-500"
+                    onClick={() => setExitDialogBoxOpen(true)}
                 >
-                    {timerIsRunning ? <div>PAUSE</div> : <div>PLAY</div>}
+                    X
                 </button>
-            )}
-            <div>------------</div>
+            </div>
+
+            {/** Workout Name */}
+            <div>
+                <div className="font-bold text-2xl ml-23">{workoutName}</div>
+            </div>
+
+            <div>
+                {/** Lock Button */}
+                <button
+                    className="border border-green-500 rounded-md px-4 py-2 text-green-500"
+                    onClick={setLockIsOn}
+                >
+                    {lockIsOn ? "UNLOCK" : "LOCK"}
+                </button>
+
+                {/** Play/Pause Button */}
+                {exercise.timer && (
+                    <button
+                        className="border border-green-500 rounded-md px-4 py-2 text-green-500"
+                        disabled={lockIsOn}
+                        onClick={() => setTimerIsRunning(!timerIsRunning)}
+                    >
+                        {timerIsRunning ? <div>PAUSE</div> : <div>PLAY</div>}
+                    </button>
+                )}
+            </div>
+
             {exitDialogBoxOpen && (
                 <DialogBox // UNFINISHED
                     title="Exit Workout"
@@ -94,53 +107,83 @@ const TimerInterface = ({ exercise, timerIsRunning, setTimerIsRunning, exerciseO
     { console.log("SETTIMERISRUNNING", timerIsRunning) }
 
     return (
-        <div>
-            <p>exerciseType:{exercise.exerciseType}</p>
-            <p>exerciseName:{exercise.exerciseName}</p>
-            {exercise.timer && <p>Timer:{formatMs(elapsedTime)}</p>}
-            {exercise.reps && <p>Reps:{exercise.reps}</p>}
-            <div>{exerciseOrder.exerciseNumber} / {exerciseOrder.totalExercise}</div>
-            <div>-----------------</div>
+        <div className="flex flex-col items-center justify-center my-30">
+            <div className="text-2xl">{exercise.exerciseType}</div>
+            <div className="text-4xl">{exercise.exerciseName}</div>
+            {exercise.timer && <div className="text-6xl">{formatMs(elapsedTime)}</div>}
+            {exercise.reps && <div className="text-6xl">{exercise.reps}</div>}
+            <div className="text-lg">{exerciseOrder.exerciseNumber} / {exerciseOrder.totalExercise}</div>
         </div>
     );
 }
 
 const NextExercise = ({ exercise, setPreviousExercise, setNextExercise, exerciseNumber, exerciseLength, lockIsOn, finishWorkout }) => {
     const [finishDialogBoxOpen, setFinishDialogBoxOpen] = useState(false)
+    const isLastExercise = exerciseNumber === exerciseLength - 1;
 
     return (
-        <div>
-            <button // UNFINISHED
-                    onClick={() => setFinishDialogBoxOpen(true)}
-                    className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
-                >
-                    Finish
-                </button>
-            {exerciseNumber < exerciseLength - 1 && 
-                <div>
-                    <div>Up next</div>
-                    <div>{exercise.exerciseType}</div>
-                    <div>{exercise.exerciseName}</div>
-                </div>
-            }
-            {exerciseNumber > 0 && (
-                <button
-                    className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
-                    disabled={lockIsOn}
-                    onClick={setPreviousExercise}
-                >
-                    Previous
-                </button>
-            )}
-            {exerciseNumber < exerciseLength - 1 && (
-                <button
-                    className="px-4 py-2 border-3 border-black bg-blue-500 text-white rounded"
-                    disabled={lockIsOn}
-                    onClick={setNextExercise}
-                >
-                    Next
-                </button>
-            )}
+        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-40">
+            <div className="max-w-screen-xl mx-auto">
+                {isLastExercise ? (
+                    <div className="flex gap-4">
+                        <button
+                            className="w-1/3 border border-green-500 rounded-md px-4 py-2 text-green-500 hover:bg-green-50 transition-colors"
+                            disabled={lockIsOn}
+                            onClick={setPreviousExercise}
+                        >
+                            Previous
+                        </button>
+                        <button
+                            onClick={() => setFinishDialogBoxOpen(true)}
+                            className="w-2/3 bg-green-500 border border-green-500 rounded-md px-4 py-2 text-white hover:bg-green-600 transition-colors"
+                        >
+                            Finish
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <div className="mb-4">
+                            <button
+                                onClick={() => setFinishDialogBoxOpen(true)}
+                                className="border border-green-500 rounded-md px-4 py-2 text-green-500 hover:bg-green-50 transition-colors w-full sm:w-auto"
+                            >
+                                Finish
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <div className="w-24">
+                                {exerciseNumber > 0 && (
+                                    <button
+                                        className="border border-green-500 rounded-md px-4 py-2 text-green-500 hover:bg-green-50 transition-colors w-full"
+                                        disabled={lockIsOn}
+                                        onClick={setPreviousExercise}
+                                    >
+                                        Previous
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="flex-1 text-center px-2">
+                                <div>
+                                    <div className="text-sm text-gray-500 font-medium uppercase tracking-wider">Up next</div>
+                                    <div className="font-semibold text-gray-700">{exercise.exerciseType}</div>
+                                    <div className="text-lg font-bold text-gray-900 truncate">{exercise.exerciseName}</div>
+                                </div>
+                            </div>
+
+                            <div className="w-24">
+                                <button
+                                    className="border border-green-500 rounded-md px-4 py-2 text-green-500 hover:bg-green-50 transition-colors w-full"
+                                    disabled={lockIsOn}
+                                    onClick={setNextExercise}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
             {finishDialogBoxOpen &&
                 <DialogBox
                     title="Finish workout?"
@@ -204,20 +247,20 @@ const PlayWorkout = () => {
 
     // TOTAL WORKOUT TIME SPENT
     const finishWorkout = () => {
-        const startWorkoutDate = new Date(workoutStartTime.current).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})
-        const startWorkoutTime = new Date(workoutStartTime.current).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true});
+        const startWorkoutDate = new Date(workoutStartTime.current).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+        const startWorkoutTime = new Date(workoutStartTime.current).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
-        const endWorkoutTime = new Date().toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true});
+        const endWorkoutTime = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
-        navigate(`/result-workout/${workoutId}`, { 
-            state: { 
+        navigate(`/result-workout/${workoutId}`, {
+            state: {
                 startWorkoutDate,
                 startWorkoutTime,
                 endWorkoutTime,
                 totalWorkoutDuration: Math.floor((Date.now() - workoutStartTime.current) / 1000),
                 exercisesDuration
-            }}
-        );
+            }
+        });
     };
 
     // SPENT ON EACH EXERCISE
@@ -241,18 +284,18 @@ const PlayWorkout = () => {
 
         // start time
         setStartExerciseTime(Date.now());
-        
+
         if (exercisesDuration.length > 0) {
             console.log("exerciseNumber", exercisesDuration[exerciseNumber].exerciseId);
             prevExerciseId.current = exercisesDuration[exerciseNumber].exerciseId;
         }
     }, [exerciseNumber]);
-    
+
     if (isLoading) return <div>Loading...</div>;
-    
+
     console.log("query", exercisesDuration, "exerciseNumber", exerciseNumber, "prev", prevExerciseId.current);
     return (
-        <div>
+        <div className="pb-64">
             {exercises && exercises.length > 0 && (
                 <div>
                     <Banner
