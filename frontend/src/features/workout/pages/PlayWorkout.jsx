@@ -2,7 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import useGetWorkout from "../hooks/useGetWorkout";
+import useRecordWorkout from "../hooks/useRecordWorkout";
 import { DialogBox } from "@/shared/index";
+
 
 const Banner = ({ exercise, timerIsRunning, setTimerIsRunning, workoutName, lockIsOn, setLockIsOn }) => {
     const { workoutId } = useParams();
@@ -209,12 +211,15 @@ const PlayWorkout = () => {
     const [exerciseNumber, setExerciseNumber] = useState(0);
     const [lockIsOn, setLockIsOn] = useState(false);
     const [exercisesDuration, setExercisesDuration] = useState([]);
-    const prevExerciseId = useRef("");
-
     const [startExerciseTime, setStartExerciseTime] = useState(Date.now());
+    
+    const prevExerciseId = useRef("");
     const workoutStartTime = useRef(Date.now());
 
+    const [errorDialogBoxIsOpen, setErrorDialogBoxIsOpen] = useState(false);
+    
     const navigate = useNavigate();
+    const { recordWorkout, } = useRecordWorkout();
 
     useEffect(() => {
         if (data?.workout) {
@@ -247,20 +252,34 @@ const PlayWorkout = () => {
 
     // TOTAL WORKOUT TIME SPENT
     const finishWorkout = () => {
-        const startWorkoutDate = new Date(workoutStartTime.current).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+        const startWorkoutDate = new Date(workoutStartTime.current).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
         const startWorkoutTime = new Date(workoutStartTime.current).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-
         const endWorkoutTime = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-
-        navigate(`/result-workout/${workoutId}`, {
-            state: {
-                startWorkoutDate,
-                startWorkoutTime,
-                endWorkoutTime,
-                totalWorkoutDuration: Math.floor((Date.now() - workoutStartTime.current) / 1000),
+        const totalWorkoutDuration = Math.floor((Date.now() - workoutStartTime.current) / 1000);
+        
+        recordWorkout.mutate({
+                workoutId,
+                workoutDateStarted: new Date(workoutStartTime.current),
+                workoutDateEnded: new Date(),
+                workoutDuration: totalWorkoutDuration,
                 exercisesDuration
+            }, { 
+                onSuccess: (data) => {
+                    navigate(`/result-workout/${workoutId}`, {
+                        state: {
+                            startWorkoutDate,
+                            startWorkoutTime,
+                            endWorkoutTime,
+                            totalWorkoutDuration,
+                            exercisesDuration,
+                            onSuccess: data.success
+                        }
+                    });
+                }, onError: () => {
+                    setErrorDialogBoxIsOpen(true)
+                }
             }
-        });
+        );
     };
 
     // SPENT ON EACH EXERCISE
@@ -326,6 +345,14 @@ const PlayWorkout = () => {
                         setTimerIsRunning={(state) => setTimerIsRunning(state)}
                         finishWorkout={finishWorkout}
                     />
+
+                    {errorDialogBoxIsOpen && 
+                    <DialogBox
+                        title="Error saving workout"
+                        message="Please try again"
+                        onCancel={() => setErrorDialogBoxIsOpen(false)}
+                        onCancelName="Cancel"
+                    />}
                 </div>
             )}
         </div>
