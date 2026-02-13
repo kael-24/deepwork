@@ -38,6 +38,9 @@ export const ERROR_MESSAGES = {
     FAILED_TO_UPDATE_WORKOUT: 'Failed to update workout',
     FAILED_TO_DELETE_WORKOUT: 'Failed to delete workout',
 
+    // Record Workout
+    FAILED_TO_GET_RECORDS: 'Failed to get records',
+
     // Firebase Errors
     INVALID_ID_TOKEN: 'Invalid Firebase ID token',
 

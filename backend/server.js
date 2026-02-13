@@ -5,8 +5,7 @@ import cookieParser from 'cookie-parser';
 import { envConfig, connectDB } from './config/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
-import userAuthRoutes from './routes/userAuthRoutes.js';
-import workoutRoutes from './routes/workoutRoutes.js'
+import { userAuthRoutes, workoutRoutes, recordRoutes } from './routes/index.js';
 
 envConfig.validateEnv();
 
@@ -41,7 +40,8 @@ app.use(cookieParser());
  * ---------------------------------------------------------
  */
 app.use('/api/auth', userAuthRoutes);
-app.use('/api/workouts', workoutRoutes)
+app.use('/api/workouts', workoutRoutes);
+app.use('/api/records', recordRoutes);
 
 /**
  * ---------------------------------------------------------

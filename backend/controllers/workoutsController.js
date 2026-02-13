@@ -59,15 +59,3 @@ export const editWorkout = async (req, res) => {
         });
 }
 
-/**
- * Record workout
- */
-export const recordWorkout = async (req, res) => { // UNFINISHED
-        const { _id } = req.user;
-        const { workoutId } = req.params;
-        const { workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration } = req.body;
-
-        const result = await workoutService.recordWorkout(_id, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration);
-
-        res.status(HTTP_STATUS.CREATED).json({ recordId: result, success: true, message: "Record created"});
-}

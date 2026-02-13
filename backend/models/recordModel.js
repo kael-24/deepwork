@@ -45,7 +45,7 @@ const recordSchema = new Schema({
 }, { timestamps: true });
 
 
-recordSchema.statics.recordWorkout = async function (userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration) {
+recordSchema.statics.createRecord = async function (userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration) {
     if (!mongoose.Types.ObjectId.isValid(workoutId) || !mongoose.Types.ObjectId.isValid(userId))
         errorThrower(HTTP_STATUS.FORBIDDEN, ERROR_MESSAGES.INVALID_CREDENTIALS);
 
