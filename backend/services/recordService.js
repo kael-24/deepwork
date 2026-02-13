@@ -25,7 +25,7 @@ export const createRecord = async (userId, workoutId, workoutDateStarted, workou
 };
 
 /**
- * Get a workout record
+ * Get workout records
  */
 export const getRecords = async (userId, workoutId) => {
     const result = await Record.getRecords(userId, workoutId)
@@ -33,3 +33,13 @@ export const getRecords = async (userId, workoutId) => {
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.FAILED_TO_GET_RECORDS);
     return result;
 };
+
+/** 
+ * Get workout record
+ */
+export const getRecord= async (userId, recordId) => {
+    const result = await Record.getRecord(userId, recordId);
+    if (!result)
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.FAILED_TO_GET_RECORDS);
+    return result;
+}
