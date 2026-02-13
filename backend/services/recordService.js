@@ -24,3 +24,12 @@ export const createRecord = async (userId, workoutId, workoutDateStarted, workou
     return res;
 };
 
+/**
+ * Get a workout record
+ */
+export const getRecords = async (userId, workoutId) => {
+    const result = await Record.getRecords(userId, workoutId)
+    if (!result)
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.FAILED_TO_GET_RECORDS);
+    return result;
+};

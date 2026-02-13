@@ -60,6 +60,22 @@ recordSchema.statics.createRecord = async function (userId, workoutId, workoutDa
     const res = await this.create({userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration});
 
     return res._id;
-}
+};
+
+recordSchema.statics.getRecords = async function (userId, workoutId) {
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(workoutId))
+        errorThrower(HTTP_STATUS.FORBIDDEN, ERROR_MESSAGES.INVALID_CREDENTIALS);
+
+    const userExists = await User.findById(userId);
+    if (!userExists)
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
+
+    const workoutExists = await Workout.findById(workoutId);
+    if (!workoutExists)
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
+
+    const res = await this.find({ workoutId }).select('-userId -__v -createdAt -updatedAt');
+    return res;
+};
 
 export default mongoose.model('Record', recordSchema);
