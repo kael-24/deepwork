@@ -10,7 +10,7 @@ const useRecordWorkout = () => {
             workoutDuration, 
             exercisesDuration
         }) => {
-                const res = await apiClient.post(`/api/workouts/record/${workoutId}`, {
+                const res = await apiClient.post(`/api/records/${workoutId}`, {
                     workoutDateStarted, 
                     workoutDateEnded, 
                     workoutDuration, 
