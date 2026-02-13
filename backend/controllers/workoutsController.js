@@ -67,7 +67,7 @@ export const recordWorkout = async (req, res) => { // UNFINISHED
         const { workoutId } = req.params;
         const { workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration } = req.body;
 
-        await workoutService.recordWorkout(_id, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration);
+        const result = await workoutService.recordWorkout(_id, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration);
 
-        res.status(HTTP_STATUS.CREATED).json({ success: true, message: "Record created"});
+        res.status(HTTP_STATUS.CREATED).json({ recordId: result, success: true, message: "Record created"});
 }

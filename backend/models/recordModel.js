@@ -57,7 +57,9 @@ recordSchema.statics.recordWorkout = async function (userId, workoutId, workoutD
     if (!workoutExists)
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
 
-    await this.create({userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration});
+    const res = await this.create({userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration});
+
+    return res._id;
 }
 
 export default mongoose.model('Record', recordSchema);
