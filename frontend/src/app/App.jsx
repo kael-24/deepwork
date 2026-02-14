@@ -12,7 +12,7 @@ import {
   ForgetPassword,
   ResetPassword,
   ProfileSettings,
-} from '@/features/auth';
+} from '@/features/auth/index';
 
 // workout feature
 import {
@@ -21,8 +21,12 @@ import {
   EditWorkout,
   ViewWorkout,
   PlayWorkout,
+} from '@/features/workout/index';
+
+// workout feature
+import {
   ResultWorkout
-} from '@/features/workout';
+} from '@/features/record/index';
 
 function App() {
   const { user, isAuthLoading } = useAuthStore();
@@ -81,7 +85,7 @@ function App() {
             element={user ? <PlayWorkout /> : <Navigate to='/login' />}
           />
           <Route
-            path='/result-workout/:workoutId'
+            path='/result-workout/:recordId'
             element={user ? <ResultWorkout /> : <Navigate to='/login' />}
           />
 

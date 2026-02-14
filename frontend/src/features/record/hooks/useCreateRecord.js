@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query"
 import { apiClient } from "@/shared/index.js";
 
-const useRecordWorkout = () => {
-    const recordWorkout = useMutation({
+const useCreateRecord = () => {
+    const createRecord = useMutation({
         mutationFn: async ({
             workoutId, 
             workoutDateStarted, 
@@ -19,7 +19,7 @@ const useRecordWorkout = () => {
                 return res.data;
             }
         });   
-    return { recordWorkout };
+    return { createRecord };
 }
 
-export default useRecordWorkout;
+export default useCreateRecord;

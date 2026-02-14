@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import useGetWorkout from "../hooks/useGetWorkout";
-import useRecordWorkout from "../hooks/useRecordWorkout";
-import { DialogBox } from "@/shared/index";
+import useGetWorkout from "../hooks/useGetWorkout.js";
+import { useCreateRecord } from "@/features/record/index.js";
+import { DialogBox } from "@/shared/index.js";
 
 
 const Banner = ({ exercise, timerIsRunning, setTimerIsRunning, workoutName, lockIsOn, setLockIsOn }) => {
@@ -219,7 +219,7 @@ const PlayWorkout = () => {
     const [errorDialogBoxIsOpen, setErrorDialogBoxIsOpen] = useState(false);
     
     const navigate = useNavigate();
-    const { recordWorkout, } = useRecordWorkout();
+    const { createRecord } = useCreateRecord();
 
     useEffect(() => {
         if (data?.workout) {
@@ -252,12 +252,9 @@ const PlayWorkout = () => {
 
     // TOTAL WORKOUT TIME SPENT
     const finishWorkout = () => {
-        const startWorkoutDate = new Date(workoutStartTime.current).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-        const startWorkoutTime = new Date(workoutStartTime.current).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-        const endWorkoutTime = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
         const totalWorkoutDuration = Math.floor((Date.now() - workoutStartTime.current) / 1000);
         
-        recordWorkout.mutate({
+        createRecord.mutate({
                 workoutId,
                 workoutDateStarted: new Date(workoutStartTime.current),
                 workoutDateEnded: new Date(),
@@ -265,16 +262,7 @@ const PlayWorkout = () => {
                 exercisesDuration
             }, { 
                 onSuccess: (data) => {
-                    navigate(`/result-workout/${workoutId}`, {
-                        state: {
-                            startWorkoutDate,
-                            startWorkoutTime,
-                            endWorkoutTime,
-                            totalWorkoutDuration,
-                            exercisesDuration,
-                            onSuccess: data.success
-                        }
-                    });
+                    navigate(`/result-workout/${data.recordId}`);
                 }, onError: () => {
                     setErrorDialogBoxIsOpen(true)
                 }
