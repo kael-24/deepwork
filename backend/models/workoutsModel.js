@@ -6,7 +6,7 @@ import errorThrower from "../utils/errorThrower.js";
 
 const Schema = mongoose.Schema;
 
-const exerciseSchema = new Schema({
+export const exerciseSchema = new Schema({
     exerciseType: {
         type: String,
         enum: ['Prepare', 'Work', 'Rest', 'RestBetweenSets', 'Cooldown'],
@@ -24,7 +24,7 @@ const exerciseSchema = new Schema({
         type: Number,
         required: function () {
             return this.timeType === 'Timer';
-        }, 
+        },
         min: [1, "Timer must be greater than 0"],
         validate: {
             validator: Number.isInteger,

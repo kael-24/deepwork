@@ -1,23 +1,20 @@
 import mongoose from "mongoose";
 
 import User from './userModel.js';
-import Workout from './workoutsModel.js';
+import Workout, { exerciseSchema } from './workoutsModel.js';
 import { errorThrower } from "../utils/index.js";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../constants/index.js";
 
 const Schema = mongoose.Schema;
 
-const exercisesDurationSchema = new Schema({
-    exerciseId: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'Workout'
-    },
+const recordExerciseSchema = exerciseSchema.clone().add({
     duration: {
         type: Number,
-        required: true
-    } 
-})
+        required: true,
+        default: 0
+    }
+});
+
 const recordSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
@@ -29,6 +26,11 @@ const recordSchema = new Schema({
         required: true,
         ref: 'Workout'
     },
+    workoutName: {
+        type: String,
+        required: true
+    },
+    exercises: [recordExerciseSchema],
     workoutDateStarted: {
         type: Date,
         required: true,
@@ -40,8 +42,7 @@ const recordSchema = new Schema({
     workoutDuration: {
         type: Number,
         required: true
-    },
-    exercisesDuration: [exercisesDurationSchema]
+    }
 }, { timestamps: true });
 
 
@@ -53,11 +54,16 @@ recordSchema.statics.createRecord = async function (userId, workoutId, workoutDa
     if (!userExists)
         errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND);
 
-    const workoutExists = await Workout.findById(workoutId);
-    if (!workoutExists)
+    const workout = await Workout.findById(workoutId);
+    if (!workout)
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
 
-    const res = await this.create({userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration});
+    const mergedExercise = workout.exercises.map((ex, index) => ({
+        ...ex.toObject(),
+        duration: exercisesDuration[index].duration
+    }))
+
+    const res = await this.create({ userId, workoutId, workoutName: workout.workoutName, exercises: mergedExercise, workoutDateStarted, workoutDateEnded, workoutDuration });
 
     return res._id;
 };
@@ -88,7 +94,7 @@ recordSchema.statics.getRecord = async function (userId, recordId) {
 
     const result = await this.findById(recordId).select('-userId -__v -createdAt -updatedAt');
     if (!result)
-        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.FAILED_TO_GET_RECORDS); 
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.FAILED_TO_GET_RECORDS);
 
     return result;
 };
