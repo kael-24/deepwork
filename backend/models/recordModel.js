@@ -39,14 +39,10 @@ const recordSchema = new Schema({
         type: Date,
         required: true
     },
-    workoutDuration: {
-        type: Number,
-        required: true
-    }
 }, { timestamps: true });
 
 
-recordSchema.statics.createRecord = async function (userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration) {
+recordSchema.statics.createRecord = async function (userId, workoutId, workoutDateStarted, workoutDateEnded, exercisesDuration) {
     if (!mongoose.Types.ObjectId.isValid(workoutId) || !mongoose.Types.ObjectId.isValid(userId))
         errorThrower(HTTP_STATUS.FORBIDDEN, ERROR_MESSAGES.INVALID_CREDENTIALS);
 
@@ -63,7 +59,7 @@ recordSchema.statics.createRecord = async function (userId, workoutId, workoutDa
         duration: exercisesDuration[index].duration
     }))
 
-    const res = await this.create({ userId, workoutId, workoutName: workout.workoutName, exercises: mergedExercise, workoutDateStarted, workoutDateEnded, workoutDuration });
+    const res = await this.create({ userId, workoutId, workoutName: workout.workoutName, exercises: mergedExercise, workoutDateStarted, workoutDateEnded });
 
     return res._id;
 };

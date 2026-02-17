@@ -6,10 +6,7 @@ import { errorThrower } from '../utils/index.js'
 /**
  * Record a workout
  */
-export const createRecord = async (userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration) => {
-    if (!Number.isFinite(workoutDuration))
-        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_INPUT);
-
+export const createRecord = async (userId, workoutId, workoutDateStarted, workoutDateEnded, exercisesDuration) => {
     if (exercisesDuration.some(ex => !Number.isFinite(ex.duration)))
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_INPUT);
 
@@ -20,7 +17,7 @@ export const createRecord = async (userId, workoutId, workoutDateStarted, workou
     if (!isValidDate(workoutDateStarted) || !isValidDate(workoutDateEnded))
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_INPUT);
 
-    const res = await Record.createRecord(userId, workoutId, workoutDateStarted, workoutDateEnded, workoutDuration, exercisesDuration);
+    const res = await Record.createRecord(userId, workoutId, workoutDateStarted, workoutDateEnded, exercisesDuration);
     return res;
 };
 
