@@ -40,3 +40,12 @@ export const getRecord= async (userId, recordId) => {
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.FAILED_TO_GET_RECORDS);
     return result;
 }
+
+/**
+ * 
+ * Get all records
+ */
+export const getAllRecords = async (userId) => {
+    const result = await Record.getAllRecords(userId);
+    return result;
+}

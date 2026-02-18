@@ -37,3 +37,13 @@ export const getRecord = async (req, res) => {
     res.status(HTTP_STATUS.OK).json({ success: true, record: result, message: "Record fetched"});
 };
 
+/**
+ * Get all workout records
+ */
+export const getAllRecords = async (req, res) => {
+    const { _id } = req.user;
+    
+    const result = await recordService.getAllRecords(_id);
+    res.status(HTTP_STATUS.OK).json({ success: true, records: result, message: "All records fetched" });
+} 
+

@@ -16,4 +16,7 @@ router.get('/workouts/:workoutId', asyncHandler(recordController.getRecordsByWor
 // GET WORKOUT RECORD
 router.get('/:recordId', asyncHandler(recordController.getRecord));
 
+// GET ALL RECORDS
+router.get('/', asyncHandler(recordController.getAllRecords));
+
 export default router;

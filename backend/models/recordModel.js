@@ -95,4 +95,19 @@ recordSchema.statics.getRecord = async function (userId, recordId) {
     return result;
 };
 
+recordSchema.statics.getAllRecords = async function (userId) {
+    if (!mongoose.Types.ObjectId.isValid(userId))
+        errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);
+
+    const userExists = await User.findById(userId);
+    if (!userExists)
+        errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);
+
+    const result = await this.find({ userId });
+    if (result.length === 0)
+        errorThrower(HTTP_STATUS.NO_CONTENT, ERROR_MESSAGES.FAILED_TO_GET_RECORDS);
+
+    return result;
+}
+
 export default mongoose.model('Record', recordSchema);
