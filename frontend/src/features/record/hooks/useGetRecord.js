@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/shared/index";
-import useRecordWorkout from "./useCreateRecord";
 
-const useGetRecordWorkout = (recordId) => {
+const useGetRecord = (recordId) => {
     return useQuery({
         queryKey: ["record", recordId],
         queryFn: async () => {
-            
+            const record = await apiClient.get(`/api/records/${recordId}`);
+            return record.data;
         } 
-    })
+    });
 };
 
-export default useRecordWorkout;
+export default useGetRecord;

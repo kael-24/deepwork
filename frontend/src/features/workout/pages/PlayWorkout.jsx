@@ -251,14 +251,11 @@ const PlayWorkout = () => {
     }, []);
 
     // TOTAL WORKOUT TIME SPENT
-    const finishWorkout = () => {
-        const totalWorkoutDuration = Math.floor((Date.now() - workoutStartTime.current) / 1000);
-        
+    const finishWorkout = () => {        
         createRecord.mutate({
                 workoutId,
                 workoutDateStarted: new Date(workoutStartTime.current),
                 workoutDateEnded: new Date(),
-                workoutDuration: totalWorkoutDuration,
                 exercisesDuration
             }, { 
                 onSuccess: (data) => {
