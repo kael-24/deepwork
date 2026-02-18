@@ -49,3 +49,10 @@ export const getAllRecords = async (userId) => {
     const result = await Record.getAllRecords(userId);
     return result;
 }
+
+/** 
+ * Delete a record
+ */
+export const deleteRecord = async (userId, recordId) => {
+    await Record.deleteRecord(userId, recordId);
+}

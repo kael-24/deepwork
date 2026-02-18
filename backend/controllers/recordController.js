@@ -47,3 +47,13 @@ export const getAllRecords = async (req, res) => {
     res.status(HTTP_STATUS.OK).json({ success: true, records: result, message: "All records fetched" });
 } 
 
+/**
+ * Delete a record
+ */
+export const deleteRecord = async (req, res) => {
+    const { _id } = req.user;
+    const { recordId } = req.params;
+
+    await recordService.deleteRecord(_id, recordId);
+    res.status(HTTP_STATUS.OK).json({ success: true, message: "Record deleted" });
+}

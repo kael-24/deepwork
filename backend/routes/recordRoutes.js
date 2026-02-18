@@ -19,4 +19,7 @@ router.get('/:recordId', asyncHandler(recordController.getRecord));
 // GET ALL RECORDS
 router.get('/', asyncHandler(recordController.getAllRecords));
 
+// DELETE A RECORD
+router.delete('/:recordId', asyncHandler(recordController.deleteRecord));
+
 export default router;

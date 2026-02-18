@@ -113,4 +113,17 @@ recordSchema.statics.getAllRecords = async function (userId) {
     return result;
 }
 
+recordSchema.statics.deleteRecord = async function (userId, recordId) {
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(recordId))
+        errorThrower(HTTP_STATUS.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);
+
+    const userExists = await User.findById(userId);
+    if (!userExists)
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_CREDENTIALS);
+
+    const result = await this.findOneAndDelete({ userId, _id: recordId });
+    if (!result)
+        errorThrower(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.FAILED_TO_GET_RECORDS);
+}
+
 export default mongoose.model('Record', recordSchema);
