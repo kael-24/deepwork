@@ -10,8 +10,8 @@ router.use(requireAuth);
 // ADD WORKOUT RECORD
 router.post('/:workoutId', asyncHandler(recordController.createRecord));
 
-// GET WORKOUT RECORDS
-router.get('/workouts/:workoutId', asyncHandler(recordController.getRecords));
+// GET WORKOUT RECORDS BY WORKOUT
+router.get('/workouts/:workoutId', asyncHandler(recordController.getRecordsByWorkout));
 
 // GET WORKOUT RECORD
 router.get('/:recordId', asyncHandler(recordController.getRecord));

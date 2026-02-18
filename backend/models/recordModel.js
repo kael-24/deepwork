@@ -64,7 +64,7 @@ recordSchema.statics.createRecord = async function (userId, workoutId, workoutDa
     return res._id;
 };
 
-recordSchema.statics.getRecords = async function (userId, workoutId) {
+recordSchema.statics.getRecordsByWorkout = async function (userId, workoutId) {
     if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(workoutId))
         errorThrower(HTTP_STATUS.FORBIDDEN, ERROR_MESSAGES.INVALID_CREDENTIALS);
 

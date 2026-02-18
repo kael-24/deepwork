@@ -17,13 +17,13 @@ export const createRecord = async (req, res) => {
 /** 
  * Get Workout Records
  */
-export const getRecords = async (req, res) => {
+export const getRecordsByWorkout = async (req, res) => {
     const { _id } = req.user;
     const { workoutId } = req.params;
 
-    const result = await recordService.getRecords(_id, workoutId);
+    const result = await recordService.getRecordsByWorkout(_id, workoutId);
     console.log(result);
-    res.status(HTTP_STATUS.OK).json({ success: true, records: result, message: "Records fetched"});
+    res.status(HTTP_STATUS.OK).json({ success: true, records: result, message: "Workout records fetched"});
 };
 
 /**
