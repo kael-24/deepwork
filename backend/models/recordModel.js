@@ -54,6 +54,9 @@ recordSchema.statics.createRecord = async function (userId, workoutId, workoutDa
     if (!workout)
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
 
+    if (workout.exercises.length !== exercisesDuration.length)
+        errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.INVALID_INPUT);
+
     const mergedExercise = workout.exercises.map((ex, index) => ({
         ...ex.toObject(),
         duration: exercisesDuration[index].duration
@@ -76,7 +79,7 @@ recordSchema.statics.getRecordsByWorkout = async function (userId, workoutId) {
     if (!workoutExists)
         errorThrower(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.WORKOUT_NOT_FOUND);
 
-    const res = await this.find({ workoutId }).select('-userId -__v -createdAt -updatedAt');
+    const res = await this.find({ userId, workoutId }).select('-userId -__v -createdAt -updatedAt');
     return res;
 };
 
