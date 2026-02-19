@@ -106,8 +106,6 @@ const TimerInterface = ({ exercise, timerIsRunning, setTimerIsRunning, exerciseO
         else
             return `${second}`
     }
-    { console.log("SETTIMERISRUNNING", timerIsRunning) }
-
     return (
         <div className="flex flex-col items-center justify-center my-30">
             <div className="text-2xl">{exercise.exerciseType}</div>
@@ -210,14 +208,14 @@ const PlayWorkout = () => {
     const [exercises, setExercises] = useState(null);
     const [exerciseNumber, setExerciseNumber] = useState(0);
     const [lockIsOn, setLockIsOn] = useState(false);
-    const [exercisesDuration, setExercisesDuration] = useState([]);
-    const [startExerciseTime, setStartExerciseTime] = useState(Date.now());
-    
-    const prevExerciseId = useRef("");
+
+    // Duration tracking lives in refs — no re-renders needed
+    const durationsRef = useRef([]);            // accumulated seconds per exercise (by index)
+    const exerciseStartRef = useRef(Date.now()); // when current exercise started
     const workoutStartTime = useRef(Date.now());
 
     const [errorDialogBoxIsOpen, setErrorDialogBoxIsOpen] = useState(false);
-    
+
     const navigate = useNavigate();
     const { createRecord } = useCreateRecord();
 
@@ -226,13 +224,9 @@ const PlayWorkout = () => {
             setWorkoutName(data.workout.workoutName);
             setExercises(data.workout.exercises);
 
-            const exerciseRecord = data.workout.exercises.map(ex => ({
-                exerciseId: ex._id,
-                duration: 0
-            }))
-
-            prevExerciseId.current = exerciseRecord[0].exerciseId;
-            setExercisesDuration(exerciseRecord);
+            // Simple array of zeros, indexed by position
+            durationsRef.current = data.workout.exercises.map(() => 0);
+            exerciseStartRef.current = Date.now();
         }
     }, [data]);
 
@@ -250,54 +244,56 @@ const PlayWorkout = () => {
         };
     }, []);
 
-    // TOTAL WORKOUT TIME SPENT
-    const finishWorkout = () => {        
-        createRecord.mutate({
-                workoutId,
-                workoutDateStarted: new Date(workoutStartTime.current),
-                workoutDateEnded: new Date(),
-                exercisesDuration
-            }, { 
-                onSuccess: (data) => {
-                    navigate(`/result-workout/${data.recordId}`);
-                }, onError: () => {
-                    setErrorDialogBoxIsOpen(true)
-                }
-            }
-        );
+    console.log(durationsRef)
+
+    // Stamp the current exercise's elapsed time into the ref
+    const stampCurrentExercise = () => {
+        const elapsed = Math.floor((Date.now() - exerciseStartRef.current) / 1000);
+        durationsRef.current[exerciseNumber] += elapsed;
+        exerciseStartRef.current = Date.now();
     };
 
-    // SPENT ON EACH EXERCISE
-    useEffect(() => {
-        const prevId = prevExerciseId.current;
+    // Stamp BEFORE switching — no useEffect or prevExerciseId needed
+    const goToExercise = (nextIndex) => {
+        stampCurrentExercise();
+        setExerciseNumber(nextIndex);
+    };
 
-        // end time
-        const endExerciseTime = Math.floor((Date.now() - startExerciseTime) / 1000);
+    const setNextExercise = () => {
+        if (exerciseNumber < exercises.length - 1) {
+            goToExercise(exerciseNumber + 1);
+        }
+    };
 
-        // record duration
-        setExercisesDuration(prev => prev.map(item => {
-            if (item.exerciseId === prevId) {
-                return {
-                    ...item,
-                    duration: item.duration + endExerciseTime
-                }
-            };
+    const setPreviousExercise = () => {
+        if (exerciseNumber > 0) {
+            goToExercise(exerciseNumber - 1);
+        }
+    };
 
-            return item;
+    const finishWorkout = () => {
+        stampCurrentExercise();
+
+        // Build the payload in one clean pass
+        const exercisesDuration = exercises.map((ex, i) => ({
+            exerciseId: ex._id,
+            duration: durationsRef.current[i],
         }));
 
-        // start time
-        setStartExerciseTime(Date.now());
-
-        if (exercisesDuration.length > 0) {
-            console.log("exerciseNumber", exercisesDuration[exerciseNumber].exerciseId);
-            prevExerciseId.current = exercisesDuration[exerciseNumber].exerciseId;
-        }
-    }, [exerciseNumber]);
+        createRecord.mutate({
+            workoutId,
+            workoutDateStarted: new Date(workoutStartTime.current),
+            workoutDateEnded: new Date(),
+            exercisesDuration,
+        }, {
+            onSuccess: (data) => navigate(`/result-workout/${data.recordId}`),
+            onError: () => setErrorDialogBoxIsOpen(true),
+        });
+    };
 
     if (isLoading) return <div>Loading...</div>;
 
-    console.log("query", exercisesDuration, "exerciseNumber", exerciseNumber, "prev", prevExerciseId.current);
+
     return (
         <div className="pb-64">
             {exercises && exercises.length > 0 && (
@@ -317,13 +313,13 @@ const PlayWorkout = () => {
                         timerIsRunning={timerIsRunning}
                         setTimerIsRunning={(state) => setTimerIsRunning(state)}
                         exerciseOrder={{ exerciseNumber: exerciseNumber + 1, totalExercise: exercises.length }}
-                        setNextExercise={() => setExerciseNumber(prev => Math.min(prev + 1, exercises.length - 1))}
+                        setNextExercise={() => goToExercise(Math.min(exerciseNumber + 1, exercises.length - 1))}
                     />
 
                     <NextExercise
                         exercise={exercises[Math.min(exerciseNumber + 1, exercises.length - 1)]}
-                        setPreviousExercise={() => setExerciseNumber(prev => Math.max(prev - 1, 0))}
-                        setNextExercise={() => setExerciseNumber(prev => Math.min(prev + 1, exercises.length - 1))}
+                        setPreviousExercise={setPreviousExercise}
+                        setNextExercise={setNextExercise}
                         exerciseNumber={exerciseNumber}
                         lockIsOn={lockIsOn}
                         exerciseLength={exercises.length}
@@ -331,13 +327,13 @@ const PlayWorkout = () => {
                         finishWorkout={finishWorkout}
                     />
 
-                    {errorDialogBoxIsOpen && 
-                    <DialogBox
-                        title="Error saving workout"
-                        message="Please try again"
-                        onCancel={() => setErrorDialogBoxIsOpen(false)}
-                        onCancelName="Cancel"
-                    />}
+                    {errorDialogBoxIsOpen &&
+                        <DialogBox
+                            title="Error saving workout"
+                            message="Please try again"
+                            onCancel={() => setErrorDialogBoxIsOpen(false)}
+                            onCancelName="Cancel"
+                        />}
                 </div>
             )}
         </div>
