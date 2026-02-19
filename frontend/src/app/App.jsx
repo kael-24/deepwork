@@ -25,7 +25,8 @@ import {
 
 // workout feature
 import {
-  ResultWorkout
+  ResultWorkout,
+  ViewRecords
 } from '@/features/record/index';
 
 function App() {
@@ -88,11 +89,12 @@ function App() {
             path='/result-workout/:recordId'
             element={user ? <ResultWorkout /> : <Navigate to='/login' />}
           />
-
+          <Route
+            path='/view-records'
+            element={user ? <ViewRecords /> : <Navigate to='/login' />}
+          />
         </Route>
-
       </Routes>
-
     </BrowserRouter>
   )
 }

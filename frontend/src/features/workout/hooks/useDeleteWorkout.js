@@ -16,6 +16,7 @@ const useDeleteWorkout = () => {
             queryClient.invalidateQueries(["workouts"]);
         }
     });
+    
     return {
         deleteWorkoutMutation
     }

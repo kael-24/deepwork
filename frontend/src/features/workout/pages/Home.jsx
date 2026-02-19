@@ -113,6 +113,7 @@ const Home = () => {
                 </div>
             )}
             <Link to="/create-workout">+</Link>
+            <Link to='/view-records'>records</Link>
         </div>
     );
 };
