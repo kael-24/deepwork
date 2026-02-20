@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import useAuthStore from '@/features/auth/store/useAuthStore'
 import useAuthHandler from '@/features/auth/hooks/useAuthHandler'
@@ -13,6 +13,7 @@ const Navbar = () => {
 
     const sidebarRef = useRef();
     const burgerRef = useRef();
+    const navigate = useNavigate();
 
     /**
      * ---------------------------------------------------------
@@ -180,6 +181,20 @@ const Navbar = () => {
                                             </svg>
                                             <span className="font-medium">Profile Settings</span>
                                         </Link>
+
+                                        {/** History Button */}
+                                        <button
+                                            onClick={() => {
+                                                navigate(`/view-records`);
+                                                closeMenu();
+                                            }}
+                                            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-left"
+                                        >
+                                            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span className="font-medium">History</span>
+                                        </button>
 
                                         {/** Log out Button */}
                                         <button
