@@ -2,13 +2,16 @@ import useGetAllRecords from '../hooks/useGetAllRecords.js';
 import { useNavigate } from 'react-router-dom';
 import useDeleteRecord from '../hooks/useDeleteRecord.js';
 import * as XLSX from 'xlsx';
+import { Link } from 'react-router-dom';
+import { DialogBox } from '@/shared/index.js';
+import { useState } from 'react';
 
 const ViewRecords = () => {
     const { data, isLoading, error, isError } = useGetAllRecords();
     const { deleteRecord } = useDeleteRecord();
     const records = data?.records || [];
     const navigate = useNavigate();
-
+    const [deleteRecordId, setDeleteRecordId] = useState(null);
     if (isLoading)
         return <div className="p-8 text-center text-gray-600">Loading records...</div>;
 
@@ -61,7 +64,14 @@ const ViewRecords = () => {
     return (
         <div className="max-w-2xl mx-auto p-6">
             <div className='flex justify-between items-center mb-6'>
-                <h1 className="text-2xl font-bold text-gray-900 m-0">History</h1>
+                <div className="flex items-center gap-3">
+                    <Link to="/" className="text-green-600 hover:text-green-700 transition-colors flex items-center justify-center p-1 rounded-full hover:bg-green-50">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </Link>
+                    <h1 className="text-2xl font-bold text-gray-900 m-0">History</h1>
+                </div>
                 <button 
                     onClick={handleDownload} 
                     className="flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-sm hover:shadow-md"
@@ -102,14 +112,25 @@ const ViewRecords = () => {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    if (window.confirm('Are you sure you want to delete this record?')) {
-                                        deleteRecord.mutate(record._id);
-                                    }
+                                    setDeleteRecordId(record._id);
                                 }}
                                 className="ml-4 text-red-500 hover:text-red-700 font-medium px-3 py-1 rounded hover:bg-red-50 transition-colors"
                             >
                                 Delete
                             </button>
+                            {deleteRecordId === record._id && (
+                                <DialogBox
+                                    title="Delete"
+                                    message="Are you sure you want to delete this record?"
+                                    onSave={() => {
+                                        deleteRecord.mutate(record._id);
+                                        setDeleteRecordId(null);
+                                    }}
+                                    onSaveName="Delete"
+                                    onCancel={() => setDeleteRecordId(null)}
+                                    onCancelName="Cancel"
+                                />
+                            )}
                         </div>
                     ))
                 ) : (

@@ -30,7 +30,10 @@ const DialogBox = ({ title, message, onSave, onSaveName, onCancel, onCancelName 
     }, [onCancel]);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+            onClick={(e) => e.stopPropagation()}
+        >
             <div
                 ref={dialogBoxRef}
                 className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 animate-scale-in border border-gray-100"
