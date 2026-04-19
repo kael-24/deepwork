@@ -1,6 +1,7 @@
 import useGetAllRecords from '../hooks/useGetAllRecords.js';
 import { useNavigate } from 'react-router-dom';
 import useDeleteRecord from '../hooks/useDeleteRecord.js';
+import * as XLSX from 'xlsx';
 
 const ViewRecords = () => {
     const { data, isLoading, error, isError } = useGetAllRecords();
@@ -32,9 +33,38 @@ const ViewRecords = () => {
             .join(':');
     };
 
+    const handleDownload = () => {
+        const flattenedData = records.flatMap(workout => {
+            return workout.exercises.map(exercise => {
+                return {
+                    Workout_ID: workout._id,
+                    Workout_Name: workout.workoutName,
+                    Date_Started: new Date(workout.workoutDateStarted).toLocaleString(),
+                    Date_Ended: new Date(workout.workoutDateEnded).toLocaleString(),
+                    
+                    Exercise_Type: exercise.exerciseType,
+                    Exercise_Name: exercise.exerciseName,
+                    Time_Type: exercise.timeType,
+                    Target_Timer_Seconds: exercise.timer,
+                    Actual_Duration: exercise.duration,
+                    Reps: exercise.reps || "N/A" 
+                };
+            });
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Workout History");
+        XLSX.writeFile(workbook, "workout_history.xlsx");
+    }
+
     return (
         <div className="max-w-2xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-6 text-gray-900">History</h1>
+            <div className='flex justify-between'>
+                <h1 className="text-2xl font-bold mb-6 text-gray-900">History</h1>
+                <button onClick={handleDownload} className="border border-green-500 rounded-lg ">Download History</button>
+            </div>
+
 
             <div className="flex flex-col gap-4">
                 {records.length > 0 ? (
