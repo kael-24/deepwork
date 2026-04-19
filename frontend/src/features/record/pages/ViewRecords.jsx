@@ -60,9 +60,17 @@ const ViewRecords = () => {
 
     return (
         <div className="max-w-2xl mx-auto p-6">
-            <div className='flex justify-between'>
-                <h1 className="text-2xl font-bold mb-6 text-gray-900">History</h1>
-                <button onClick={handleDownload} className="border border-green-500 rounded-lg ">Download History</button>
+            <div className='flex justify-between items-center mb-6'>
+                <h1 className="text-2xl font-bold text-gray-900 m-0">History</h1>
+                <button 
+                    onClick={handleDownload} 
+                    className="flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download History
+                </button>
             </div>
 
 

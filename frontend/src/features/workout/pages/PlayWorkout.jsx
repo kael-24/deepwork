@@ -12,49 +12,44 @@ const Banner = ({ exercise, timerIsRunning, setTimerIsRunning, workoutName, lock
     const [exitDialogBoxOpen, setExitDialogBoxOpen] = useState(false);
 
     return (
-        <div className="flex items-center justify-between mb-10">
-            {/** Back Button */}
-            <div className="">
-                <button
-                    className="border border-green-500 rounded-md px-4 py-2 text-green-500"
-                    onClick={() => setExitDialogBoxOpen(true)}
-                >
-                    X
-                </button>
+        <div className="flex items-center justify-between mb-8 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+            <button
+                className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-gray-50 shrink-0"
+                onClick={() => setExitDialogBoxOpen(true)}
+                title="Exit Workout"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            
+            <div className="font-bold text-xl text-gray-800 tracking-wide truncate px-2 text-center flex-1">
+                {workoutName}
             </div>
 
-            {/** Workout Name */}
-            <div>
-                <div className="font-bold text-2xl ml-23">{workoutName}</div>
-            </div>
-
-            <div>
-                {/** Lock Button */}
+            <div className="flex items-center gap-2 shrink-0">
                 <button
-                    className="border border-green-500 rounded-md px-4 py-2 text-green-500"
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors text-sm ${lockIsOn ? "bg-amber-100 text-amber-700 hover:bg-amber-200" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
                     onClick={setLockIsOn}
                 >
-                    {lockIsOn ? "UNLOCK" : "LOCK"}
+                    {lockIsOn ? "🔓 Unlock" : "🔒 Lock UI"}
                 </button>
-
-                {/** Play/Pause Button */}
+                
                 {exercise.timer && (
                     <button
-                        className="border border-green-500 rounded-md px-4 py-2 text-green-500"
+                        className={`w-20 py-2 rounded-lg font-bold text-white transition-colors shadow-sm text-sm flex justify-center items-center ${lockIsOn ? "bg-gray-300 cursor-not-allowed" : timerIsRunning ? "bg-orange-500 hover:bg-orange-600" : "bg-green-500 hover:bg-green-600"}`}
                         disabled={lockIsOn}
                         onClick={() => setTimerIsRunning(!timerIsRunning)}
                     >
-                        {timerIsRunning ? <div>PAUSE</div> : <div>PLAY</div>}
+                        {timerIsRunning ? "⏸ Pause" : "▶ Play"}
                     </button>
                 )}
             </div>
 
             {exitDialogBoxOpen && (
-                <DialogBox // UNFINISHED
+                <DialogBox
                     title="Exit Workout"
-                    message="Exiting workout wont save your progress"
+                    message="Exiting the workout will not save your progress. Are you sure?"
                     onSave={() => navigate(`/view-workout/${workoutId}`)}
-                    onSaveName="Exit"
+                    onSaveName="Exit Without Saving"
                     onCancel={() => setExitDialogBoxOpen(false)}
                     onCancelName="Cancel"
                 />
@@ -107,12 +102,32 @@ const TimerInterface = ({ exercise, timerIsRunning, setTimerIsRunning, exerciseO
             return `${second}`
     }
     return (
-        <div className="flex flex-col items-center justify-center my-30">
-            <div className="text-2xl">{exercise.exerciseType}</div>
-            <div className="text-4xl">{exercise.exerciseName}</div>
-            {exercise.timer && <div className="text-6xl">{formatMs(elapsedTime)}</div>}
-            {exercise.reps && <div className="text-6xl">{exercise.reps}</div>}
-            <div className="text-lg">{exerciseOrder.exerciseNumber} / {exerciseOrder.totalExercise}</div>
+        <div className="flex flex-col items-center justify-center py-12 px-6 bg-white rounded-3xl shadow-sm border border-gray-100 mb-8 w-full">
+            <div className="inline-flex text-sm font-semibold px-4 py-1 rounded-full bg-violet-100 text-violet-800 capitalize mb-6 tracking-wide">
+                {exercise.exerciseType}
+            </div>
+            
+            <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-10 text-center leading-tight">
+                {exercise.exerciseName}
+            </h2>
+            
+            <div className="flex items-center justify-center w-64 h-64 md:w-72 md:h-72 rounded-full border-[12px] border-gray-50 shadow-inner bg-white mb-10 relative">
+                {exercise.timer && (
+                    <div className="text-6xl md:text-7xl font-black text-blue-600 tracking-tighter">
+                        {formatMs(elapsedTime)}
+                    </div>
+                )}
+                {exercise.reps && !exercise.timer && (
+                    <div className="flex flex-col items-center">
+                        <div className="text-7xl md:text-8xl font-black text-rose-500 leading-none">{exercise.reps}</div>
+                        <div className="text-lg font-bold text-gray-400 uppercase tracking-[0.2em] mt-2">Reps</div>
+                    </div>
+                )}
+            </div>
+            
+            <div className="text-sm font-bold text-gray-500 bg-gray-50 px-5 py-2.5 rounded-xl border border-gray-100 shadow-sm uppercase tracking-wider">
+                Exercise {exerciseOrder.exerciseNumber} of {exerciseOrder.totalExercise}
+            </div>
         </div>
     );
 }
@@ -122,12 +137,12 @@ const NextExercise = ({ exercise, setPreviousExercise, setNextExercise, exercise
     const isLastExercise = exerciseNumber === exerciseLength - 1;
 
     return (
-        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-40">
-            <div className="max-w-screen-xl mx-auto">
+        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 pb-6 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-40">
+            <div className="max-w-2xl mx-auto">
                 {isLastExercise ? (
                     <div className="flex gap-4">
                         <button
-                            className="w-1/3 border border-green-500 rounded-md px-4 py-2 text-green-500 hover:bg-green-50 transition-colors"
+                            className="flex-1 font-semibold bg-gray-100 text-gray-700 rounded-xl px-6 py-4 hover:bg-gray-200 transition-colors disabled:opacity-50"
                             disabled={lockIsOn}
                             onClick={setPreviousExercise}
                         >
@@ -135,51 +150,50 @@ const NextExercise = ({ exercise, setPreviousExercise, setNextExercise, exercise
                         </button>
                         <button
                             onClick={() => setFinishDialogBoxOpen(true)}
-                            className="w-2/3 bg-green-500 border border-green-500 rounded-md px-4 py-2 text-white hover:bg-green-600 transition-colors"
+                            className="flex-[2] bg-green-500 font-bold text-lg text-white rounded-xl px-6 py-4 hover:bg-green-600 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:hover:bg-green-500"
+                            disabled={lockIsOn}
                         >
-                            Finish
+                            Finish Workout 🏆
                         </button>
                     </div>
                 ) : (
                     <>
-                        <div className="mb-4">
-                            <button
-                                onClick={() => setFinishDialogBoxOpen(true)}
-                                className="border border-green-500 rounded-md px-4 py-2 text-green-500 hover:bg-green-50 transition-colors w-full sm:w-auto"
-                            >
-                                Finish
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div className="w-24">
-                                {exerciseNumber > 0 && (
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="w-28 shrink-0">
+                                {exerciseNumber > 0 ? (
                                     <button
-                                        className="border border-green-500 rounded-md px-4 py-2 text-green-500 hover:bg-green-50 transition-colors w-full"
+                                        className="w-full font-semibold bg-gray-100 text-gray-700 rounded-xl py-3 hover:bg-gray-200 transition-colors disabled:opacity-50"
                                         disabled={lockIsOn}
                                         onClick={setPreviousExercise}
                                     >
                                         Previous
                                     </button>
-                                )}
+                                ) : null}
                             </div>
 
-                            <div className="flex-1 text-center px-2">
-                                <div>
-                                    <div className="text-sm text-gray-500 font-medium uppercase tracking-wider">Up next</div>
-                                    <div className="font-semibold text-gray-700">{exercise.exerciseType}</div>
-                                    <div className="text-lg font-bold text-gray-900 truncate">{exercise.exerciseName}</div>
-                                </div>
+                            <div className="flex-1 text-center bg-gray-50 rounded-xl py-2 px-3 border border-gray-100 truncate">
+                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-0.5">Up Next</span>
+                                <span className="text-sm font-bold text-gray-800 truncate block">{exercise.exerciseName}</span>
                             </div>
 
-                            <div className="w-24">
+                            <div className="w-28 shrink-0">
                                 <button
-                                    className="border border-green-500 rounded-md px-4 py-2 text-green-500 hover:bg-green-50 transition-colors w-full"
+                                    className="w-full font-bold bg-green-500 text-white rounded-xl py-3 hover:bg-green-600 transition-colors shadow-sm disabled:opacity-50"
                                     disabled={lockIsOn}
                                     onClick={setNextExercise}
                                 >
-                                    Next
+                                    Next ➔
                                 </button>
                             </div>
+                        </div>
+                        <div className="mt-3 text-center">
+                            <button
+                                onClick={() => setFinishDialogBoxOpen(true)}
+                                className="text-xs font-bold text-gray-400 hover:text-green-600 transition-colors py-2 uppercase tracking-wide disabled:opacity-50"
+                                disabled={lockIsOn}
+                            >
+                                Finish Workout Early
+                            </button>
                         </div>
                     </>
                 )}
@@ -295,9 +309,10 @@ const PlayWorkout = () => {
 
 
     return (
-        <div className="pb-64">
+        <div className="min-h-screen bg-gray-50 pt-6 px-4 pb-64">
+            <div className="max-w-2xl mx-auto">
             {exercises && exercises.length > 0 && (
-                <div>
+                <div className="animate-fade-in">
                     <Banner
                         exercise={exercises[exerciseNumber]}
                         timerIsRunning={timerIsRunning}
@@ -336,6 +351,7 @@ const PlayWorkout = () => {
                         />}
                 </div>
             )}
+            </div>
         </div>
     );
 }
