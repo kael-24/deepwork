@@ -471,8 +471,6 @@ const ProfileSettings = () => {
                         Successfully saved changes
                     </p>
                 )}
-
-                <div>LAST LOGGED IN: 9/15/25 -- 10:49AM</div>
             </div>
         </div>
     );

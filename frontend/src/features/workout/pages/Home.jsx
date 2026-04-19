@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { DnDWrapper, useClickOutside } from '@/shared/index';
 import { useAuthStore } from "@/features/auth/index";
 import useGetWorkouts from "../hooks/useGetWorkouts";
+import LandingPage from "../components/LandingPage";
 import useDeleteWorkout from "../hooks/useDeleteWorkout";
 
 const WorkoutCard = ({ workout }) => {
@@ -103,7 +104,7 @@ const Home = () => {
         }
     }, [data]);
 
-    if (!user) return <div className="text-center text-gray-500 mt-20">Log in to see your workouts</div>
+    if (!user) return <LandingPage />
     if (isLoading) return <p className="text-center text-gray-400 mt-20">Loading....</p>;
     if (isError && error) return <p className="text-center text-red-500 mt-20">{error.response?.data?.error}</p>;
 
