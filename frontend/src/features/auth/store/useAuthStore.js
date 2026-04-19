@@ -12,8 +12,8 @@ const useAuthStore = create((set) => ({
 
     // logout user
     logoutUser: () => set({ user: null }),
-    
-    // set isAuthLoading (seems like not needed) // TODO
+
+    // set isAuthLoading
     setIsAuthLoading: (value) => set({ isAuthLoading: value }),
 }));
 

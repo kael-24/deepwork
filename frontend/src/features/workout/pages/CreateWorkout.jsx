@@ -78,7 +78,6 @@ const CreateWorkout = () => {
      * @returns 
      */
     const handleSaveWorkout = async () => {
-        console.log("WORKOUTS", exercises);
         setClientError(null);
 
         // checks if timer is empty

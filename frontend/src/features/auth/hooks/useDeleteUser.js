@@ -28,7 +28,3 @@ const useDeleteUser = () => {
 }
 
 export default useDeleteUser;
-
-
-// TODO -- Question if the api call to delete user cookies is really needed
-// TODO -- verify if the whole hook is correct

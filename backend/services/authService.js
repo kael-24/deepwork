@@ -16,7 +16,6 @@ const createToken = (_id, rememberMe) => {
     const expiresIn = rememberMe === false ? '30m' : '3d';
     const token = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: expiresIn });
 
-    console.log("TOKEN: ", token); //TEMPDEV
     return token;
 }
 

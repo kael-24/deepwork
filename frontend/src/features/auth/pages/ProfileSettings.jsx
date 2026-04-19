@@ -393,7 +393,7 @@ const ProfileSettings = () => {
                             <label className="block text-sm font-bold text-red-600">Delete Account</label>
                         </div>
 
-                        {/** Non-edit Mode Name Button // TODO */}
+                        {/** Non-edit Mode Name Button */}
                         {currentEdit !== 'deleteUser' ? (
                             <button
                                 onClick={() => handleClearStates('deleteUser')}

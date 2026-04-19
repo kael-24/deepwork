@@ -22,7 +22,6 @@ export const getRecordsByWorkout = async (req, res) => {
     const { workoutId } = req.params;
 
     const result = await recordService.getRecordsByWorkout(_id, workoutId);
-    console.log(result);
     res.status(HTTP_STATUS.OK).json({ success: true, records: result, message: "Workout records fetched"});
 };
 

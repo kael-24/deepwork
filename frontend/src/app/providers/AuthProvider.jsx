@@ -6,7 +6,7 @@ import { apiClient } from '@/shared/index';
 import { useAuthStore } from '@/features/auth/index';
 
 const AuthProvider = ({ children }) => {
-    const { user, setUser, logoutUser, setIsAuthLoading } = useAuthStore();
+    const { setUser, logoutUser, setIsAuthLoading } = useAuthStore();
 
     useEffect(() => {
         const checkAuthStatus = async () => {
@@ -37,8 +37,6 @@ const AuthProvider = ({ children }) => {
 
         checkAuthStatus();
     }, [])
-
-    console.log("AuthStates", user);
 
     return children || null;
 }

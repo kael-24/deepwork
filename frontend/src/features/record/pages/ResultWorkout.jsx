@@ -31,10 +31,8 @@ const ResultWorkout = () => {
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
 
-        console.log(totalSeconds)
         return [hours, minutes, seconds].map(val => String(val).padStart(2, '0')).join(':');
     };
-    console.log(data?.record);
 
 
     return (

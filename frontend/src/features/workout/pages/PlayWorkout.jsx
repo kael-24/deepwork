@@ -258,8 +258,6 @@ const PlayWorkout = () => {
         };
     }, []);
 
-    console.log(durationsRef)
-
     // Stamp the current exercise's elapsed time into the ref
     const stampCurrentExercise = () => {
         const elapsed = Math.floor((Date.now() - exerciseStartRef.current) / 1000);
