@@ -128,16 +128,29 @@ const Home = () => {
                 </div>
             )}
 
-            {/* Bottom actions */}
-            <div className="flex items-center justify-between mt-6">
-                <Link
-                    to="/create-workout"
-                    className="w-12 h-12 flex items-center justify-center bg-blue-600 text-white rounded-full text-2xl shadow-md hover:bg-blue-700"
-                >+</Link>
+            {/* Floating Action Buttons - Bottom Right */}
+            <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-4">
+                {/* Records Button */}
                 <Link
                     to="/view-records"
-                    className="text-sm text-blue-600 hover:underline"
-                >Records</Link>
+                    className="w-12 h-12 bg-white text-green-600 rounded-full hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center border border-gray-200"
+                    title="View Records"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </Link>
+
+                {/* Create Workout Plus Button */}
+                <Link
+                    to="/create-workout"
+                    className="w-14 h-14 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center"
+                    title="Create Workout"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                </Link>
             </div>
         </div>
     );
