@@ -85,7 +85,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                                         }}
                                         className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                                     >
-                                        {option}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                        {option}                                                                 
                                     </button>
                                 ) : null
                             )}
@@ -185,7 +185,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                             value={exercise.timer}
                             onChange={(e) => handleTimer(e.target.value)}
                             placeholder="seconds"
-                            className="flex-1 px-3 py-2 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                            className="flex-1 min-w-0 px-3 py-2 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                         />
                         {/** Increase Input Timer Seconds */}
                         <button
@@ -223,7 +223,7 @@ const ExerciseCard = ({ id, exercise, sequence, addExercise, updateExercise, del
                                 updateExercise({reps: value === '' || value === '0' ? '' : value});
                             }}
                             placeholder="0"
-                            className="flex-1 px-3 py-2 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                            className="flex-1 min-w-0 px-3 py-2 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                         />
                         {/** Increase reps timer Button */}
                         <button
